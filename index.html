@@ -229,6 +229,22 @@
         .account-menu button:hover { background:rgba(0,0,0,0.05); color:var(--text-primary); }
         .account-area { position:relative; }
         .permission-control { display:none; }
+        .nav-mobile-publish-wrap { display: none; }
+        .mobile-publish-menu { display: none; }
+
+        /* ========== 移动端搜索页 ========== */
+        .mobile-search-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+        .mobile-search-back { width: 34px; height: 34px; border: 0; background: transparent; color: var(--text-secondary); font-size: 1.3rem; line-height: 1; cursor: pointer; padding: 0; flex-shrink: 0; }
+        .mobile-search-box { flex: 1; display: flex; align-items: center; gap: 9px; background: var(--bg-input); border-radius: 21px; padding: 10px 16px; }
+        .mobile-search-box input { border: 0; background: transparent; padding: 0; font-size: 0.92rem; }
+        .mobile-search-box .search-icon { width: 16px; height: 16px; color: var(--text-muted); flex-shrink: 0; }
+        .mobile-search-box .search-icon::before { width: 9px; height: 9px; }
+        .mobile-search-box .search-icon::after { width: 7px; left: 10px; top: 12px; }
+        .search-group { margin-bottom: 20px; }
+        .search-item { display: flex; align-items: center; gap: 10px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 8px; cursor: pointer; transition: background var(--transition); }
+        .search-item:active { background: var(--bg-card-hover); }
+        .search-item-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.88rem; color: var(--text-primary); }
+        .search-item-meta { margin-left: auto; font-size: 0.74rem; color: var(--text-muted); flex-shrink: 0; max-width: 96px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         /* ========== 主内容区域 ========== */
         .main-content {
@@ -538,6 +554,23 @@
         .profile-signature { text-align:center; color:var(--text-secondary); font-size:0.85rem; margin:8px 0 18px; }
         .profile-section { margin-bottom:24px; }
         .profile-section h2, .admin-panel h2 { font-size:1.1rem; margin-bottom:14px; }
+        .profile-top { position:relative; display:flex; align-items:center; gap:26px; padding:6px 4px 26px; }
+        .profile-top .profile-avatar { width:96px; height:96px; margin:0; font-size:2.2rem; flex-shrink:0; }
+        .profile-info { flex:1; min-width:0; display:flex; flex-direction:column; gap:9px; }
+        .profile-info .profile-name { text-align:left; font-size:1.35rem; line-height:1.2; }
+        .profile-info .profile-signature { text-align:left; margin:0; font-size:0.88rem; }
+        .profile-stats { display:flex; align-items:center; gap:30px; font-size:0.86rem; color:var(--text-secondary); flex-wrap:wrap; }
+        .profile-stats b { color:var(--text-primary); font-size:1.02rem; margin-right:6px; font-weight:700; }
+        .profile-side-actions { position:absolute; top:0; right:0; display:flex; gap:8px; align-items:center; }
+        .follow-btn { min-width:96px; }
+        .profile-divider { height:1px; background:var(--border-color); margin:0 0 24px; }
+        .profile-tabs { display:flex; justify-content:center; gap:14px; margin-bottom:26px; }
+        .profile-tab-btn { padding:9px 38px; border-radius:22px; border:1px solid var(--border-light); background:transparent; color:var(--text-secondary); font-size:0.92rem; transition:all var(--transition); }
+        .profile-tab-btn:hover { color:var(--text-primary); border-color:var(--accent-cyan); background:rgba(43,167,255,0.05); }
+        .profile-tab-btn.active { background:var(--accent-cyan); border-color:var(--accent-cyan); color:#fff; font-weight:600; }
+        .history-line { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+        .history-time { margin-left:auto; font-size:0.78rem; color:var(--text-muted); flex-shrink:0; }
+        .profile-privacy-hint { color:var(--text-muted); font-size:0.78rem; margin-top:12px; }
         .admin-grid { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:16px; }
         .admin-panel button { margin-top:8px; }
         #page-admin #homeBackgroundInput { display: none; }
@@ -789,52 +822,66 @@
         @media (max-width: 600px) {
             .main-content { padding: 16px 12px; }
             .top-nav {
-                height: 164px;
-                padding: 10px 12px 8px;
+                height: 96px;
+                padding: 0;
                 display: grid;
-                grid-template-columns: 1fr auto;
-                grid-template-rows: 36px 42px 48px;
-                align-content: start;
-                gap: 6px 12px;
+                grid-template-columns: 1fr auto 1fr;
+                grid-template-rows: 52px 44px;
+                align-items: center;
             }
-            .nav-logo { font-size: 0.95rem; margin-right: 0; grid-column: 1; grid-row: 1; }
-            .nav-logo .logo-icon { width: 28px; height: 28px; font-size: 0.9rem; }
-            .account-area { grid-column: 2; grid-row: 1; margin-left: 0; }
+            .nav-logo { display: none; }
+            .account-area { grid-column: 1; grid-row: 1; justify-self: start; margin-left: 14px; }
+            .account-area .account-menu { left: 0; right: auto; }
             .nav-search,
             .nav-search:focus-within {
+                grid-column: 2;
+                grid-row: 1;
+                justify-self: center;
+                width: 42px;
+                height: 42px;
+                min-width: 0;
+                margin-left: 0;
+                padding: 0;
+                border-radius: 50%;
+                justify-content: center;
+                background: transparent;
+                border: none;
+                box-shadow: none;
+            }
+            .nav-search input { display: none; }
+            .nav-search .search-icon { width: 22px; height: 22px; cursor: pointer; color: var(--text-primary); }
+            .nav-search .search-icon::before { width: 13px; height: 13px; border-width: 2.4px; }
+            .nav-search .search-icon::after { width: 10px; height: 2.4px; left: 14px; top: 18px; }
+            .nav-mobile-publish-wrap { display: block; grid-column: 3; grid-row: 1; justify-self: end; margin-right: 12px; position: relative; }
+            .nav-mobile-publish { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border-radius: 50%; background: transparent; color: var(--text-primary); }
+            .nav-mobile-publish svg { width: 27px; height: 27px; }
+            .nav-mobile-publish svg circle, .nav-mobile-publish svg path { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+            .mobile-publish-menu { display: block; position: absolute; top: calc(100% + 10px); right: 0; min-width: 176px; padding: 6px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); box-shadow: var(--shadow-hover); z-index: 1200; opacity: 0; pointer-events: none; transform: translateY(-6px); transition: all var(--transition); }
+            .mobile-publish-menu.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+            .mobile-publish-menu button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 11px 12px; border: 0; background: transparent; color: var(--text-secondary); font-size: 0.9rem; border-radius: var(--radius-sm); text-align: left; }
+            .mobile-publish-menu button:hover { background: rgba(0,0,0,0.045); color: var(--text-primary); }
+            .mobile-publish-menu svg { width: 18px; height: 18px; color: var(--accent-cyan); flex-shrink: 0; }
+            .mobile-publish-menu svg path, .mobile-publish-menu svg ellipse { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+            .top-nav.nav-transparent .nav-mobile-publish { color: #fff; }
+            .top-nav.nav-transparent .nav-search .search-icon { color: #fff; }
+            .nav-tabs {
                 grid-column: 1 / -1;
                 grid-row: 2;
                 width: 100%;
-                min-width: 0;
-                margin-left: 0;
-                padding: 6px 12px;
-            }
-            .nav-tabs {
-                grid-column: 1 / -1;
-                grid-row: 3;
-                width: 100%;
-                min-width: 0;
-                display: grid;
-                grid-template-columns: repeat(5, minmax(0, 1fr));
-                height: 48px;
-                align-self: start;
-                align-items: center;
-                gap: 2px;
+                display: flex;
+                height: 44px;
+                border-top: 1px solid var(--border-color);
+                gap: 0;
             }
             .nav-tab {
-                width: 100%;
+                flex: 1;
                 min-width: 0;
-                min-height: 42px;
                 justify-content: center;
-                padding: 5px 2px;
-                font-size: 0.72rem;
-                line-height: 1.25;
-                letter-spacing: 0;
-                text-align: center;
-                white-space: normal;
-                overflow-wrap: anywhere;
+                padding: 0;
+                font-size: 0.85rem;
+                min-height: 44px;
             }
-            .main-content { margin-top: 164px; min-height: calc(100vh - 164px); }
+            .main-content { margin-top: 96px; min-height: calc(100vh - 96px); }
             .main-content.home-content { margin-top: 0; }
             .hero-fullpage h1 { font-size: 1.8rem; }
             .post-detail-article { padding: 24px 18px; }
@@ -854,7 +901,30 @@
             .profile-layout, .admin-grid { grid-template-columns: 1fr; }
             .forum-toolbar { flex-direction: column; align-items: stretch; }
             .forum-tabs { justify-content: center; }
-            .media-subnav { flex-direction: column; align-items: stretch; }
+            .breadcrumb { display: none; }
+            .page-header { margin-bottom: 14px; padding-bottom: 12px; }
+            .page-header h1 { font-size: 1.25rem; }
+            .page-header .subtitle { font-size: 0.76rem; }
+            .media-subnav {
+                flex-direction: row;
+                margin: -16px -12px 16px;
+                padding: 0 6px;
+                background: var(--bg-card);
+                border: none;
+                border-bottom: 1px solid var(--border-color);
+                border-radius: 0;
+                overflow-x: auto;
+            }
+            .media-subnav-btn {
+                flex: 1;
+                padding: 13px 6px;
+                border-radius: 0;
+                text-align: center;
+                position: relative;
+                font-size: 0.9rem;
+            }
+            .media-subnav-btn.active { background: transparent; color: var(--accent-cyan); font-weight: 600; }
+            .media-subnav-btn.active::after { content: ''; position: absolute; left: 50%; bottom: 5px; transform: translateX(-50%); width: 30px; height: 3px; border-radius: 2px; background: var(--accent-cyan); }
             .article-card { flex-direction: column; gap: 10px; padding: 14px; }
             .article-card-cover { width: 100%; aspect-ratio: 16/9; }
             .article-card-footer { display: flex; flex-wrap: wrap; row-gap: 6px; }
@@ -888,11 +958,22 @@
             <a href="#tools" class="nav-tab" data-page="tools" onclick="navigateTo('tools')">实用工具</a>
         </div>
         <div class="nav-search">
-            <span class="search-icon" aria-hidden="true"></span>
+            <span class="search-icon" aria-hidden="true" onclick="mobileSearchTap(event)"></span>
             <input type="text" placeholder="搜索文献、帖子、数据集..." id="globalSearchInput" oninput="handleGlobalSearch(this.value)">
         </div>
         <div class="account-area" id="accountArea">
             <button class="btn btn-sm btn-outline" id="loginButton" onclick="openAuthModal()">登录 / 注册</button>
+        </div>
+        <div class="nav-mobile-publish-wrap">
+            <button class="nav-mobile-publish" onclick="toggleMobilePublish(event)" aria-label="发布内容">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v8M8 12h8"></path></svg>
+            </button>
+            <div class="mobile-publish-menu" id="mobilePublishMenu">
+                <button onclick="mobilePublishAction('dynamic')"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg>发布动态</button>
+                <button onclick="mobilePublishAction('article')"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg>发布文章</button>
+                <button onclick="mobilePublishAction('literature')"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/><path d="M5 13.18v4L12 21l7-3.82v-4"/></svg>新增论文</button>
+                <button onclick="mobilePublishAction('dataset')"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5"/><path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3"/></svg>新增数据</button>
+            </div>
         </div>
     </nav>
 
@@ -990,6 +1071,7 @@
             <div class="tools-grid" id="toolsGrid"></div>
         </div>
         <div id="page-post-detail" class="page-container" style="display:none;"></div>
+        <div id="page-search" class="page-container" style="display:none;"></div>
         <div id="page-article-editor" class="page-container" style="display:none;"></div>
         <div id="page-literature-editor" class="page-container" style="display:none;"></div>
     </div>
@@ -1156,6 +1238,9 @@
         let currentUser = JSON.parse(localStorage.getItem('weatherPlatformUser') || 'null');
         let likedPostIds = JSON.parse(localStorage.getItem('weatherPlatformLikedPosts') || '[]');
         let favoritePostIds = JSON.parse(localStorage.getItem('weatherPlatformFavoritePosts') || '[]');
+        let follows = JSON.parse(localStorage.getItem('weatherPlatformFollows') || '[]');
+        let historyData = JSON.parse(localStorage.getItem('weatherPlatformHistory') || '[]');
+        let profileTab = 'publish';
 
         function postEndpoint(template, id) { return template.replace('{id}', encodeURIComponent(id)); }
         function endpoint(template, params) { return Object.entries(params).reduce((path, [key, value]) => path.replace(`{${key}}`, encodeURIComponent(value)), template); }
@@ -1314,15 +1399,101 @@
             updateAccountUI();
         }
 
+        function fmtHistoryTime(ts) {
+            const d = new Date(ts);
+            const p = function (n) { return (n < 10 ? '0' : '') + n; };
+            return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+        }
+
+        function recordHistory(rec) {
+            historyData = historyData.filter(function (h) { return !(h.kind === rec.kind && String(h.id) === String(rec.id)); });
+            rec.time = Date.now();
+            rec.link = rec.link || '';
+            historyData.unshift(rec);
+            if (historyData.length > 300) historyData.length = 300;
+            localStorage.setItem('weatherPlatformHistory', JSON.stringify(historyData));
+        }
+
+        function recordLiteratureView(id) {
+            const item = literatureData.find(function (d) { return String(d.id) === String(id); });
+            if (item) recordHistory({ kind: 'literature', id: item.id, title: item.title, link: item.cnki });
+        }
+
+        function toggleFollow(name) {
+            if (!requirePermission('user')) return;
+            const i = follows.indexOf(name);
+            if (i >= 0) follows.splice(i, 1); else follows.push(name);
+            localStorage.setItem('weatherPlatformFollows', JSON.stringify(follows));
+            if (currentPage === 'author') renderAuthorProfile(name);
+            if (currentPage === 'profile') renderProfile();
+        }
+
         function renderProfile() {
             if (!requirePermission('user')) return;
             const avatar = currentUser.avatar ? `<img src="${currentUser.avatar}" alt="头像">` : (currentUser.name || currentUser.username || '用').slice(0, 1).toUpperCase();
             const ownPosts = postsData.filter(post => String(post.ownerId) === String(currentUser.id));
-            const ownDatasets = datasetsData.filter(dataset => String(dataset.ownerId) === String(currentUser.id));
-            document.getElementById('page-profile').innerHTML = `<div class="page-header"><h1>个人中心</h1><p class="subtitle">账户资料与个人上传内容</p></div><div class="profile-layout"><div class="profile-card"><div class="profile-avatar">${avatar}</div><input class="avatar-input" type="file" id="avatarInput" accept="image/*" onchange="uploadAvatar(this.files[0])"><button class="btn btn-outline btn-sm" onclick="document.getElementById('avatarInput').click()">更换头像</button><div class="profile-name">${currentUser.name || currentUser.username}</div><div class="profile-signature">${currentUser.signature || '还没有个人签名'}</div><p class="profile-signature">${currentUser.phone || ''}</p><button class="btn btn-outline btn-sm" onclick="editProfile()">编辑资料</button></div><div><div class="profile-section"><h2>我的文章与动态</h2><div class="profile-post-list">${ownPosts.length ? ownPosts.map(post => `<div class="post-item"><div class="post-item-title">${post.title}</div><div class="post-item-meta">${post.subcatLabel} · ${post.date}</div><div class="post-item-actions"><button class="btn btn-sm btn-outline" onclick="deletePost(${post.id}, event)">删除</button></div></div>`).join('') : '<div class="empty-state">暂无上传内容</div>'}</div></div><div class="profile-section"><h2>我的数据文件</h2><div class="profile-post-list">${ownDatasets.length ? ownDatasets.map(dataset => `<div class="post-item"><div class="post-item-title">${dataset.name}</div><div class="post-item-meta">${dataset.format || '数据文件'} · ${dataset.size || ''}</div><div class="post-item-actions"><button class="btn btn-sm btn-outline" onclick="deleteDataset(${dataset.id}, event)">删除</button></div></div>`).join('') : '<div class="empty-state">暂无上传数据</div>'}</div></div></div></div>`;
-            const likedPosts = postsData.filter(post => likedPostIds.includes(post.id));
-            const favoritePosts = postsData.filter(post => favoritePostIds.includes(post.id));
-            document.getElementById('page-profile').insertAdjacentHTML('beforeend', `<div class="profile-section"><h2>我的收藏</h2><div class="profile-post-list">${renderInteractionList(favoritePosts, 'favorite')}</div></div><div class="profile-section"><h2>我的点赞</h2><div class="profile-post-list">${renderInteractionList(likedPosts, 'like')}</div></div>`);
+            const likesReceived = ownPosts.reduce((sum, p) => sum + (p.likes || 0), 0);
+            const tabs = [['publish', '发布'], ['favorites', '收藏'], ['history', '历史']];
+            document.getElementById('page-profile').innerHTML = `
+                <div class="page-header"><h1>个人中心</h1><p class="subtitle">账户资料与个人内容</p></div>
+                <div class="profile-top">
+                    <div class="profile-avatar" title="点击更换头像" onclick="document.getElementById('avatarInput').click()">${avatar}</div>
+                    <input class="avatar-input" type="file" id="avatarInput" accept="image/*" onchange="uploadAvatar(this.files[0])">
+                    <div class="profile-info">
+                        <div class="profile-name">${currentUser.name || currentUser.username}</div>
+                        <div class="profile-signature">${currentUser.signature || '还没有个人签名'}</div>
+                        <div class="profile-stats"><span><b>${follows.length}</b>关注</span><span><b>0</b>粉丝</span><span><b>${likesReceived}</b>获赞</span></div>
+                    </div>
+                    <div class="profile-side-actions">
+                        <button class="btn btn-outline btn-sm" onclick="editProfile()">编辑资料</button>
+                        <button class="btn btn-outline btn-sm" onclick="document.getElementById('avatarInput').click()">更换头像</button>
+                    </div>
+                </div>
+                <div class="profile-divider"></div>
+                <div class="profile-tabs">${tabs.map(t => `<button class="profile-tab-btn ${profileTab === t[0] ? 'active' : ''}" data-tab="${t[0]}" onclick="switchProfileTab('${t[0]}')">${t[1]}</button>`).join('')}</div>
+                <div id="profileTabContent"></div>`;
+            renderProfileTab();
+        }
+
+        function switchProfileTab(tab) {
+            profileTab = tab;
+            document.querySelectorAll('.profile-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+            renderProfileTab();
+        }
+
+        function renderProfileTab() {
+            const container = document.getElementById('profileTabContent');
+            if (!container) return;
+            if (profileTab === 'publish') {
+                const ownPosts = postsData.filter(post => String(post.ownerId) === String(currentUser.id));
+                const ownDatasets = datasetsData.filter(dataset => String(dataset.ownerId) === String(currentUser.id));
+                container.innerHTML = `
+                    <div class="profile-section"><h2>我发布的文章与动态</h2><div class="profile-post-list">${ownPosts.length ? ownPosts.map(post => `<div class="post-item"><div class="post-item-title">${post.title}</div><div class="post-item-meta">${post.subcatLabel || ''} · ${post.date}</div><div class="post-item-actions"><button class="btn btn-sm btn-outline" onclick="viewPost(${post.id})">查看</button><button class="btn btn-sm btn-outline" onclick="deletePost(${post.id}, event)">删除</button></div></div>`).join('') : '<div class="empty-state">暂无上传内容</div>'}</div></div>
+                    <div class="profile-section"><h2>我的数据文件</h2><div class="profile-post-list">${ownDatasets.length ? ownDatasets.map(dataset => `<div class="post-item"><div class="post-item-title">${dataset.name}</div><div class="post-item-meta">${dataset.format || '数据文件'} · ${dataset.size || ''}</div><div class="post-item-actions"><button class="btn btn-sm btn-outline" onclick="deleteDataset(${dataset.id}, event)">删除</button></div></div>`).join('') : '<div class="empty-state">暂无上传数据</div>'}</div></div>`;
+            } else if (profileTab === 'favorites') {
+                const favoritePosts = postsData.filter(post => favoritePostIds.includes(post.id));
+                const likedPosts = postsData.filter(post => likedPostIds.includes(post.id));
+                container.innerHTML = `
+                    <div class="profile-section"><h2>收藏的内容</h2><div class="profile-post-list">${favoritePosts.length ? favoritePosts.map(post => `<div class="post-item"><div class="post-item-title">${post.title}</div><div class="post-item-meta">${post.author} · ${post.date}</div><div class="post-item-actions"><button class="btn btn-sm btn-outline" onclick="viewPost(${post.id})">查看</button><button class="btn btn-sm btn-outline" onclick="togglePostFavorite(${post.id}, event)">取消收藏</button></div></div>`).join('') : '<div class="empty-state">暂无收藏内容</div>'}</div><p class="profile-privacy-hint">收藏内容仅自己可见</p></div>
+                    <div class="profile-section"><h2>点赞的内容</h2><div class="profile-post-list">${likedPosts.length ? likedPosts.map(post => `<div class="post-item"><div class="post-item-title">${post.title}</div><div class="post-item-meta">${post.author} · ${post.date}</div><div class="post-item-actions"><button class="btn btn-sm btn-outline" onclick="viewPost(${post.id})">查看</button><button class="btn btn-sm btn-outline" onclick="togglePostLike(${post.id}, event)">取消点赞</button></div></div>`).join('') : '<div class="empty-state">暂无点赞内容</div>'}</div></div>`;
+            } else {
+                container.innerHTML = `<div class="profile-section"><h2>浏览历史</h2><div class="profile-post-list">${renderHistoryList()}</div></div>`;
+            }
+        }
+
+        function renderHistoryList() {
+            if (!historyData.length) return '<div class="empty-state"><p>暂无浏览记录，去看看文章、动态、数据和论文吧</p></div>';
+            return historyData.map(h => {
+                let label = '记录';
+                if (h.kind === 'post') label = h.subcat === 'dynamic' ? '动态' : '文章';
+                else if (h.kind === 'dataset') label = '数据集';
+                else if (h.kind === 'literature') label = '论文';
+                let action = '';
+                if (h.kind === 'post') action = `<button class="btn btn-sm btn-outline" onclick="viewPost(${h.id})">查看</button>`;
+                else if (h.kind === 'dataset') action = `<button class="btn btn-sm btn-outline" onclick="downloadDataset(${h.id})">下载数据</button>`;
+                else if (h.kind === 'literature' && h.link) action = `<button class="btn btn-sm btn-outline" onclick="window.open('${h.link}')">打开原文</button>`;
+                return `<div class="post-item"><div class="history-line"><span class="badge badge-cyan">${label}</span><span class="post-item-title">${h.title}</span><span class="history-time">${fmtHistoryTime(h.time)}</span></div><div class="post-item-actions">${action}</div></div>`;
+            }).join('');
         }
 
         function openAuthorProfile(authorName) {
@@ -1336,7 +1507,22 @@
             if (!container) return;
             const avatarUrl = authorPosts.find(post => post.authorAvatar)?.authorAvatar;
             const avatar = avatarUrl ? `<img src="${avatarUrl}" alt="${authorName}的头像">` : authorName.slice(0, 1).toUpperCase();
-            container.innerHTML = `<div class="page-header"><button class="btn btn-outline btn-sm" onclick="navigateTo('media'); switchMediaTab('original', document.querySelector('.media-subnav-btn[data-msub=original]'))">← 返回原创志</button><h1>${authorName}</h1><p class="subtitle">作者主页 · ${authorPosts.length} 条发表内容</p></div><div class="profile-layout"><div class="profile-card"><div class="profile-avatar">${avatar}</div><div class="profile-name">${authorName}</div><div class="profile-signature">专注分享气象观察与分析</div></div><div><div class="profile-section"><h2>${authorName} 的文章与动态</h2><div class="profile-post-list">${authorPosts.length ? authorPosts.map(post => `<div class="post-item" onclick="viewPost(${post.id})"><div class="post-item-header"><span class="badge ${post.subcat==='article'?'badge-cyan':'badge-amber'}">${post.subcatLabel}</span><span class="post-item-title">${post.title}</span></div><div class="post-item-meta">${post.date}</div><div class="post-item-excerpt">${post.excerpt}</div></div>`).join('') : '<div class="empty-state">暂无发表内容</div>'}</div></div></div></div>`;
+            const likesReceived = authorPosts.reduce((sum, p) => sum + (p.likes || 0), 0);
+            const isFollowing = follows.includes(authorName);
+            const followBtn = `<button class="btn btn-sm follow-btn ${isFollowing ? 'btn-outline' : 'btn-primary'}" onclick="toggleFollow('${authorName}')">${isFollowing ? '已关注' : '+ 关注'}</button>`;
+            container.innerHTML = `
+                <div class="page-header"><button class="btn btn-outline btn-sm" onclick="navigateTo('media'); switchMediaTab('original', document.querySelector('.media-subnav-btn[data-msub=original]'))">← 返回原创志</button></div>
+                <div class="profile-top">
+                    <div class="profile-avatar">${avatar}</div>
+                    <div class="profile-info">
+                        <div class="profile-name">${authorName}</div>
+                        <div class="profile-signature">专注分享气象观察与分析</div>
+                        <div class="profile-stats"><span><b>0</b>关注</span><span><b>${isFollowing ? 1 : 0}</b>粉丝</span><span><b>${likesReceived}</b>获赞</span><span><b>${authorPosts.length}</b>作品</span></div>
+                    </div>
+                    <div class="profile-side-actions">${followBtn}</div>
+                </div>
+                <div class="profile-divider"></div>
+                <div class="profile-section"><h2>${authorName} 的文章与动态</h2><div class="profile-post-list">${authorPosts.length ? authorPosts.map(post => `<div class="post-item" onclick="viewPost(${post.id})"><div class="post-item-title">${post.title}</div><div class="post-item-meta">${post.subcatLabel || ''} · ${post.date}</div><div class="post-item-excerpt">${post.excerpt}</div></div>`).join('') : '<div class="empty-state">暂无发表内容</div>'}</div></div>`;
         }
 
         function renderInteractionList(posts, type) {
@@ -1489,6 +1675,7 @@
                 if (index >= 0) postsData.splice(index, 1);
                 renderPosts();
                 renderOverview();
+                if (currentPage === 'profile') renderProfile();
                 if (API_CONFIG.enabled) alert('原创内容已删除。');
             } catch (error) { alert(error.message); }
         }
@@ -1805,7 +1992,8 @@
             if (page === 'media') {
                 switchMediaTab(currentMediaTab, document.querySelector(`.media-subnav-btn[data-msub="${currentMediaTab}"]`));
             }
-            if (page === 'profile') renderProfile();
+            if (page === 'profile') { profileTab = 'publish'; renderProfile(); }
+            if (page === 'search') renderSearchPage();
             if (page === 'author') renderAuthorProfile(currentAuthorName);
             if (page === 'admin') renderAdminCenter();
             if (page === 'tools') renderTools();
@@ -1926,8 +2114,8 @@
                         </div>`}
                     </div>
                     <div class="lit-item-footer">
-                        <a href="${item.doi}" target="_blank" class="btn btn-sm btn-outline">DOI: ${item.doi}</a>
-                        <a href="${item.cnki}" target="_blank" class="btn btn-sm btn-outline">知网</a>
+                        <a href="${item.doi}" target="_blank" class="btn btn-sm btn-outline" onclick="recordLiteratureView(${item.id})">DOI: ${item.doi}</a>
+                        <a href="${item.cnki}" target="_blank" class="btn btn-sm btn-outline" onclick="recordLiteratureView(${item.id})">知网</a>
                         ${hasPermission('admin') ? `<button class="btn btn-sm btn-outline" onclick="deleteLiterature(${item.id}); event.stopPropagation();">删除</button>` : ''}
                     </div>
                 </div>
@@ -2075,6 +2263,7 @@
         function viewPost(id) {
             const post = postsData.find(p=>p.id===id);
             if(!post) return;
+            recordHistory({ kind:'post', id: post.id, title: post.title, subcat: post.subcat });
             currentPostDetailId = id;
             navigateTo('post-detail');
         }
@@ -2173,6 +2362,7 @@
         async function downloadDataset(id) {
             const dataset = datasetsData.find(item => item.id === id);
             if (!dataset) return;
+            recordHistory({ kind:'dataset', id: dataset.id, title: dataset.name });
             if (!API_CONFIG.enabled) {
                 if (dataset.link && dataset.link !== '#') { window.open(dataset.link, '_blank'); return; }
                 alert('演示模式未配置可下载文件；启用后端后将从下载接口获取文件。');
@@ -2344,7 +2534,8 @@
         document.getElementById('interactionModal').addEventListener('click', function(e) { if(e.target===this) closeInteractionModal(); });
         document.getElementById('datasetUploadModal').addEventListener('click', function(e) { if(e.target===this) closeDatasetUploadModal(); });
         document.addEventListener('click', closeAccountMenu);
-        document.addEventListener('keydown', function(e) { if(e.key==='Escape') { closePostModal(); closeInteractionModal(); closeDatasetUploadModal(); } });
+        document.addEventListener('click', closeMobilePublish);
+        document.addEventListener('keydown', function(e) { if(e.key==='Escape') { closePostModal(); closeInteractionModal(); closeDatasetUploadModal(); closeMobilePublish(); } });
 
         // ==================== 全局搜索 ====================
         function matchesSearchTitle(title) {
@@ -2357,6 +2548,72 @@
             renderLiterature();
             renderPosts();
             renderDatasets();
+        }
+
+        // ==================== 移动端导航与搜索页 ====================
+        function mobileSearchTap(event) {
+            if (window.matchMedia('(max-width: 600px)').matches) {
+                event.stopPropagation();
+                navigateTo('search');
+            }
+        }
+
+        function toggleMobilePublish(event) {
+            event.stopPropagation();
+            closeAccountMenu();
+            document.getElementById('mobilePublishMenu').classList.toggle('show');
+        }
+
+        function closeMobilePublish() {
+            const menu = document.getElementById('mobilePublishMenu');
+            if (menu) menu.classList.remove('show');
+        }
+
+        function mobilePublishAction(kind) {
+            closeMobilePublish();
+            if (kind === 'dynamic') openPostModal('dynamic');
+            else if (kind === 'article') openPostModal('article');
+            else if (kind === 'literature') openLiteratureEditor();
+            else if (kind === 'dataset') openDatasetUploadModal();
+        }
+
+        function renderSearchPage() {
+            const container = document.getElementById('page-search');
+            if (!container) return;
+            container.innerHTML = `
+                <div class="mobile-search-bar">
+                    <button class="mobile-search-back" onclick="navigateTo('home')" aria-label="返回">←</button>
+                    <div class="mobile-search-box"><span class="search-icon" aria-hidden="true"></span><input type="text" id="mobileSearchInput" placeholder="搜索文章、动态、论文、数据集" oninput="handleMobileSearch(this.value)"></div>
+                </div>
+                <div id="mobileSearchResults"></div>`;
+            const input = document.getElementById('mobileSearchInput');
+            if (input) setTimeout(function () { input.focus(); }, 200);
+        }
+
+        function handleMobileSearch(value) {
+            const query = (value || '').trim().toLowerCase();
+            const container = document.getElementById('mobileSearchResults');
+            if (!container) return;
+            if (!query) { container.innerHTML = ''; return; }
+            const posts = postsData.filter(p => (p.title || '').toLowerCase().includes(query) || (p.author || '').toLowerCase().includes(query));
+            const lits = literatureData.filter(d => (d.title || '').toLowerCase().includes(query) || (d.authors || '').toLowerCase().includes(query));
+            const dss = datasetsData.filter(d => (d.name || '').toLowerCase().includes(query) || (d.description || '').toLowerCase().includes(query) || (d.region || '').toLowerCase().includes(query));
+            let html = '';
+            if (posts.length) {
+                html += `<div class="search-group"><div class="feed-section-title">文章与动态</div>${posts.map(p => `<div class="search-item" onclick="viewPost(${p.id})"><span class="badge badge-cyan">${p.subcatLabel || '内容'}</span><span class="search-item-title">${p.title}</span><span class="search-item-meta">${p.author || ''}</span></div>`).join('')}</div>`;
+            }
+            if (lits.length) {
+                html += `<div class="search-group"><div class="feed-section-title">论文</div>${lits.map(d => `<div class="search-item" onclick="recordLiteratureView(${d.id}); window.open('${d.cnki}')"><span class="badge badge-blue">论文</span><span class="search-item-title">${d.title}</span><span class="search-item-meta">${d.authors || ''}</span></div>`).join('')}</div>`;
+            }
+            if (dss.length) {
+                html += `<div class="search-group"><div class="feed-section-title">数据集</div>${dss.map(d => `<div class="search-item" onclick="openDatasetCenter()"><span class="badge badge-teal">数据集</span><span class="search-item-title">${d.name}</span><span class="search-item-meta">${d.region || ''}</span></div>`).join('')}</div>`;
+            }
+            container.innerHTML = html || '<div class="empty-state"><p>没有找到相关内容</p></div>';
+        }
+
+        function openDatasetCenter() {
+            navigateTo('media');
+            switchMediaTab('datacenter', document.querySelector('.media-subnav-btn[data-msub=datacenter]'));
         }
 
         // ==================== 初始化 ====================
