@@ -7,25 +7,25 @@
     <style>
         /* ========== 全局变量与基础样式 ========== */
         :root {
-            --bg-primary: #0a1628;
-            --bg-secondary: #0f1f38;
-            --bg-card: #132847;
-            --bg-card-hover: #1a3557;
-            --bg-input: #0d1d33;
-            --text-primary: #e8f0f8;
-            --text-secondary: #9ab0c8;
-            --text-muted: #5a7a9a;
-            --accent-cyan: #00b4d8;
-            --accent-cyan-hover: #00d4f8;
-            --accent-blue: #1e88e5;
-            --accent-teal: #00e5a0;
-            --accent-amber: #ffb74d;
-            --accent-red: #ff6b6b;
-            --accent-purple: #b388ff;
-            --border-color: #1e3a5f;
-            --border-light: #2a4a70;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-            --shadow-hover: 0 8px 35px rgba(0, 0, 0, 0.6);
+            --bg-primary: #f5f6f8;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --bg-card-hover: #fafbfc;
+            --bg-input: #f2f3f5;
+            --text-primary: #22272e;
+            --text-secondary: #61666d;
+            --text-muted: #9aa3af;
+            --accent-cyan: #2ba7ff;      /* 品牌主色（小红书风格红，沿用原变量名） */
+            --accent-cyan-hover: #4db8ff;
+            --accent-blue: #1e7fff;      /* 渐变辅助色（暖橙红） */
+            --accent-teal: #00a884;
+            --accent-amber: #f59e0b;
+            --accent-red: #f04438;
+            --accent-purple: #9c6ade;
+            --border-color: #e8e9ee;
+            --border-light: #d8dbe2;
+            --shadow: 0 2px 12px rgba(30, 34, 40, 0.06);
+            --shadow-hover: 0 8px 24px rgba(30, 34, 40, 0.12);
             --radius-sm: 6px;
             --radius-md: 10px;
             --radius-lg: 16px;
@@ -43,11 +43,7 @@
             color: var(--text-primary);
             line-height: 1.65;
             min-height: 100vh;
-            background-image:
-                radial-gradient(ellipse at 20% 20%, rgba(0,180,216,0.06) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 80%, rgba(30,136,229,0.05) 0%, transparent 60%),
-                radial-gradient(ellipse at 50% 50%, rgba(10,22,40,1) 0%, rgba(10,22,40,1) 100%);
-            background-attachment: fixed;
+            background-image: none;
         }
 
         a { color: var(--accent-cyan); text-decoration: none; transition: color var(--transition); }
@@ -66,9 +62,9 @@
             transition: border-color var(--transition), box-shadow var(--transition);
             width: 100%;
         }
-        input:focus, textarea:focus, select:focus { border-color: var(--accent-cyan); box-shadow: 0 0 0 3px rgba(0,180,216,0.15); }
+        input:focus, textarea:focus, select:focus { border-color: var(--accent-cyan); box-shadow: 0 0 0 3px rgba(43,167,255,0.12); }
         textarea { resize: vertical; min-height: 120px; }
-        ::selection { background: rgba(0,180,216,0.35); color: #fff; }
+        ::selection { background: rgba(43,167,255,0.22); color: #22272e; }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: var(--bg-primary); }
         ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 4px; }
@@ -81,7 +77,7 @@
             left: 0;
             right: 0;
             height: var(--nav-height);
-            background: rgba(10,22,40,0.92);
+            background: rgba(255,255,255,0.92);
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
             border-bottom: 1px solid var(--border-color);
@@ -90,7 +86,7 @@
             align-items: center;
             padding: 0 24px;
             gap: 0;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.35);
+            box-shadow: 0 1px 12px rgba(0,0,0,0.05);
             transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
         /* 首页透明导航 */
@@ -110,12 +106,11 @@
         }
         .top-nav.nav-transparent .nav-tab.active {
             color: #fff;
-            background: rgba(255,255,255,0.15);
-            border-color: rgba(255,255,255,0.3);
+            background: transparent;
+            border-color: transparent;
         }
         .top-nav.nav-transparent .nav-tab.active::after {
             background: #fff;
-            box-shadow: 0 0 12px rgba(255,255,255,0.8);
         }
         .top-nav.nav-transparent .nav-search {
             background: rgba(255,255,255,0.15);
@@ -144,7 +139,7 @@
             justify-content: center;
             font-size: 1.1rem;
             animation: logoSpin 8s linear infinite;
-            box-shadow: 0 0 20px rgba(0,180,216,0.4);
+            box-shadow: 0 2px 10px rgba(43,167,255,0.25);
         }
         @keyframes logoSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
@@ -165,8 +160,8 @@
             display: inline-flex;
             align-items: center;
         }
-        .nav-tab:hover { color: var(--text-primary); background: rgba(255,255,255,0.04); }
-        .nav-tab.active { color: var(--accent-cyan); background: rgba(0,180,216,0.08); border-color: rgba(0,180,216,0.2); }
+        .nav-tab:hover { color: var(--text-primary); background: rgba(0,0,0,0.045); }
+        .nav-tab.active { color: var(--accent-cyan); background: transparent; border-color: transparent; }
         .nav-tab.active::after {
             content: '';
             position: absolute;
@@ -177,7 +172,7 @@
             height: 2px;
             background: var(--accent-cyan);
             border-radius: 2px;
-            box-shadow: 0 0 8px rgba(0,180,216,0.6);
+            box-shadow: none;
         }
 
         .nav-search {
@@ -185,14 +180,14 @@
             align-items: center;
             gap: 8px;
             margin-left: auto;
-            background: rgba(0,180,216,0.08);
-            border: 1px solid rgba(0,180,216,0.2);
+            background: var(--bg-input);
+            border: 1px solid transparent;
             border-radius: var(--radius-sm);
             padding: 6px 14px;
             transition: all var(--transition);
             width: 220px;
         }
-        .nav-search:focus-within { border-color: var(--accent-cyan); box-shadow: 0 0 0 3px rgba(0,180,216,0.12); width: 280px; }
+        .nav-search:focus-within { border-color: var(--accent-cyan); box-shadow: 0 0 0 3px rgba(43,167,255,0.1); width: 280px; }
         .nav-search input { border: none; background: transparent; padding: 4px 0; font-size: 0.85rem; color: var(--text-primary); }
         .nav-search input:focus { border: none; box-shadow: none; outline: none; }
         .nav-search input::placeholder { color: var(--text-muted); }
@@ -231,7 +226,7 @@
         .account-menu { position:absolute; top:calc(100% + 8px); right:0; min-width:150px; padding:6px; background:var(--bg-secondary); border:1px solid var(--border-light); border-radius:var(--radius-sm); box-shadow:var(--shadow); opacity:0; pointer-events:none; transform:translateY(-6px); transition:all var(--transition); z-index:1100; }
         .account-area:hover .account-menu, .account-area.menu-open .account-menu { opacity:1; pointer-events:auto; transform:translateY(0); }
         .account-menu button { display:block; width:100%; border:0; background:transparent; color:var(--text-secondary); text-align:left; padding:9px 12px; border-radius:4px; cursor:pointer; }
-        .account-menu button:hover { background:rgba(255,255,255,0.06); color:var(--text-primary); }
+        .account-menu button:hover { background:rgba(0,0,0,0.05); color:var(--text-primary); }
         .account-area { position:relative; }
         .permission-control { display:none; }
 
@@ -301,6 +296,8 @@
             border-radius: 30px;
             margin: 0 8px;
         }
+        .hero-fullpage .btn-outline { color:#fff; border-color: rgba(255,255,255,0.65); }
+        .hero-fullpage .btn-outline:hover { background: rgba(255,255,255,0.15); border-color:#fff; color:#fff; }
 
         /* ========== 页面标题与面包屑 ========== */
         .page-header { margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); position: relative; }
@@ -319,8 +316,8 @@
 
         /* ========== 标签/徽章 ========== */
         .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.03em; border: 1px solid; white-space: nowrap; transition: all var(--transition); }
-        .badge-cyan { background: rgba(0,180,216,0.12); color: var(--accent-cyan); border-color: rgba(0,180,216,0.3); }
-        .badge-blue { background: rgba(30,136,229,0.12); color: var(--accent-blue); border-color: rgba(30,136,229,0.3); }
+        .badge-cyan { background: rgba(43,167,255,0.07); color: var(--accent-cyan); border-color: rgba(43,167,255,0.25); }
+        .badge-blue { background: rgba(30,127,255,0.08); color: var(--accent-blue); border-color: rgba(30,127,255,0.28); }
         .badge-teal { background: rgba(0,229,160,0.12); color: var(--accent-teal); border-color: rgba(0,229,160,0.3); }
         .badge-amber { background: rgba(255,183,77,0.12); color: var(--accent-amber); border-color: rgba(255,183,77,0.3); }
         .badge-red { background: rgba(255,107,107,0.12); color: var(--accent-red); border-color: rgba(255,107,107,0.3); }
@@ -329,10 +326,10 @@
 
         /* ========== 按钮 ========== */
         .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 20px; border-radius: var(--radius-sm); font-size: 0.9rem; font-weight: 500; letter-spacing: 0.02em; transition: all var(--transition); border: 1px solid transparent; white-space: nowrap; }
-        .btn-primary { background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue)); color: #fff; box-shadow: 0 4px 14px rgba(0,180,216,0.3); }
-        .btn-primary:hover { box-shadow: 0 6px 24px rgba(0,180,216,0.45); transform: translateY(-1px); color: #fff; }
-        .btn-outline { background: transparent; color: var(--accent-cyan); border-color: rgba(0,180,216,0.4); }
-        .btn-outline:hover { background: rgba(0,180,216,0.08); border-color: var(--accent-cyan); color: var(--accent-cyan-hover); }
+        .btn-primary { background: linear-gradient(135deg, #2ba7ff, #1e7fff); color: #fff; box-shadow: 0 4px 12px rgba(43,167,255,0.25); }
+        .btn-primary:hover { box-shadow: 0 6px 20px rgba(43,167,255,0.35); transform: translateY(-1px); color: #fff; }
+        .btn-outline { background: transparent; color: var(--accent-cyan); border-color: rgba(43,167,255,0.35); }
+        .btn-outline:hover { background: rgba(43,167,255,0.06); border-color: var(--accent-cyan); color: var(--accent-cyan-hover); }
         #loginButton { background: transparent; border-color: transparent; }
         #loginButton:hover { background: transparent; border-color: transparent; color: var(--accent-cyan-hover); }
         .btn-sm { padding: 5px 14px; font-size: 0.8rem; }
@@ -353,7 +350,7 @@
             display: flex;
             flex-direction: column;
         }
-        .section-card:hover { border-color: var(--accent-cyan); box-shadow: 0 12px 40px rgba(0,180,216,0.2); transform: translateY(-4px); }
+        .section-card:hover { border-color: var(--accent-cyan); box-shadow: 0 12px 32px rgba(43,167,255,0.12); transform: translateY(-4px); }
         .section-card .section-icon { font-size: 2.2rem; margin-bottom: 14px; }
         .section-card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.03em; }
         .section-card .section-desc { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.7; flex: 1; }
@@ -384,7 +381,47 @@
             white-space: nowrap;
         }
         .media-subnav-btn.active { background: var(--accent-cyan); color: #fff; font-weight: 600; }
-        .media-subnav-btn:hover:not(.active) { color: var(--text-primary); background: rgba(255,255,255,0.05); }
+        .media-subnav-btn:hover:not(.active) { color: var(--text-primary); background: rgba(0,0,0,0.045); }
+
+        /* ========== 媒体平台发布板块 ========== */
+        .media-overview-header { max-width: 920px; margin: 0 auto 22px; text-align: center; }
+        .media-overview-header.page-header { border-bottom: 0; padding-bottom: 0; }
+        .media-overview-header.page-header::after { display: none; }
+        .media-overview-header h1 { font-size: 2rem; letter-spacing: 0.08em; }
+        .publish-panel {
+            width: min(62vw, 760px);
+            min-height: 214px;
+            margin: 0 auto 44px;
+            padding: 22px 26px 16px;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            box-shadow: 0 6px 24px rgba(30,34,40,0.08);
+        }
+        .publish-canvas {
+            width: 100%;
+            min-height: 112px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 18px 20px;
+            text-align: left;
+            color: var(--text-muted);
+            background: var(--bg-input);
+            border: 1px dashed var(--border-light);
+            border-radius: var(--radius-sm);
+            transition: border-color var(--transition), background var(--transition), transform var(--transition);
+        }
+        .publish-canvas:hover { border-color: var(--accent-cyan); background: rgba(43,167,255,0.03); transform: translateY(-1px); }
+        .publish-canvas-copy strong { display: block; margin-bottom: 4px; color: var(--text-primary); font-size: 1rem; font-weight: 600; }
+        .publish-canvas-copy span { font-size: 0.82rem; }
+        .publish-types { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 16px; }
+        .publish-type { position: relative; padding: 14px 8px 0; color: var(--text-secondary); background: transparent; font-size: 0.86rem; transition: color var(--transition), transform var(--transition); }
+        .publish-type:first-child::before { display: none; }
+        .publish-type:hover { color: var(--accent-cyan); transform: translateY(-1px); }
+        .publish-type .type-icon { display: block; width: 22px; height: 22px; margin: 0 auto 5px; color: var(--accent-cyan); }
+        .publish-type .type-icon path, .publish-type .type-icon ellipse { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+        .media-latest { max-width: 920px; margin: 0 auto; }
 
         /* ========== 文献库布局 ========== */
         .lit-layout { display: grid; grid-template-columns: 240px 1fr; gap: 28px; align-items: start; }
@@ -404,9 +441,9 @@
             text-align: left;
             width: 100%;
         }
-        .lit-cat-btn:hover { background: rgba(255,255,255,0.04); color: var(--text-primary); }
-        .lit-cat-btn.active { background: rgba(0,180,216,0.08); border-color: rgba(0,180,216,0.25); color: var(--accent-cyan); font-weight: 500; }
-        .lit-cat-btn .cat-count { margin-left: auto; font-size: 0.75rem; background: rgba(255,255,255,0.06); padding: 1px 8px; border-radius: 10px; color: var(--text-muted); }
+        .lit-cat-btn:hover { background: rgba(0,0,0,0.045); color: var(--text-primary); }
+        .lit-cat-btn.active { background: rgba(43,167,255,0.06); border-color: rgba(43,167,255,0.18); color: var(--accent-cyan); font-weight: 500; }
+        .lit-cat-btn .cat-count { margin-left: auto; font-size: 0.75rem; background: #f0f1f4; padding: 1px 8px; border-radius: 10px; color: var(--text-muted); }
         .lit-list { display: flex; flex-direction: column; gap: 16px; }
         .lit-item {
             padding: 20px 24px;
@@ -427,8 +464,8 @@
             line-height: 1.75;
             margin: 10px 0;
             padding: 12px 16px;
-            background: rgba(0,180,216,0.04);
-            border-left: 3px solid var(--accent-cyan);
+            background: #f7f8fa;
+            border-left: 3px solid rgba(43,167,255,0.35);
             border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
             max-height: 90px;
             overflow: hidden;
@@ -457,14 +494,14 @@
         .post-interactions button:hover { background:transparent; color:var(--text-primary); }
         .post-interactions .active { color:var(--accent-amber); }
         .interaction-icon { width:18px; height:18px; display:inline-block; vertical-align:-4px; position:relative; margin-right:3px; color:currentColor; }
-        .thumb-icon { width:18px; height:18px; display:inline-block; vertical-align:-4px; fill:#ffb74d; transition:all 0.2s ease; cursor:pointer; filter:drop-shadow(0 1px 2px rgba(0,0,0,0.2)); margin-right:3px; }
-        .post-interactions button:hover .thumb-icon { transform:scale(1.1); fill:#ffa726; }
-        .post-interactions button.active .thumb-icon { fill:#ef5350; }
-        .favorite-icon { width:18px; height:18px; display:inline-block; vertical-align:-4px; fill:#ffb74d; transition:all 0.2s ease; cursor:pointer; filter:drop-shadow(0 1px 2px rgba(0,0,0,0.2)); margin-right:3px; }
-        .post-interactions button:hover .favorite-icon { transform:scale(1.1); fill:#ffa726; }
-        .post-interactions button.active .favorite-icon { fill:#ef5350; }
-        .comment-icon { width:18px; height:18px; display:inline-block; vertical-align:-4px; fill:#ffb74d; transition:all 0.2s ease; cursor:pointer; filter:drop-shadow(0 1px 2px rgba(0,0,0,0.2)); margin-right:3px; }
-        .post-interactions button:hover .comment-icon { transform:scale(1.1); fill:#ffa726; }
+        .thumb-icon { width:18px; height:18px; display:inline-block; vertical-align:-4px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; transition:all 0.2s ease; cursor:pointer; margin-right:3px; }
+        .post-interactions button:hover .thumb-icon { transform:scale(1.1); color:#ffa726; }
+        .post-interactions button.active .thumb-icon { color:#ef5350; }
+        .favorite-icon { width:18px; height:18px; display:inline-block; vertical-align:-4px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; transition:all 0.2s ease; cursor:pointer; margin-right:3px; }
+        .post-interactions button:hover .favorite-icon { transform:scale(1.1); color:#ffa726; }
+        .post-interactions button.active .favorite-icon { color:#ef5350; }
+        .comment-icon { width:18px; height:18px; display:inline-block; vertical-align:-4px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; transition:all 0.2s ease; cursor:pointer; margin-right:3px; }
+        .post-interactions button:hover .comment-icon { transform:scale(1.1); color:#ffa726; }
         .post-detail-page { max-width: 980px; margin: 0 auto; }
         .post-detail-back { margin-bottom: 20px; }
         .post-detail-back:hover { color: var(--accent-cyan); }
@@ -478,13 +515,13 @@
         .post-detail-footer { margin-top: 36px; padding-top: 20px; border-top: 1px solid var(--border-color); }
         .post-detail-actions { display: flex; gap: 10px; flex-wrap: wrap; }
         .post-detail-actions button { border: 1px solid var(--border-color); background: transparent; color: var(--text-secondary); }
-        .post-detail-actions button:hover, .post-detail-actions button.active { color: var(--accent-cyan); border-color: var(--accent-cyan); background: rgba(0,180,216,0.08); }
+        .post-detail-actions button:hover, .post-detail-actions button.active { color: var(--accent-cyan); border-color: var(--accent-cyan); background: rgba(43,167,255,0.06); }
         .post-detail-comments { margin-top: 30px; }
         .post-detail-comments h2 { font-size: 1.15rem; margin-bottom: 14px; }
         .comment-form { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 22px; }
         .comment-form textarea { min-height: 76px; }
         .comment-list { display: flex; flex-direction: column; gap: 12px; }
-        .comment-item { padding: 14px 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: var(--radius-sm); }
+        .comment-item { padding: 14px 16px; background: #f7f8fa; border: 1px solid var(--border-color); border-radius: var(--radius-sm); }
         .comment-head { display: flex; justify-content: space-between; gap: 10px; color: var(--accent-cyan); font-size: 0.82rem; }
         .comment-content { margin: 6px 0 8px; color: var(--text-secondary); white-space: pre-wrap; }
         .comment-actions { display: flex; gap: 12px; }
@@ -528,7 +565,6 @@
         /* ========== 原创志论坛样式 ========== */
         .forum-layout { display: flex; flex-direction: column; gap: 20px; }
         .forum-toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 0; }
-        .forum-toolbar .post-publish-btn { margin-left: auto; }
         .forum-tabs { display: flex; gap: 4px; background: var(--bg-input); border-radius: var(--radius-sm); padding: 3px; border: 1px solid var(--border-color); }
         .forum-tab-btn { padding: 7px 18px; border-radius: 4px; background: transparent; color: var(--text-secondary); font-size: 0.85rem; transition: all var(--transition); border: none; }
         .forum-tab-btn.active { background: var(--accent-cyan); color: #fff; font-weight: 500; }
@@ -549,7 +585,66 @@
         .post-item-title { font-size: 1rem; font-weight: 600; flex: 1; min-width: 200px; line-height: 1.4; }
         .post-item-meta { display: flex; align-items: center; gap: 14px; font-size: 0.78rem; color: var(--text-muted); flex-wrap: wrap; }
         .post-item-meta .author { color: var(--accent-cyan); }
-        .post-item-excerpt { font-size: 0.86rem; color: var(--text-secondary); line-height: 1.65; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .post-item-excerpt { font-size: 0.86rem; color: var(--text-secondary); line-height: 1.65; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        /* ========== 信息流卡片（文章=百度资讯风 / 动态=小红书风） ========== */
+        .feed-section-title { display:flex; align-items:center; gap:10px; font-size:1.02rem; font-weight:600; color:var(--text-primary); margin:8px 0 2px; }
+        .feed-section-title::before { content:''; width:4px; height:16px; border-radius:2px; background:linear-gradient(180deg, var(--accent-cyan), var(--accent-blue)); }
+        .feed-section-title .feed-count { font-size:0.75rem; font-weight:500; color:var(--text-muted); letter-spacing:0.02em; }
+        .feed-more { display:flex; justify-content:center; padding:6px 0 2px; }
+        .feed-more .btn { min-width:220px; justify-content:center; }
+
+        /* —— 文章卡片（横条双栏：4:3封面在左） —— */
+        .article-card { display:flex; gap:18px; padding:16px 20px; }
+        .article-card-cover { width:216px; aspect-ratio:4/3; flex-shrink:0; border-radius:var(--radius-sm); overflow:hidden; background:var(--bg-input); border:1px solid var(--border-color); }
+        .article-card-cover img { width:100%; height:100%; object-fit:cover; transition:transform 0.35s ease; }
+        .article-card:hover .article-card-cover img, .article-card:hover .article-card-media img, .dynamic-card:hover .dynamic-card-cover img { transform:scale(1.05); }
+        .article-card-body { flex:1; min-width:0; display:flex; flex-direction:column; justify-content:space-between; gap:8px; }
+        .article-card-title { font-size:1.08rem; font-weight:600; line-height:1.45; color:var(--text-primary); display:-webkit-box; -webkit-line-clamp:2; line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+        .article-card-meta { display:flex; align-items:center; gap:12px; font-size:0.8rem; color:var(--text-muted); flex-wrap:wrap; }
+        .article-card-meta .author, .article-card-footer .author { color:var(--accent-cyan); cursor:pointer; }
+        .article-card-meta .author:hover, .article-card-footer .author:hover { color:var(--accent-cyan-hover); }
+        .article-card-stats { display:flex; align-items:center; gap:18px; font-size:0.8rem; color:var(--text-muted); flex-wrap:wrap; }
+        .article-card-stats button { display:inline-flex; align-items:center; gap:5px; border:0; background:transparent; padding:0; color:var(--text-muted); font-size:0.8rem; transition:color var(--transition); }
+        .article-card-stats button:hover { color:var(--text-primary); }
+        .article-card-stats button.active { color:var(--accent-amber); }
+        .article-card-stats button.stat-delete:hover { color:var(--accent-red); }
+        .article-card-stats .thumb-icon, .article-card-stats .comment-icon, .article-card-stats .favorite-icon { width:16px; height:16px; margin-right:0; vertical-align:middle; flex-shrink:0; }
+
+        /* —— 文章卡片（无封面：上标题、中插图、下信息行） —— */
+        .article-card.plain { flex-direction:column; gap:12px; }
+        .article-card-media { display:flex; gap:10px; }
+        .article-card-media .media-slot { flex:1 1 0; max-width:min(280px, calc((100% - 20px)/3)); height:172px; border-radius:var(--radius-sm); overflow:hidden; background:var(--bg-input); border:1px solid var(--border-color); }
+        .article-card-media img { width:100%; height:100%; object-fit:cover; transition:transform 0.35s ease; }
+        .article-card-plain-excerpt { font-size:0.86rem; color:var(--text-secondary); line-height:1.7; display:-webkit-box; -webkit-line-clamp:2; line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; background:#f7f8fa; border-left:3px solid rgba(43,167,255,0.35); padding:8px 14px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; }
+        .article-card-footer { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:12px; font-size:0.8rem; color:var(--text-muted); }
+        .article-card-footer .author { justify-self:start; }
+        .article-card-footer .article-card-stats { justify-self:center; }
+        .article-card-footer .card-date { justify-self:end; }
+
+        /* —— 动态卡片（小红书风：方形图卡） —— */
+        .dynamic-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(232px, 1fr)); gap:18px; }
+        .dynamic-card { padding:0; overflow:hidden; display:flex; flex-direction:column; aspect-ratio:1/1; }
+        .dynamic-card-cover { flex:1; min-height:0; position:relative; background:var(--bg-input); overflow:hidden; }
+        .dynamic-card-cover img { width:100%; height:100%; object-fit:cover; transition:transform 0.35s ease; }
+        .dynamic-card-cover .dynamic-cover-placeholder { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; color:var(--text-muted); font-size:0.82rem; background:linear-gradient(145deg, #f7f8fa, #eef0f4); }
+        .dynamic-card-cover .dynamic-cover-placeholder .icon { font-size:2rem; }
+        .dynamic-card-title { flex-shrink:0; padding:9px 12px 0; font-size:0.86rem; font-weight:600; line-height:1.4; color:var(--text-primary); display:-webkit-box; -webkit-line-clamp:2; line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+        .dynamic-card-footer { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 12px 10px; background:var(--bg-card); transition:background var(--transition); }
+        .dynamic-card:hover .dynamic-card-footer { background:var(--bg-card-hover); }
+        .dynamic-card-author { display:flex; align-items:center; gap:7px; min-width:0; font-size:0.78rem; color:var(--text-secondary); cursor:pointer; }
+        .dynamic-card-author .mini-avatar { width:20px; height:20px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, var(--accent-cyan), var(--accent-blue)); color:#fff; font-size:0.62rem; font-weight:700; overflow:hidden; }
+        .dynamic-card-author .mini-avatar img { width:100%; height:100%; object-fit:cover; }
+        .dynamic-card-author .name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; transition:color var(--transition); }
+        .dynamic-card-author:hover .name { color:var(--text-primary); }
+        .dynamic-card-actions { display:flex; align-items:center; gap:12px; flex-shrink:0; }
+        .dynamic-card-delete { border:0; background:transparent; padding:0; color:var(--text-muted); font-size:0.72rem; transition:color var(--transition); }
+        .dynamic-card-delete:hover { color:var(--accent-red); }
+        .dynamic-card-like { display:inline-flex; align-items:center; gap:4px; border:0; background:transparent; padding:0; color:var(--text-muted); font-size:0.78rem; flex-shrink:0; transition:color var(--transition), transform var(--transition); }
+        .dynamic-card-like:hover { color:var(--text-primary); }
+        .dynamic-card-like.active { color:#ef5350; }
+        .dynamic-card-like:hover .thumb-icon { transform:scale(1.12); }
+        .dynamic-card-like .thumb-icon { width:15px; height:15px; margin-right:0; vertical-align:middle; }
 
         /* ========== 数据中心样式 ========== */
         .data-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
@@ -582,7 +677,7 @@
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.65);
+            background: rgba(17,20,24,0.45);
             backdrop-filter: blur(6px);
             z-index: 2000;
             display: flex;
@@ -603,7 +698,7 @@
             max-width: 600px;
             max-height: 85vh;
             overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.18);
             transform: translateY(20px);
             transition: transform 0.3s ease;
         }
@@ -625,7 +720,7 @@
         .article-editor-canvas { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden; }
         .article-editor-toolbar { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; padding: 10px 14px; background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); }
         .editor-tool { min-width: 34px; height: 32px; padding: 0 8px; border: 1px solid transparent; border-radius: 4px; background: transparent; color: var(--text-secondary); font-size: 0.82rem; }
-        .editor-tool:hover, .editor-tool.active { color: var(--accent-cyan); border-color: rgba(0,180,216,0.3); background: rgba(0,180,216,0.08); }
+        .editor-tool:hover, .editor-tool.active { color: var(--accent-cyan); border-color: rgba(43,167,255,0.25); background: rgba(43,167,255,0.06); }
         .editor-tool select { width: auto; height: 30px; padding: 4px 26px 4px 8px; border: 0; background: transparent; color: inherit; font-size: inherit; }
         .article-editor-body { padding: 34px 42px; }
         .article-title-input { width: 100%; border: 0; border-bottom: 1px solid var(--border-color); border-radius: 0; background: transparent; padding: 0 0 18px; font-size: 2rem; font-weight: 700; color: var(--text-primary); }
@@ -638,12 +733,12 @@
         .article-settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         .cover-picker { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
         .cover-preview { width: 120px; height: 70px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border-color); display: none; }
-        .file-choice { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border: 1px solid rgba(0,180,216,0.4); border-radius: var(--radius-sm); background: rgba(0,180,216,0.08); color: var(--accent-cyan); cursor: pointer; font-size: 0.82rem; transition: all var(--transition); }
-        .file-choice:hover { border-color: var(--accent-cyan); background: rgba(0,180,216,0.16); color: var(--accent-cyan-hover); }
+        .file-choice { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border: 1px solid rgba(43,167,255,0.35); border-radius: var(--radius-sm); background: rgba(43,167,255,0.05); color: var(--accent-cyan); cursor: pointer; font-size: 0.82rem; transition: all var(--transition); }
+        .file-choice:hover { border-color: var(--accent-cyan); background: rgba(43,167,255,0.1); color: var(--accent-cyan-hover); }
         #articleCover { width: auto; border: 0; background: transparent; color: var(--text-muted); padding: 0; }
-        #articleCover::file-selector-button { margin-right: 10px; padding: 8px 14px; border: 1px solid rgba(0,180,216,0.4); border-radius: var(--radius-sm); background: rgba(0,180,216,0.08); color: var(--accent-cyan); cursor: pointer; font-family: var(--font-sans); transition: all var(--transition); }
-        #articleCover::file-selector-button:hover { border-color: var(--accent-cyan); background: rgba(0,180,216,0.16); color: var(--accent-cyan-hover); }
-        .dynamic-image-picker { display: none; padding: 14px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background: rgba(255,255,255,0.02); }
+        #articleCover::file-selector-button { margin-right: 10px; padding: 8px 14px; border: 1px solid rgba(43,167,255,0.35); border-radius: var(--radius-sm); background: rgba(43,167,255,0.05); color: var(--accent-cyan); cursor: pointer; font-family: var(--font-sans); transition: all var(--transition); }
+        #articleCover::file-selector-button:hover { border-color: var(--accent-cyan); background: rgba(43,167,255,0.1); color: var(--accent-cyan-hover); }
+        .dynamic-image-picker { display: none; padding: 14px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background: #f7f8fa; }
         .dynamic-image-picker.show { display: block; }
         .dynamic-image-preview { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
         .dynamic-image-preview img { width: 86px; height: 64px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-color); }
@@ -662,7 +757,7 @@
         .dataset-upload-section:first-of-type { padding-top: 0; }
         .dataset-upload-section:last-of-type { border-bottom: 0; padding-bottom: 0; }
         .dataset-upload-section h3 { margin-bottom: 14px; font-size: 1rem; color: var(--text-primary); }
-        .dataset-file-box { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 14px; background: rgba(0,180,216,0.04); border: 1px dashed var(--border-light); border-radius: var(--radius-sm); }
+        .dataset-file-box { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 14px; background: #f7f8fa; border: 1px dashed var(--border-light); border-radius: var(--radius-sm); }
         .dataset-file-name { color: var(--text-secondary); font-size: 0.85rem; word-break: break-all; }
         .dataset-auto-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
         #datasetUploadForm .post-compose-footer > div { display: flex; gap: 16px; }
@@ -687,15 +782,60 @@
             .nav-search:focus-within { width: 180px; }
             .nav-logo { margin-right: 16px; font-size: 1.1rem; }
             .nav-tab { padding: 6px 12px; font-size: 0.85rem; }
+            .article-card { gap: 14px; padding: 14px 16px; }
+            .article-card-cover { width: 168px; }
+            .dynamic-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
         }
         @media (max-width: 600px) {
             .main-content { padding: 16px 12px; }
-            .top-nav { padding: 0 12px; gap: 0; }
-            .nav-logo { font-size: 0.95rem; margin-right: 8px; }
+            .top-nav {
+                height: 164px;
+                padding: 10px 12px 8px;
+                display: grid;
+                grid-template-columns: 1fr auto;
+                grid-template-rows: 36px 42px 48px;
+                align-content: start;
+                gap: 6px 12px;
+            }
+            .nav-logo { font-size: 0.95rem; margin-right: 0; grid-column: 1; grid-row: 1; }
             .nav-logo .logo-icon { width: 28px; height: 28px; font-size: 0.9rem; }
-            .nav-tab { padding: 5px 8px; font-size: 0.78rem; letter-spacing: 0; }
-            .nav-search { width: 100px; padding: 4px 10px; }
-            .nav-search:focus-within { width: 140px; }
+            .account-area { grid-column: 2; grid-row: 1; margin-left: 0; }
+            .nav-search,
+            .nav-search:focus-within {
+                grid-column: 1 / -1;
+                grid-row: 2;
+                width: 100%;
+                min-width: 0;
+                margin-left: 0;
+                padding: 6px 12px;
+            }
+            .nav-tabs {
+                grid-column: 1 / -1;
+                grid-row: 3;
+                width: 100%;
+                min-width: 0;
+                display: grid;
+                grid-template-columns: repeat(5, minmax(0, 1fr));
+                height: 48px;
+                align-self: start;
+                align-items: center;
+                gap: 2px;
+            }
+            .nav-tab {
+                width: 100%;
+                min-width: 0;
+                min-height: 42px;
+                justify-content: center;
+                padding: 5px 2px;
+                font-size: 0.72rem;
+                line-height: 1.25;
+                letter-spacing: 0;
+                text-align: center;
+                white-space: normal;
+                overflow-wrap: anywhere;
+            }
+            .main-content { margin-top: 164px; min-height: calc(100vh - 164px); }
+            .main-content.home-content { margin-top: 0; }
             .hero-fullpage h1 { font-size: 1.8rem; }
             .post-detail-article { padding: 24px 18px; }
             .post-detail-title { font-size: 1.45rem; }
@@ -708,10 +848,19 @@
             .dataset-auto-grid { grid-template-columns: 1fr; }
             .section-grid { grid-template-columns: 1fr; gap: 16px; }
             .data-grid { grid-template-columns: 1fr; }
+            .publish-panel { width: 100%; min-height: 0; padding: 16px 14px 12px; }
+            .publish-canvas { min-height: 92px; padding: 14px; }
+            .publish-type { font-size: 0.75rem; padding-left: 3px; padding-right: 3px; }
             .profile-layout, .admin-grid { grid-template-columns: 1fr; }
             .forum-toolbar { flex-direction: column; align-items: stretch; }
             .forum-tabs { justify-content: center; }
             .media-subnav { flex-direction: column; align-items: stretch; }
+            .article-card { flex-direction: column; gap: 10px; padding: 14px; }
+            .article-card-cover { width: 100%; aspect-ratio: 16/9; }
+            .article-card-footer { display: flex; flex-wrap: wrap; row-gap: 6px; }
+            .article-card-footer .article-card-stats { flex: 1 1 100%; justify-content: center; order: 3; }
+            .article-card-footer .card-date { margin-left: auto; }
+            .dynamic-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
@@ -734,8 +883,8 @@
         <div class="nav-tabs">
             <a href="#" class="nav-tab active" data-page="home" onclick="navigateTo('home')">首页</a>
             <a href="#" class="nav-tab" data-page="media" onclick="navigateTo('media')">媒体平台</a>
-            <a href="#" class="nav-tab" data-page="image" onclick="openExternal('image')">逐风影像库</a>
-            <a href="#" class="nav-tab" data-page="weather" onclick="openExternal('weather')">菜园子天气栈</a>
+            <a href="#" class="nav-tab" data-page="image" onclick="openExternal('image')">影像库</a>
+            <a href="#" class="nav-tab" data-page="weather" onclick="openExternal('weather')">天气栈</a>
             <a href="#tools" class="nav-tab" data-page="tools" onclick="navigateTo('tools')">实用工具</a>
         </div>
         <div class="nav-search">
@@ -766,63 +915,40 @@
         <div id="page-media" class="page-container" style="display:none;">
             <!-- 媒体平台子导航 -->
             <div class="media-subnav">
-                <button class="media-subnav-btn active" data-msub="overview" onclick="switchMediaTab('overview', this)">📋 平台概览</button>
-                <button class="media-subnav-btn" data-msub="literature" onclick="switchMediaTab('literature', this)">📚 文献库</button>
-                <button class="media-subnav-btn" data-msub="original" onclick="switchMediaTab('original', this)">✍️ 原创志</button>
-                <button class="media-subnav-btn" data-msub="datacenter" onclick="switchMediaTab('datacenter', this)">📊 数据中心</button>
+                <button class="media-subnav-btn active" data-msub="overview" onclick="switchMediaTab('overview', this)">平台首页</button>
+                <button class="media-subnav-btn" data-msub="literature" onclick="switchMediaTab('literature', this)">文献库</button>
+                <button class="media-subnav-btn" data-msub="original" onclick="switchMediaTab('original', this)">原创志</button>
+                <button class="media-subnav-btn" data-msub="datacenter" onclick="switchMediaTab('datacenter', this)">数据中心</button>
             </div>
 
             <!-- 概览 -->
             <div id="media-overview" class="media-subpage">
-                <div class="page-header">
-                    <h1>媒体平台</h1>
-                    <p class="subtitle">文献索引 · 深度原创 · 数据仓库</p>
-                </div>
-                <div class="section-grid">
-                    <div class="section-card" onclick="switchMediaTab('literature', document.querySelector('.media-subnav-btn[data-msub=\'literature\']'))">
-                        <div class="section-icon">📚</div>
-                        <h3>文献库</h3>
-                        <p class="section-desc">严肃、静态的学术索引。按台风动力学、强对流机理、中尺度气象、气候诊断分类。</p>
-                        <span class="section-link">进入文献库 <span class="arrow">→</span></span>
-                    </div>
-                    <div class="section-card" onclick="switchMediaTab('original', document.querySelector('.media-subnav-btn[data-msub=\'original\']'))">
-                        <div class="section-icon">✍️</div>
-                        <h3>原创志</h3>
-                        <p class="section-desc">深度分析、数据记录、自由发帖。</p>
-                        <span class="section-link">进入原创志 <span class="arrow">→</span></span>
-                    </div>
-                    <div class="section-card" onclick="switchMediaTab('datacenter', document.querySelector('.media-subnav-btn[data-msub=\'datacenter\']'))">
-                        <div class="section-icon">📊</div>
-                        <h3>数据中心</h3>
-                        <p class="section-desc">历史气象数据集存档。</p>
-                        <span class="section-link">进入数据中心 <span class="arrow">→</span></span>
+                <div class="publish-panel" aria-label="发布内容">
+                    <button class="publish-canvas" type="button" onclick="openPostModal('dynamic')">
+                        <span class="publish-canvas-copy"><strong>发布动态</strong><span>记录此刻的天气、观测与现场发现</span></span>
+                    </button>
+                    <div class="publish-types" role="group" aria-label="选择发布类型">
+                        <button class="publish-type" type="button" onclick="openPostModal('dynamic')"><svg class="type-icon icon-outline" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg>发布动态</button>
+                        <button class="publish-type" type="button" onclick="openPostModal('article')"><svg class="type-icon icon-outline" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg>发布文章</button>
+                        <button class="publish-type" type="button" onclick="openLiteratureEditor()"><svg class="type-icon icon-outline" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/><path d="M5 13.18v4L12 21l7-3.82v-4"/></svg>新增论文</button>
+                        <button class="publish-type" type="button" onclick="openDatasetUploadModal()"><svg class="type-icon icon-outline" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5"/><path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3"/></svg>新增数据</button>
                     </div>
                 </div>
-                <h2 style="font-size:1.2rem; font-weight:600; margin-bottom:14px; display:flex; align-items:center; gap:8px;">
-                    <span style="color:var(--accent-cyan);">📌</span> 最新动态
-                </h2>
+                <div class="media-latest">
                 <div id="overviewLatestPosts" style="display:flex; flex-direction:column; gap:12px;"></div>
+                </div>
             </div>
 
             <!-- 文献库子页面 -->
             <div id="media-literature" class="media-subpage" style="display:none;">
                 <div class="page-header">
                     <div class="breadcrumb">媒体平台 <span>›</span> 文献库</div>
-                    <h1>📚 文献库</h1>
+                    <h1>文献库</h1>
                     <p class="subtitle">学术文献索引 · 精要提炼 · 核心图表</p>
                 </div>
-                <div class="content-admin-bar">
-                    <button class="btn btn-primary btn-sm permission-control" data-permission="admin" onclick="openLiteratureEditor()">上传论文</button>
-                </div>
                 <div class="lit-layout">
-                    <div class="lit-sidebar" id="litSidebar">
-                        <div class="sidebar-title">学科分类</div>
-                        <button class="lit-cat-btn active" data-cat="all" onclick="filterLiterature('all', this)">🗂️ 全部文献 <span class="cat-count" id="count-all">0</span></button>
-                        <button class="lit-cat-btn" data-cat="typhoon" onclick="filterLiterature('typhoon', this)">🌀 台风动力学 <span class="cat-count" id="count-typhoon">0</span></button>
-                        <button class="lit-cat-btn" data-cat="convective" onclick="filterLiterature('convective', this)">⚡ 强对流机理 <span class="cat-count" id="count-convective">0</span></button>
-                        <button class="lit-cat-btn" data-cat="mesoscale" onclick="filterLiterature('mesoscale', this)">🌦️ 中尺度气象 <span class="cat-count" id="count-mesoscale">0</span></button>
-                        <button class="lit-cat-btn" data-cat="climate" onclick="filterLiterature('climate', this)">🌍 气候诊断 <span class="cat-count" id="count-climate">0</span></button>
-                    </div>
+                    <!-- 侧边栏将动态生成 -->
+                    <div class="lit-sidebar" id="litSidebar"></div>
                     <div class="lit-list" id="litList"></div>
                 </div>
             </div>
@@ -831,17 +957,16 @@
             <div id="media-original" class="media-subpage" style="display:none;">
                 <div class="page-header">
                     <div class="breadcrumb">媒体平台 <span>›</span> 原创志</div>
-                    <h1>✍️ 原创志</h1>
+                    <h1>原创志</h1>
                     <p class="subtitle">深度分析 · 数据记录 · 自由发帖</p>
                 </div>
                 <div class="forum-layout">
                     <div class="forum-toolbar">
                         <div class="forum-tabs">
                             <button class="forum-tab-btn active" data-subcat="all" onclick="filterPosts('all', this)">全部</button>
-                            <button class="forum-tab-btn" data-subcat="article" onclick="filterPosts('article', this)">📄 文章</button>
-                            <button class="forum-tab-btn" data-subcat="dynamic" onclick="filterPosts('dynamic', this)">📡 动态</button>
+                            <button class="forum-tab-btn" data-subcat="article" onclick="filterPosts('article', this)">文章</button>
+                            <button class="forum-tab-btn" data-subcat="dynamic" onclick="filterPosts('dynamic', this)">动态</button>
                         </div>
-                        <button class="btn btn-primary permission-control post-publish-btn" data-permission="user" onclick="openPostModal(currentPostSubcat)"></button>
                     </div>
                     <div id="postList" style="display:flex; flex-direction:column; gap:12px;"></div>
                 </div>
@@ -851,11 +976,8 @@
             <div id="media-datacenter" class="media-subpage" style="display:none;">
                 <div class="page-header">
                     <div class="breadcrumb">媒体平台 <span>›</span> 数据中心</div>
-                    <h1>📊 数据中心</h1>
+                    <h1>数据中心</h1>
                     <p class="subtitle">历史气象数据集存档 · 纯粹的数据仓库</p>
-                </div>
-                <div class="content-admin-bar">
-                    <button class="btn btn-primary btn-sm permission-control" data-permission="dataset" onclick="openDatasetUploadModal()">上传数据文件</button>
                 </div>
                 <div class="data-grid" id="dataGrid"></div>
             </div>
@@ -974,12 +1096,12 @@
         };
 
         const toolsData = [
-            { name:'数值及AI预报集成中心', url:'https://yandoos.balabot.top', description:'强大的数值及AI预报集成中心，提供多模式预报产品与智能天气分析能力。', icon:'🧠' },
-            { name:'逐风影像库', url:'https://chase.moexin.cn/', description:'浏览和查找天气过程影像、卫星云图与气象观测素材。', icon:'🛰️' },
-            { name:'菜园子天气栈', url:'https://www.smca.fun/', description:'提供天气信息查询、气象数据浏览与日常天气服务。', icon:'🌦️' },
-            { name:'中国气象数据服务', url:'https://data.cma.cn/', description:'访问中国气象数据服务中心的公开气象观测和历史数据资源。', icon:'📡' },
-            { name:'Open-Meteo', url:'https://open-meteo.com/', description:'面向开发者的免费天气预报 API，适合快速查询和原型开发。', icon:'🌍' },
-            { name:'Windy', url:'https://www.windy.com/', description:'可视化查看全球风场、降水、气温、雷达和卫星等天气图层。', icon:'🗺️' }
+            { name:'数值及AI预报集成中心', url:'https://yandoos.balabot.top', description:'强大的数值及AI预报集成中心，提供多模式预报产品与智能天气分析能力。', icon:'' },
+            { name:'逐风影像库', url:'https://chase.moexin.cn/', description:'浏览和查找天气过程影像、卫星云图与气象观测素材。', icon:'' },
+            { name:'菜园子天气栈', url:'https://www.smca.fun/', description:'提供天气信息查询、气象数据浏览与日常天气服务。', icon:'' },
+            { name:'中国气象数据服务', url:'https://data.cma.cn/', description:'访问中国气象数据服务中心的公开气象观测和历史数据资源。', icon:'' },
+            { name:'Open-Meteo', url:'https://open-meteo.com/', description:'面向开发者的免费天气预报 API，适合快速查询和原型开发。', icon:'' },
+            { name:'Windy', url:'https://www.windy.com/', description:'可视化查看全球风场、降水、气温、雷达和卫星等天气图层。', icon:'' }
         ];
 
         function openExternal(key) {
@@ -992,7 +1114,6 @@
         }
 
         // ==================== 后端接口配置 ====================
-        // 部署后将 enabled 改为 true，并按后端实际路由修改 endpoints。
         const API_CONFIG = {
             enabled: false,
             baseUrl: 'http://localhost:8080/api',
@@ -1006,6 +1127,7 @@
                 myFavorites: '/auth/me/favorites',
                 users: '/admin/users',
                 literature: '/literature',
+                literatureCategories: '/literature/categories',
                 posts: '/posts',
                 postLike: '/posts/{id}/like',
                 postFavorite: '/posts/{id}/favorite',
@@ -1197,7 +1319,7 @@
             const avatar = currentUser.avatar ? `<img src="${currentUser.avatar}" alt="头像">` : (currentUser.name || currentUser.username || '用').slice(0, 1).toUpperCase();
             const ownPosts = postsData.filter(post => String(post.ownerId) === String(currentUser.id));
             const ownDatasets = datasetsData.filter(dataset => String(dataset.ownerId) === String(currentUser.id));
-            document.getElementById('page-profile').innerHTML = `<div class="page-header"><h1>个人中心</h1><p class="subtitle">账户资料与个人上传内容</p></div><div class="profile-layout"><div class="profile-card"><div class="profile-avatar">${avatar}</div><input class="avatar-input" type="file" id="avatarInput" accept="image/*" onchange="uploadAvatar(this.files[0])"><button class="btn btn-outline btn-sm" onclick="document.getElementById('avatarInput').click()">更换头像</button><div class="profile-name">${currentUser.name || currentUser.username}</div><div class="profile-signature">${currentUser.signature || '还没有个人签名'}</div><p class="profile-signature">${currentUser.phone || ''}</p><button class="btn btn-outline btn-sm" onclick="editProfile()">编辑资料</button></div><div><div class="profile-section"><h2>我的文章与动态</h2><div class="profile-post-list">${ownPosts.length ? ownPosts.map(post => `<div class="post-item"><div class="post-item-title">${post.title}</div><div class="post-item-meta">${post.subcatLabel} · ${post.date}</div><div class="post-item-actions"><button class="btn btn-sm btn-outline" onclick="deletePost(${post.id}, event)">🗑️ 删除</button></div></div>`).join('') : '<div class="empty-state">暂无上传内容</div>'}</div></div><div class="profile-section"><h2>我的数据文件</h2><div class="profile-post-list">${ownDatasets.length ? ownDatasets.map(dataset => `<div class="post-item"><div class="post-item-title">${dataset.name}</div><div class="post-item-meta">${dataset.format || '数据文件'} · ${dataset.size || ''}</div><div class="post-item-actions"><button class="btn btn-sm btn-outline" onclick="deleteDataset(${dataset.id}, event)">🗑️ 删除</button></div></div>`).join('') : '<div class="empty-state">暂无上传数据</div>'}</div></div></div></div>`;
+            document.getElementById('page-profile').innerHTML = `<div class="page-header"><h1>个人中心</h1><p class="subtitle">账户资料与个人上传内容</p></div><div class="profile-layout"><div class="profile-card"><div class="profile-avatar">${avatar}</div><input class="avatar-input" type="file" id="avatarInput" accept="image/*" onchange="uploadAvatar(this.files[0])"><button class="btn btn-outline btn-sm" onclick="document.getElementById('avatarInput').click()">更换头像</button><div class="profile-name">${currentUser.name || currentUser.username}</div><div class="profile-signature">${currentUser.signature || '还没有个人签名'}</div><p class="profile-signature">${currentUser.phone || ''}</p><button class="btn btn-outline btn-sm" onclick="editProfile()">编辑资料</button></div><div><div class="profile-section"><h2>我的文章与动态</h2><div class="profile-post-list">${ownPosts.length ? ownPosts.map(post => `<div class="post-item"><div class="post-item-title">${post.title}</div><div class="post-item-meta">${post.subcatLabel} · ${post.date}</div><div class="post-item-actions"><button class="btn btn-sm btn-outline" onclick="deletePost(${post.id}, event)">删除</button></div></div>`).join('') : '<div class="empty-state">暂无上传内容</div>'}</div></div><div class="profile-section"><h2>我的数据文件</h2><div class="profile-post-list">${ownDatasets.length ? ownDatasets.map(dataset => `<div class="post-item"><div class="post-item-title">${dataset.name}</div><div class="post-item-meta">${dataset.format || '数据文件'} · ${dataset.size || ''}</div><div class="post-item-actions"><button class="btn btn-sm btn-outline" onclick="deleteDataset(${dataset.id}, event)">删除</button></div></div>`).join('') : '<div class="empty-state">暂无上传数据</div>'}</div></div></div></div>`;
             const likedPosts = postsData.filter(post => likedPostIds.includes(post.id));
             const favoritePosts = postsData.filter(post => favoritePostIds.includes(post.id));
             document.getElementById('page-profile').insertAdjacentHTML('beforeend', `<div class="profile-section"><h2>我的收藏</h2><div class="profile-post-list">${renderInteractionList(favoritePosts, 'favorite')}</div></div><div class="profile-section"><h2>我的点赞</h2><div class="profile-post-list">${renderInteractionList(likedPosts, 'like')}</div></div>`);
@@ -1297,7 +1419,7 @@
         }
 
         function openLiteratureEditor() {
-            if (!requirePermission('admin')) return;
+            if (!requirePermission('user')) return;
             navigateTo('literature-editor');
         }
 
@@ -1321,7 +1443,7 @@
 
         async function submitLiterature(event) {
             event.preventDefault();
-            if (!requirePermission('admin')) return;
+            if (!requirePermission('user')) return;
             const file = document.getElementById('literatureFile').files[0];
             const screenshot = document.getElementById('literatureScreenshot').files[0];
             if (!file || !screenshot) { alert('请上传论文文件和文章截图。'); return; }
@@ -1513,12 +1635,14 @@
         ];
 
         const postsData = [
-            { id:101, subcat:'article', subcatLabel:'文章', title:'2021年郑州"7·20"特大暴雨过程拆解', author:'追风者', date:'2025-03-18', excerpt:'系统复盘7·20郑州暴雨的环流背景、水汽输送、中尺度对流系统演变过程。重点分析副高异常偏北、台风"烟花"远程水汽输送与地形辐合的三重叠加效应，以及短时强降水的极端性成因。', content:'2021年7月20日，郑州遭遇历史罕见的特大暴雨，小时雨强突破200mm，24小时雨量达624mm。本文从大尺度环流、中尺度系统、水汽条件、地形作用等方面进行系统拆解...' },
-            { id:102, subcat:'article', subcatLabel:'文章', title:'2023年台风"杜苏芮"北上致灾过程分析', author:'风暴眼', date:'2025-02-28', excerpt:'分析杜苏芮登陆后维持强度、长距离北上的关键因素，重点讨论华北极端降水的成因，包括高空急流引导、低空急流水汽接力输送、太行山地形增幅等。', content:'台风杜苏芮是2023年影响我国最严重的台风之一。登陆后北上过程中受高空槽前西南气流引导，维持较完整环流结构...' },
-            { id:103, subcat:'dynamic', subcatLabel:'动态', title:'【实测记录】2025年3月华南前汛期首场强对流', author:'南风观测', date:'2025-03-12', excerpt:'记录3月12日广东中北部一次飑线过程的实时观测数据，包括雷达回波演变、阵风风速、气压骤变等，附有自动站逐5分钟数据。', content:'3月12日14:00起，粤北山区触发分散对流，随后组织成飑线向东南方向移动...' },
-            { id:104, subcat:'dynamic', subcatLabel:'动态', title:'【数据存档】2024年夏季长江流域高温事件', author:'气象数据员', date:'2024-09-05', excerpt:'存档2024年7-8月长江流域持续高温过程的逐日最高气温数据，包含重庆、武汉、南京等代表站的极端高温统计。', content:'2024年夏季长江流域出现持续高温天气，重庆连续20天最高气温超40°C...' },
+            { id:101, subcat:'article', subcatLabel:'文章', title:'2021年郑州"7·20"特大暴雨过程拆解', author:'追风者', date:'2025-03-18', cover:'https://images.unsplash.com/photo-1605727216801-e27ce1d0cc28?q=80&w=900&auto=format&fit=crop', excerpt:'系统复盘7·20郑州暴雨的环流背景、水汽输送、中尺度对流系统演变过程。重点分析副高异常偏北、台风"烟花"远程水汽输送与地形辐合的三重叠加效应，以及短时强降水的极端性成因。', content:'2021年7月20日，郑州遭遇历史罕见的特大暴雨，小时雨强突破200mm，24小时雨量达624mm。本文从大尺度环流、中尺度系统、水汽条件、地形作用等方面进行系统拆解...' },
+            { id:102, subcat:'article', subcatLabel:'文章', title:'2023年台风"杜苏芮"北上致灾过程分析', author:'风暴眼', date:'2025-02-28', excerpt:'分析杜苏芮登陆后维持强度、长距离北上的关键因素，重点讨论华北极端降水的成因，包括高空急流引导、低空急流水汽接力输送、太行山地形增幅等。', content:'台风杜苏芮是2023年影响我国最严重的台风之一。登陆后北上过程中受高空槽前西南气流引导，维持较完整环流结构...<br><img src="https://images.unsplash.com/photo-1527482797697-8795b05a13fe?q=80&w=900&auto=format&fit=crop" alt="台风外围云系"><br>北上期间，低压环流与副高之间形成强劲的偏南低空急流，将海上水汽持续输送至华北平原...<br><img src="https://images.unsplash.com/photo-1500674425229-f692875b0ab7?q=80&w=900&auto=format&fit=crop" alt="华北暴雨云团">' },
+            { id:103, subcat:'dynamic', subcatLabel:'动态', title:'【实测记录】2025年3月华南前汛期首场强对流', author:'南风观测', date:'2025-03-12', images:['https://images.unsplash.com/photo-1561484930-998b6a7b22e8?q=80&w=800&auto=format&fit=crop', 'https://images.unsplash.com/photo-1417325384643-aac51acc9e5d?q=80&w=800&auto=format&fit=crop', 'https://images.unsplash.com/photo-1504333638930-c8787321eee0?q=80&w=800&auto=format&fit=crop'], excerpt:'记录3月12日广东中北部一次飑线过程的实时观测数据，包括雷达回波演变、阵风风速、气压骤变等，附有自动站逐5分钟数据。', content:'3月12日14:00起，粤北山区触发分散对流，随后组织成飑线向东南方向移动...' },
+            { id:104, subcat:'dynamic', subcatLabel:'动态', title:'【数据存档】2024年夏季长江流域高温事件', author:'气象数据员', date:'2024-09-05', images:['https://images.unsplash.com/photo-1454789548928-9efd52dc4031?q=80&w=800&auto=format&fit=crop'], excerpt:'存档2024年7-8月长江流域持续高温过程的逐日最高气温数据，包含重庆、武汉、南京等代表站的极端高温统计。', content:'2024年夏季长江流域出现持续高温天气，重庆连续20天最高气温超40°C...' },
             { id:105, subcat:'article', subcatLabel:'文章', title:'东北冷涡对夏季强对流天气的触发机制', author:'北国气象', date:'2025-01-20', excerpt:'探讨东北冷涡背景下强对流天气的触发条件与预报着眼点，结合多个典型个例分析冷涡南侧西南气流中的对流组织特征。', content:'东北冷涡是影响我国北方夏季天气的重要系统。冷涡南侧的强垂直风切变和低层暖湿条件...' },
-            { id:106, subcat:'dynamic', subcatLabel:'动态', title:'【实时追踪】2024年台风"摩羯"登陆海南', author:'海岸守望', date:'2024-09-06', excerpt:'台风摩羯登陆海南文昌前后的雷达回波、地面观测和风场数据实时记录，含逐10分钟风压变化。', content:'摩羯于9月6日16时20分在海南文昌登陆，登陆时中心附近最大风力17级...' }
+            { id:106, subcat:'dynamic', subcatLabel:'动态', title:'【实时追踪】2024年台风"摩羯"登陆海南', author:'海岸守望', date:'2024-09-06', images:['https://images.unsplash.com/photo-1561553873-e8491a564fd0?q=80&w=800&auto=format&fit=crop'], excerpt:'台风摩羯登陆海南文昌前后的雷达回波、地面观测和风场数据实时记录，含逐10分钟风压变化。', content:'摩羯于9月6日16时20分在海南文昌登陆，登陆时中心附近最大风力17级...' },
+            { id:107, subcat:'article', subcatLabel:'文章', title:'2024年西北太平洋台风季复盘：生成个数、强度与路径统计', author:'台风档案馆', date:'2024-12-15', cover:'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=900&auto=format&fit=crop', excerpt:'统计2024年西北太平洋台风季的生成个数、登陆比例、峰值强度与路径类型分布，并与气候平均态进行对比分析。', content:'2024年西北太平洋台风季共生成26个台风，其中8个登陆我国...' },
+            { id:108, subcat:'dynamic', subcatLabel:'动态', title:'【图集】夏季积雨云与雷暴观测合集', author:'对流观测站', date:'2024-08-20', images:['https://images.unsplash.com/photo-1428592953211-077101b2021b?q=80&w=800&auto=format&fit=crop', 'https://images.unsplash.com/photo-1493314894560-5c412a56c17c?q=80&w=800&auto=format&fit=crop'], excerpt:'收录今夏多次强对流过程的积雨云、砧状云顶与闪电观测照片。', content:'收集整理了本站今夏观测的多次强对流过程照片...' }
         ];
 
         const datasetsData = [
@@ -1539,6 +1663,112 @@
         let currentAuthorName = '';
         let globalSearchQuery = '';
         let editorFormatPainter = false;
+        let literatureCategories = [
+            { value:'typhoon', label:'台风动力学' },
+            { value:'convective', label:'强对流机理' },
+            { value:'mesoscale', label:'中尺度气象' },
+            { value:'climate', label:'气候诊断' }
+        ];
+
+        function normalizeLiteratureCategories(categories) {
+            if (!Array.isArray(categories)) return [];
+            return categories.map(category => {
+                if (typeof category === 'string') return { value:category, label:category };
+                return { value:category.value || category.id || category.key || category.slug, label:category.label || category.name || category.title };
+            }).filter(category => category.value && category.label);
+        }
+
+        async function loadLiteratureCategories() {
+            if (!API_CONFIG.enabled) {
+                const saved = normalizeLiteratureCategories(JSON.parse(localStorage.getItem('weatherPlatformLiteratureCategories') || '[]'));
+                if (saved.length) literatureCategories = saved;
+                return literatureCategories;
+            }
+            try {
+                const result = await apiRequest(API_CONFIG.endpoints.literatureCategories);
+                const categories = normalizeLiteratureCategories(Array.isArray(result) ? result : result && result.categories);
+                if (categories.length) literatureCategories = categories;
+            } catch (error) { console.warn('论文分类加载失败，继续使用默认分类：', error); }
+            return literatureCategories;
+        }
+
+        async function createLiteratureCategory() {
+            const label = prompt('请输入新分类名称：');
+            if (!label || !label.trim()) return;
+            const normalizedLabel = label.trim();
+            if (literatureCategories.some(category => category.label === normalizedLabel)) {
+                alert('该分类已经存在。');
+                return;
+            }
+            const category = { value:'custom-' + Date.now(), label:normalizedLabel };
+            try {
+                const result = API_CONFIG.enabled ? await apiRequest(API_CONFIG.endpoints.literatureCategories, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(category) }) : null;
+                const savedCategory = normalizeLiteratureCategories([result && (result.category || result)])[0] || category;
+                literatureCategories.push(savedCategory);
+                localStorage.setItem('weatherPlatformLiteratureCategories', JSON.stringify(literatureCategories));
+                populateLiteratureCategorySelect(savedCategory.value);
+                if (document.getElementById('litSidebar')) {
+                    renderLiteratureSidebar(currentLitCategory);
+                }
+            } catch (error) { alert(error.message); }
+        }
+
+        function populateLiteratureCategorySelect(selectedValue = '') {
+            const select = document.getElementById('literatureCategory');
+            if (!select) return;
+            select.innerHTML = literatureCategories.map(category => `<option value="${category.value}">${category.label}</option>`).join('') + '<option value="__new__">新建分类</option>';
+            if (selectedValue) select.value = selectedValue;
+        }
+
+        function handleLiteratureCategoryChange(select) {
+            if (select.value !== '__new__') return;
+            const previousValue = literatureCategories[0] && literatureCategories[0].value;
+            select.value = previousValue || '';
+            createLiteratureCategory();
+        }
+
+        const outlineThumbPath = 'M7 10v11H3V10h4zm0 0l4-7a2 2 0 0 1 2 1.85V7h5a2 2 0 0 1 2 2v2.5a2 2 0 0 1-.2.9l-2.5 6A2 2 0 0 1 15 19H7';
+        const outlineFavoritePath = 'M12 2.5l2.9 6.2 6.6.8-4.8 4.6 1.2 6.5L12 17.8l-5.9 3.1 1.2-6.5-4.8-4.6 6.6-.8L12 2.5z';
+        const outlineCommentPath = 'M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4v4l4-4h8c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z';
+
+        function applyOutlineThumbIcons() {
+            document.querySelectorAll('.thumb-icon').forEach(icon => {
+                icon.classList.add('icon-outline');
+                const path = icon.querySelector('path');
+                if (!path) return;
+                path.setAttribute('d', outlineThumbPath);
+                path.setAttribute('fill', 'none');
+                path.setAttribute('stroke', 'currentColor');
+                path.setAttribute('stroke-width', '1.8');
+                path.setAttribute('stroke-linecap', 'round');
+                path.setAttribute('stroke-linejoin', 'round');
+            });
+            document.querySelectorAll('.favorite-icon').forEach(icon => {
+                icon.classList.add('icon-outline');
+                const path = icon.querySelector('path');
+                if (!path) return;
+                path.setAttribute('d', outlineFavoritePath);
+                path.setAttribute('fill', 'none');
+                path.setAttribute('stroke', 'currentColor');
+                path.setAttribute('stroke-width', '1.8');
+                path.setAttribute('stroke-linecap', 'round');
+                path.setAttribute('stroke-linejoin', 'round');
+            });
+            document.querySelectorAll('.comment-icon').forEach(icon => {
+                icon.classList.add('icon-outline');
+                const path = icon.querySelector('path');
+                if (!path) return;
+                path.setAttribute('d', outlineCommentPath);
+                path.setAttribute('fill', 'none');
+                path.setAttribute('stroke', 'currentColor');
+                path.setAttribute('stroke-width', '1.8');
+                path.setAttribute('stroke-linecap', 'round');
+                path.setAttribute('stroke-linejoin', 'round');
+            });
+        }
+
+        new MutationObserver(applyOutlineThumbIcons).observe(document.body, { childList:true, subtree:true });
+        applyOutlineThumbIcons();
 
         // ==================== 导航主函数 ====================
         function navigateTo(page) {
@@ -1581,7 +1811,12 @@
             if (page === 'tools') renderTools();
             if (page === 'post-detail') renderPostDetail(currentPostDetailId);
             if (page === 'article-editor') renderArticleEditor();
-            if (page === 'literature-editor') renderLiteratureEditor();
+            if (page === 'literature-editor') {
+                renderLiteratureEditor();
+                loadLiteratureCategories().then(() => populateLiteratureCategorySelect());
+                const categorySelect = document.getElementById('literatureCategory');
+                if (categorySelect) categorySelect.onchange = () => handleLiteratureCategoryChange(categorySelect);
+            }
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -1625,69 +1860,79 @@
         // ==================== 渲染函数 ====================
         function renderOverview() {
             const container = document.getElementById('overviewLatestPosts');
-            const latestPosts = [...postsData].filter(post => matchesSearchTitle(post.title)).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,3);
-            container.innerHTML = latestPosts.map(post => `
-                <div class="post-item" onclick="switchMediaTab('original', document.querySelector('.media-subnav-btn[data-msub=\\'original\\']'))">
-                    <div class="post-item-header">
-                        <span class="badge ${post.subcat==='article'?'badge-cyan':'badge-amber'}">${post.subcatLabel}</span>
-                        <span class="post-item-title">${post.title}</span>
-                    </div>
-                    <div class="post-item-meta"><span class="author">${post.author}</span><span>${post.date}</span></div>
-                    <div class="post-item-excerpt">${post.excerpt}</div>
-                </div>
-            `).join('');
+            const latestPosts = [...postsData].filter(post => matchesSearchTitle(post.title)).sort((a,b)=>b.date.localeCompare(a.date));
+            const latestArticles = latestPosts.filter(post => post.subcat === 'article');
+            const latestDynamics = latestPosts.filter(post => post.subcat === 'dynamic');
+            container.innerHTML = buildFeedHtml(latestArticles, latestDynamics, '最新', 3) || '<div class="empty-state"><p>暂无内容</p></div>';
         }
 
-        function renderLiterature() {
+        function renderLiteratureSidebar(activeCategory = 'all') {
+            const sidebar = document.getElementById('litSidebar');
+            if (!sidebar) return;
+            const categories = literatureCategories;
+            const counts = {};
+            categories.forEach(cat => {
+                counts[cat.value] = literatureData.filter(d => d.category === cat.value).length;
+            });
+            const total = literatureData.length;
+            let html = '<div class="sidebar-title">学科分类</div>';
+            html += `<button class="lit-cat-btn ${activeCategory === 'all' ? 'active' : ''}" data-cat="all" onclick="filterLiterature('all', this)">全部文献 <span class="cat-count">${total}</span></button>`;
+            categories.forEach(cat => {
+                const count = counts[cat.value] || 0;
+                html += `<button class="lit-cat-btn ${activeCategory === cat.value ? 'active' : ''}" data-cat="${cat.value}" onclick="filterLiterature('${cat.value}', this)">${cat.label} <span class="cat-count">${count}</span></button>`;
+            });
+            sidebar.innerHTML = html;
+        }
+
+        async function renderLiterature() {
+            await loadLiteratureCategories();
+            renderLiteratureSidebar(currentLitCategory);
             filterLiterature(currentLitCategory, null);
         }
 
         function filterLiterature(category, btn) {
             currentLitCategory = category;
-            document.querySelectorAll('.lit-cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === category));
-            const counts = {
-                all: literatureData.length,
-                typhoon: literatureData.filter(d=>d.category==='typhoon').length,
-                convective: literatureData.filter(d=>d.category==='convective').length,
-                mesoscale: literatureData.filter(d=>d.category==='mesoscale').length,
-                climate: literatureData.filter(d=>d.category==='climate').length
-            };
-            for (const [key,val] of Object.entries(counts)) {
-                const el = document.getElementById('count-'+key);
-                if(el) el.textContent = val;
-            }
-            const filtered = (category==='all' ? literatureData : literatureData.filter(d=>d.category===category)).filter(item => matchesSearchTitle(item.title));
+            document.querySelectorAll('.lit-cat-btn').forEach(b => {
+                b.classList.toggle('active', b.dataset.cat === category);
+            });
+            const filtered = category === 'all' 
+                ? literatureData 
+                : literatureData.filter(d => d.category === category);
+            const finalFiltered = filtered.filter(item => matchesSearchTitle(item.title));
             const container = document.getElementById('litList');
-            if(filtered.length===0) {
-                container.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>该分类下暂无文献</p></div>';
+            if (finalFiltered.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>该分类下暂无文献</p></div>';
                 return;
             }
-            container.innerHTML = filtered.map(item => `
+            container.innerHTML = finalFiltered.map(item => {
+                const categoryLabel = (literatureCategories.find(c => c.value === item.category) || {}).label || item.categoryLabel || item.category;
+                return `
                 <div class="lit-item">
                     <div class="lit-item-header">
-                        <span class="badge badge-cyan">${item.categoryLabel}</span>
+                        <span class="badge badge-cyan">${categoryLabel}</span>
                         <span class="lit-item-title">${item.title}</span>
                     </div>
-                    <div class="lit-item-authors">✍️ ${item.authors}</div>
-                    <div class="lit-item-journal">📖 ${item.journal}</div>
+                    <div class="lit-item-authors">${item.authors}</div>
+                    <div class="lit-item-journal">${item.journal}</div>
                     <div class="lit-item-excerpt" id="excerpt-${item.id}">
                         ${item.excerpt}
                         <span class="excerpt-toggle" onclick="toggleExcerpt(${item.id}, event)">展开全部 ▾</span>
                     </div>
                     <div class="lit-item-thumb">
                         ${item.screenshot ? `<img src="${item.screenshot}" alt="${item.title}文章截图">` : `<div class="thumb-placeholder">
-                            <span class="icon">📊</span>
+                            <span class="icon"></span>
                             <span>${item.thumbDesc}</span>
                             <span style="font-size:0.7rem; color:var(--text-muted);">（截图占位）</span>
                         </div>`}
                     </div>
                     <div class="lit-item-footer">
-                        <a href="${item.doi}" target="_blank" class="btn btn-sm btn-outline">🔗 DOI: ${item.doi}</a>
-                        <a href="${item.cnki}" target="_blank" class="btn btn-sm btn-outline">📖 知网</a>
-                        ${hasPermission('admin') ? `<button class="btn btn-sm btn-outline" onclick="deleteLiterature(${item.id}); event.stopPropagation();">🗑️ 删除</button>` : ''}
+                        <a href="${item.doi}" target="_blank" class="btn btn-sm btn-outline">DOI: ${item.doi}</a>
+                        <a href="${item.cnki}" target="_blank" class="btn btn-sm btn-outline">知网</a>
+                        ${hasPermission('admin') ? `<button class="btn btn-sm btn-outline" onclick="deleteLiterature(${item.id}); event.stopPropagation();">删除</button>` : ''}
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function toggleExcerpt(id, event) {
@@ -1700,6 +1945,113 @@
             }
         }
 
+        // ==================== 信息流卡片渲染（文章=百度资讯风，动态=小红书风） ====================
+        function getPostImages(post) {
+            if (Array.isArray(post.images) && post.images.length) return post.images.filter(Boolean);
+            const content = String(post.content || '');
+            return [...content.matchAll(/<img[^>]+src=["']([^"']+)["']/gi)].map(match => match[1]);
+        }
+
+        function renderCardStats(post) {
+            return `
+                        <button class="${isPostLiked(post) ? 'active' : ''}" aria-label="点赞" onclick="togglePostLike(${post.id}, event)"><svg class="thumb-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M1 21h4V9H1v12zM23 10c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>${post.likes || 0}</button>
+                        <button aria-label="评论" onclick="commentPost(${post.id}, event)"><svg class="comment-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4v4l4-4h8c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>${(post.comments || []).length}</button>
+                        <button class="${isPostFavorited(post) ? 'active' : ''}" aria-label="收藏" onclick="togglePostFavorite(${post.id}, event)"><svg class="favorite-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>${post.favorites || 0}</button>`;
+        }
+
+        function renderArticleCard(post) {
+            const deleteBtn = hasPermission('own-post', post) ? `<button class="stat-delete" aria-label="删除" onclick="deletePost(${post.id}, event)">删除</button>` : '';
+            const images = getPostImages(post);
+            // 模式一：有自定义封面，或无封面但插图不足三张（以正文首图充当左侧封面）
+            if (post.cover || (images.length > 0 && images.length < 3)) {
+                const coverSrc = post.cover || images[0];
+                return `
+                <article class="post-item article-card" onclick="viewPost(${post.id})">
+                    <div class="article-card-cover"><img src="${coverSrc}" alt="${post.title}封面" loading="lazy"></div>
+                    <div class="article-card-body">
+                        <h3 class="article-card-title">${post.title}</h3>
+                        <div class="article-card-meta"><span class="author" onclick="openAuthorProfile('${post.author}'); event.stopPropagation();">${post.author}</span><span>发布于 ${post.date}</span></div>
+                        <div class="article-card-stats">${renderCardStats(post)}${deleteBtn}</div>
+                    </div>
+                </article>`;
+            }
+            // 模式二：无封面且插图不少于三张，随机取三张展示在卡片中部
+            if (images.length >= 3) {
+                const picked = images.slice();
+                for (let i = picked.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [picked[i], picked[j]] = [picked[j], picked[i]];
+                }
+                const middle = `<div class="article-card-media">${picked.slice(0, 3).map(src => `<div class="media-slot"><img src="${src}" alt="${post.title}插图" loading="lazy"></div>`).join('')}</div>`;
+                return `
+                <article class="post-item article-card plain" onclick="viewPost(${post.id})">
+                    <h3 class="article-card-title">${post.title}</h3>
+                    ${middle}
+                    <div class="article-card-footer">
+                        <span class="author" onclick="openAuthorProfile('${post.author}'); event.stopPropagation();">${post.author}</span>
+                        <div class="article-card-stats">${renderCardStats(post)}${deleteBtn}</div>
+                        <span class="card-date">发布于 ${post.date}</span>
+                    </div>
+                </article>`;
+            }
+            // 模式三：无封面且无插图，纯文字卡片
+            return `
+                <article class="post-item article-card plain" onclick="viewPost(${post.id})">
+                    <h3 class="article-card-title">${post.title}</h3>
+                    <p class="article-card-plain-excerpt">${post.excerpt || ''}</p>
+                    <div class="article-card-footer">
+                        <span class="author" onclick="openAuthorProfile('${post.author}'); event.stopPropagation();">${post.author}</span>
+                        <div class="article-card-stats">${renderCardStats(post)}${deleteBtn}</div>
+                        <span class="card-date">发布于 ${post.date}</span>
+                    </div>
+                </article>`;
+        }
+
+        function renderDynamicCard(post) {
+            const images = getPostImages(post);
+            const cover = images.length
+                ? `<img src="${images[0]}" alt="${post.title}配图" loading="lazy">`
+                : `<div class="dynamic-cover-placeholder"><span class="icon">🌪️</span><span>纯文字动态</span></div>`;
+            const avatar = post.authorAvatar ? `<img src="${post.authorAvatar}" alt="${post.author}头像">` : (post.author || '匿').slice(0, 1).toUpperCase();
+            const deleteBtn = hasPermission('own-post', post) ? `<button class="dynamic-card-delete" aria-label="删除" onclick="deletePost(${post.id}, event)">删除</button>` : '';
+            return `
+                <article class="post-item dynamic-card" onclick="viewPost(${post.id})">
+                    <div class="dynamic-card-cover">${cover}</div>
+                    <h3 class="dynamic-card-title">${post.title}</h3>
+                    <div class="dynamic-card-footer">
+                        <span class="dynamic-card-author" onclick="openAuthorProfile('${post.author}'); event.stopPropagation();"><span class="mini-avatar">${avatar}</span><span class="name">${post.author}</span></span>
+                        <span class="dynamic-card-actions">${deleteBtn}<button class="dynamic-card-like ${isPostLiked(post) ? 'active' : ''}" aria-label="点赞" onclick="togglePostLike(${post.id}, event)"><svg class="thumb-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M1 21h4V9H1v12z"/></svg>${post.likes || 0}</button></span>
+                    </div>
+                </article>`;
+        }
+
+        function buildFeedHtml(articles, dynamics, titlePrefix, limit) {
+            const shownArticles = limit ? articles.slice(0, limit) : articles;
+            const shownDynamics = limit ? dynamics.slice(0, limit) : dynamics;
+            let html = '';
+            if (shownArticles.length) {
+                html += `<div class="feed-section-title">${titlePrefix}文章<span class="feed-count">${shownArticles.length} 篇</span></div>`;
+                html += shownArticles.map(renderArticleCard).join('');
+                if (limit && articles.length > limit) {
+                    html += `<div class="feed-more"><button class="btn btn-outline btn-sm" onclick="openOriginalFeed('article')">查看更多文章（共 ${articles.length} 篇）</button></div>`;
+                }
+            }
+            if (shownDynamics.length) {
+                html += `<div class="feed-section-title">${titlePrefix}动态<span class="feed-count">${shownDynamics.length} 条</span></div>`;
+                html += `<div class="dynamic-grid">${shownDynamics.map(renderDynamicCard).join('')}</div>`;
+                if (limit && dynamics.length > limit) {
+                    html += `<div class="feed-more"><button class="btn btn-outline btn-sm" onclick="openOriginalFeed('dynamic')">查看更多动态（共 ${dynamics.length} 条）</button></div>`;
+                }
+            }
+            return html;
+        }
+
+        function openOriginalFeed(type) {
+            navigateTo('media');
+            switchMediaTab('original', document.querySelector('.media-subnav-btn[data-msub="original"]'));
+            filterPosts(type, null);
+        }
+
         function renderPosts() {
             filterPosts(currentPostSubcat, null);
         }
@@ -1707,35 +2059,17 @@
         function filterPosts(subcat, btn) {
             currentPostSubcat = subcat;
             document.querySelectorAll('.forum-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.subcat === subcat));
-            const publishButton = document.querySelector('.post-publish-btn');
-            if (publishButton) {
-                const canPublish = subcat === 'article' || subcat === 'dynamic';
-                publishButton.style.display = canPublish && hasPermission('user') ? '' : 'none';
-                publishButton.textContent = subcat === 'article' ? '＋ 发布文章' : '＋ 发布动态';
-            }
-            const filtered = (subcat==='all' ? postsData : postsData.filter(p=>p.subcat===subcat)).filter(post => matchesSearchTitle(post.title));
+            const searched = postsData.filter(post => matchesSearchTitle(post.title));
+            const articles = (subcat === 'dynamic' ? [] : searched.filter(p => p.subcat === 'article')).sort((a,b)=>b.date.localeCompare(a.date));
+            const dynamics = (subcat === 'article' ? [] : searched.filter(p => p.subcat === 'dynamic')).sort((a,b)=>b.date.localeCompare(a.date));
             const container = document.getElementById('postList');
-            if(filtered.length===0) {
-                container.innerHTML = '<div class="empty-state"><div class="icon">📝</div><p>暂无帖子</p></div>';
+            if (articles.length === 0 && dynamics.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>暂无帖子</p></div>';
                 return;
             }
-            const sorted = [...filtered].sort((a,b)=>b.date.localeCompare(a.date));
-            container.innerHTML = sorted.map(post => `
-                <div class="post-item" onclick="viewPost(${post.id})">
-                    <div class="post-item-header">
-                        <span class="badge ${post.subcat==='article'?'badge-cyan':'badge-amber'}">${post.subcatLabel}</span>
-                        <span class="post-item-title">${post.title}</span>
-                    </div>
-                    <div class="post-item-meta"><span class="author">👤 ${post.author}</span><span>📅 ${post.date}</span></div>
-                    <div class="post-item-excerpt">${post.excerpt}</div>
-                    <div class="post-interactions">
-                        <button class="btn btn-sm ${isPostLiked(post) ? 'active' : ''}" aria-label="点赞" onclick="togglePostLike(${post.id}, event)"><svg class="thumb-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M1 21h4V9H1v12zM23 10c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>${post.likes || 0}</button>
-                        <button class="btn btn-sm ${isPostFavorited(post) ? 'active' : ''}" aria-label="收藏" onclick="togglePostFavorite(${post.id}, event)"><svg class="favorite-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>${post.favorites || 0}</button>
-                        <button class="btn btn-sm" aria-label="评论" onclick="commentPost(${post.id}, event)"><svg class="comment-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>${(post.comments || []).length}</button>
-                    </div>
-                    ${hasPermission('own-post', post) ? `<div class="post-item-actions"><button class="btn btn-sm btn-outline" onclick="deletePost(${post.id}, event)">🗑️ 删除</button></div>` : ''}
-                </div>
-            `).join('');
+            container.innerHTML = subcat === 'all'
+                ? buildFeedHtml(articles, dynamics, '', 3)
+                : buildFeedHtml(articles, dynamics, '', 0);
         }
 
         function viewPost(id) {
@@ -1823,14 +2157,14 @@
                 <div class="data-card">
                     <div class="data-card-header">
                         <span class="data-card-title">${ds.name}</span>
-                        <span class="data-card-region">📍 ${ds.region}</span>
+                        <span class="data-card-region">${ds.region}</span>
                     </div>
                     <div class="data-card-desc">${ds.description}</div>
-                    <div class="data-card-stats"><span>📅 ${ds.period}</span><span>📦 ${ds.size}</span><span>📄 ${ds.format}</span></div>
-                    <div class="data-card-stats" style="border-top:none; padding-top:0;"><span>🏛️ ${ds.source}</span><span>🗂️ ${ds.type}</span></div>
+                    <div class="data-card-stats"><span>${ds.period}</span><span>${ds.size}</span><span>${ds.format}</span></div>
+                    <div class="data-card-stats" style="border-top:none; padding-top:0;"><span>${ds.source}</span><span>${ds.type}</span></div>
                     <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                        <button class="btn btn-outline btn-sm" onclick="downloadDataset(${ds.id})">⬇ 下载数据集</button>
-                        ${hasPermission('own-dataset', ds) ? `<button class="btn btn-outline btn-sm" onclick="deleteDataset(${ds.id}, event)">🗑️ 删除</button>` : ''}
+                        <button class="btn btn-outline btn-sm" onclick="downloadDataset(${ds.id})">下载数据集</button>
+                        ${hasPermission('own-dataset', ds) ? `<button class="btn btn-outline btn-sm" onclick="deleteDataset(${ds.id}, event)">删除</button>` : ''}
                     </div>
                 </div>
             `).join('');
@@ -1917,7 +2251,7 @@
             document.getElementById('postForm').reset();
             if(currentMediaTab==='original') renderPosts();
             renderOverview(); // 更新概览最新动态
-            alert('✅ 发布成功！');
+            alert('发布成功！');
         }
 
         function previewDynamicImages(files) {
@@ -1946,7 +2280,7 @@
         function renderArticleEditor() {
             const container = document.getElementById('page-article-editor');
             if (!container) return;
-            container.innerHTML = `<div class="article-editor-page"><div class="page-header"><button class="btn btn-outline btn-sm" onclick="navigateTo('media'); switchMediaTab('original', document.querySelector('.media-subnav-btn[data-msub=original]'))">← 返回原创志</button><h1>发布文章</h1><p class="subtitle">写下你的分析、复盘和气象观察</p></div><form onsubmit="submitArticle(event)"><div class="article-editor-canvas"><div class="article-editor-toolbar"><button type="button" class="editor-tool" onclick="toggleFormatPainter(this)">格式刷</button><button type="button" class="editor-tool" onclick="cancelFormatPainter()">取消格式刷</button><button type="button" class="editor-tool"><select aria-label="字体大小" onchange="applyEditorCommand('fontSize', this.value)"><option value="3">字体大小</option><option value="2">小号</option><option value="3">标准</option><option value="5">大号</option><option value="7">特大</option></select></button><button type="button" class="editor-tool" onclick="applyEditorCommand('italic')"><i>斜体</i></button><button type="button" class="editor-tool" onclick="applyEditorCommand('bold')"><b>粗体</b></button><button type="button" class="editor-tool" onclick="applyEditorCommand('underline')"><u>下划线</u></button><button type="button" class="editor-tool"><input type="color" aria-label="字体颜色选择" value="#e8f0f8" onchange="applyEditorCommand('foreColor', this.value)"></button><button type="button" class="editor-tool" onclick="document.getElementById('articleImageInput').click()">插入图片</button><input type="file" id="articleImageInput" accept="image/*" hidden onchange="insertArticleImage(this.files[0])"></div><div class="article-editor-body"><input class="article-title-input" id="articleTitle" type="text" placeholder="输入文章标题" required><div class="article-content-editor" id="articleContent" contenteditable="true" data-placeholder="从这里开始写作..." role="textbox" aria-label="文章内容"></div><div class="article-editor-settings"><h2>发布设置</h2><div class="article-settings-grid"><div class="form-group"><label for="articleCover">文章封面</label><div class="cover-picker"><input type="file" id="articleCover" accept="image/*" onchange="previewArticleCover(this.files[0])"><img class="cover-preview" id="articleCoverPreview" alt="封面预览"></div><small class="post-compose-hint">不选择时将从已上传照片中随机选择</small></div><div class="form-group"><label for="articleTags">标签</label><input id="articleTags" type="text" placeholder="例如：台风, 强对流, 复盘"><label for="articlePublishAt">定时发布</label><input id="articlePublishAt" type="datetime-local"></div></div></div><div class="article-editor-actions"><button type="button" class="btn btn-outline" onclick="navigateTo('media'); switchMediaTab('original', document.querySelector('.media-subnav-btn[data-msub=original]'))">取消</button><button type="submit" class="btn btn-primary">发布文章</button></div></div></div></form></div>`;
+            container.innerHTML = `<div class="article-editor-page"><div class="page-header"><button class="btn btn-outline btn-sm" onclick="navigateTo('media'); switchMediaTab('original', document.querySelector('.media-subnav-btn[data-msub=original]'))">← 返回原创志</button><h1>发布文章</h1><p class="subtitle">写下你的分析、复盘和气象观察</p></div><form onsubmit="submitArticle(event)"><div class="article-editor-canvas"><div class="article-editor-toolbar"><button type="button" class="editor-tool" onclick="toggleFormatPainter(this)">格式刷</button><button type="button" class="editor-tool" onclick="cancelFormatPainter()">取消格式刷</button><button type="button" class="editor-tool"><select aria-label="字体大小" onchange="applyEditorCommand('fontSize', this.value)"><option value="3">字体大小</option><option value="2">小号</option><option value="3">标准</option><option value="5">大号</option><option value="7">特大</option></select></button><button type="button" class="editor-tool" onclick="applyEditorCommand('italic')"><i>斜体</i></button><button type="button" class="editor-tool" onclick="applyEditorCommand('bold')"><b>粗体</b></button><button type="button" class="editor-tool" onclick="applyEditorCommand('underline')"><u>下划线</u></button><button type="button" class="editor-tool"><input type="color" aria-label="字体颜色选择" value="#e8f0f8" onchange="applyEditorCommand('foreColor', this.value)"></button><button type="button" class="editor-tool" onclick="document.getElementById('articleImageInput').click()">插入图片</button><input type="file" id="articleImageInput" accept="image/*" hidden onchange="insertArticleImage(this.files[0])"></div><div class="article-editor-body"><input class="article-title-input" id="articleTitle" type="text" placeholder="输入文章标题" required><div class="article-content-editor" id="articleContent" contenteditable="true" data-placeholder="从这里开始写作..." role="textbox" aria-label="文章内容"></div><div class="article-editor-settings"><h2>发布设置</h2><div class="article-settings-grid"><div class="form-group"><label for="articleCover">文章封面</label><div class="cover-picker"><input type="file" id="articleCover" accept="image/*" onchange="previewArticleCover(this.files[0])"><img class="cover-preview" id="articleCoverPreview" alt="封面预览"></div><small class="post-compose-hint">不选封面时将按正文插图数量自动匹配卡片样式；无插图时发布前会询问确认</small></div><div class="form-group"><label for="articleTags">标签</label><input id="articleTags" type="text" placeholder="例如：台风, 强对流, 复盘"><label for="articlePublishAt">定时发布</label><input id="articlePublishAt" type="datetime-local"></div></div></div><div class="article-editor-actions"><button type="button" class="btn btn-outline" onclick="navigateTo('media'); switchMediaTab('original', document.querySelector('.media-subnav-btn[data-msub=original]'))">取消</button><button type="submit" class="btn btn-primary">发布文章</button></div></div></div></form></div>`;
         }
 
         function applyEditorCommand(command, value = null) {
@@ -1988,19 +2322,17 @@
             reader.readAsDataURL(file);
         }
 
-        function randomArticleCover() {
-            const photos = JSON.parse(localStorage.getItem('weatherPlatformUploadedPhotos') || '[]');
-            return photos.length ? photos[Math.floor(Math.random() * photos.length)] : 'https://images.unsplash.com/photo-1500534623283-312aade485b7?q=80&w=1200&auto=format&fit=crop';
-        }
-
         async function submitArticle(event) {
             event.preventDefault();
             if (!requirePermission('user')) return;
             const title = document.getElementById('articleTitle').value.trim();
             const content = document.getElementById('articleContent').innerHTML.trim();
             if (!title || !content) { alert('请填写文章标题和内容。'); return; }
+            const cover = document.getElementById('articleCover').dataset.value || '';
+            const inlineImageCount = [...content.matchAll(/<img[^>]+src=["']([^"']+)["']/gi)].length;
+            if (!cover && inlineImageCount === 0 && !confirm('未添加任何插图与封面，是否确认发布')) return;
             const tags = document.getElementById('articleTags').value.split(',').map(tag => tag.trim()).filter(Boolean);
-            const newPost = { id: Date.now(), ownerId: currentUser.id, subcat:'article', subcatLabel:'文章', title, author:currentUser.name || currentUser.username, date:new Date().toISOString().slice(0,10), scheduledAt:document.getElementById('articlePublishAt').value || null, tags, cover:document.getElementById('articleCover').dataset.value || randomArticleCover(), excerpt:content.replace(/<[^>]+>/g, '').slice(0,120) + '...', content };
+            const newPost = { id: Date.now(), ownerId: currentUser.id, subcat:'article', subcatLabel:'文章', title, author:currentUser.name || currentUser.username, date:new Date().toISOString().slice(0,10), scheduledAt:document.getElementById('articlePublishAt').value || null, tags, cover:cover, excerpt:content.replace(/<[^>]+>/g, '').slice(0,120) + '...', content };
             try { const savedPost = await apiRequest(API_CONFIG.endpoints.posts, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(newPost) }); postsData.unshift(savedPost || newPost); } catch (error) { alert(error.message); return; }
             renderOverview();
             navigateTo('media');
@@ -2041,6 +2373,7 @@
             renderOverview();
             updateAccountUI();
             restoreSession();
+            loadLiteratureCategories();
             loadBackendContent();
         }
         init();
