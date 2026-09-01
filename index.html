@@ -192,33 +192,14 @@
         .nav-search input:focus { border: none; box-shadow: none; outline: none; }
         .nav-search input::placeholder { color: var(--text-muted); }
         .nav-search .search-icon {
-            width: 14px;
-            height: 14px;
+            width: 18px;
+            height: 18px;
             color: var(--text-muted);
-            position: relative;
             flex-shrink: 0;
-        }
-        .nav-search .search-icon::before {
-            content: '';
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            left: 0;
-            top: 0;
-            border: 2px solid currentColor;
-            border-radius: 50%;
-        }
-        .nav-search .search-icon::after {
-            content: '';
-            position: absolute;
-            width: 6px;
-            height: 2px;
-            left: 9px;
-            top: 11px;
-            background: currentColor;
-            border-radius: 2px;
-            transform: rotate(45deg);
-            transform-origin: left center;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
         }
         .account-area { display:flex; align-items:center; gap:8px; margin-left:14px; flex-shrink:0; }
         .account-avatar { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--accent-cyan); color:#fff; font-size:0.85rem; font-weight:700; cursor:pointer; overflow:hidden; }
@@ -234,12 +215,14 @@
 
         /* ========== 移动端搜索页 ========== */
         .mobile-search-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
-        .mobile-search-back { width: 34px; height: 34px; border: 0; background: transparent; color: var(--text-secondary); font-size: 1.3rem; line-height: 1; cursor: pointer; padding: 0; flex-shrink: 0; }
-        .mobile-search-box { flex: 1; display: flex; align-items: center; gap: 9px; background: var(--bg-input); border-radius: 21px; padding: 10px 16px; }
+        .mobile-search-back { width: 36px; height: 36px; border: 1px solid var(--border-color); border-radius: 50%; background: var(--bg-card); color: var(--text-primary); cursor: pointer; padding: 0; flex-shrink: 0; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow); transition: all var(--transition); }
+        .mobile-search-back:hover { color: var(--accent-cyan); border-color: var(--accent-cyan); }
+        .mobile-search-back svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .mobile-search-box { flex: 1; display: flex; align-items: center; gap: 9px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 21px; padding: 10px 16px; box-shadow: var(--shadow); transition: border-color var(--transition), box-shadow var(--transition); }
+        .mobile-search-box:focus-within { border-color: var(--accent-cyan); box-shadow: 0 0 0 3px rgba(43,167,255,0.12); }
         .mobile-search-box input { border: 0; background: transparent; padding: 0; font-size: 0.92rem; }
-        .mobile-search-box .search-icon { width: 16px; height: 16px; color: var(--text-muted); flex-shrink: 0; }
-        .mobile-search-box .search-icon::before { width: 9px; height: 9px; }
-        .mobile-search-box .search-icon::after { width: 7px; left: 10px; top: 12px; }
+        .mobile-search-box .search-icon { width: 17px; height: 17px; color: var(--text-muted); flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+        .mobile-search-clear { border: 0; background: #e3e5ea; color: var(--text-secondary); width: 18px; height: 18px; border-radius: 50%; font-size: 0.82rem; line-height: 1; padding: 0; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
         .search-group { margin-bottom: 20px; }
         .search-item { display: flex; align-items: center; gap: 10px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 8px; cursor: pointer; transition: background var(--transition); }
         .search-item:active { background: var(--bg-card-hover); }
@@ -440,9 +423,6 @@
         .media-latest { max-width: 920px; margin: 0 auto; }
 
         /* ========== 文献库布局 ========== */
-        .lit-layout { display: grid; grid-template-columns: 240px 1fr; gap: 28px; align-items: start; }
-        .lit-sidebar { position: sticky; top: calc(var(--nav-height) + 24px); display: flex; flex-direction: column; gap: 6px; }
-        .lit-sidebar .sidebar-title { font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 6px; padding-left: 8px; }
         .lit-cat-btn {
             display: flex;
             align-items: center;
@@ -554,18 +534,25 @@
         .profile-signature { text-align:center; color:var(--text-secondary); font-size:0.85rem; margin:8px 0 18px; }
         .profile-section { margin-bottom:24px; }
         .profile-section h2, .admin-panel h2 { font-size:1.1rem; margin-bottom:14px; }
-        .profile-top { position:relative; display:flex; align-items:center; gap:26px; padding:6px 4px 26px; }
-        .profile-top .profile-avatar { width:96px; height:96px; margin:0; font-size:2.2rem; flex-shrink:0; }
-        .profile-info { flex:1; min-width:0; display:flex; flex-direction:column; gap:9px; }
-        .profile-info .profile-name { text-align:left; font-size:1.35rem; line-height:1.2; }
-        .profile-info .profile-signature { text-align:left; margin:0; font-size:0.88rem; }
-        .profile-stats { display:flex; align-items:center; gap:30px; font-size:0.86rem; color:var(--text-secondary); flex-wrap:wrap; }
-        .profile-stats b { color:var(--text-primary); font-size:1.02rem; margin-right:6px; font-weight:700; }
+        .profile-top { position:relative; display:flex; align-items:center; gap:22px; padding:2px 4px 20px; }
+        .profile-top .profile-avatar { width:88px; height:88px; margin:0; font-size:2rem; flex-shrink:0; }
+        .profile-info { flex:1; min-width:0; display:flex; flex-direction:column; gap:8px; }
+        .profile-info .profile-name { text-align:left; font-size:1.25rem; line-height:1.2; }
+        .profile-info .profile-signature { text-align:left; margin:0; font-size:0.85rem; }
+        .profile-stats { display:flex; align-items:center; gap:24px; font-size:0.84rem; color:var(--text-secondary); flex-wrap:wrap; }
+        .profile-stats b { color:var(--text-primary); font-size:0.98rem; margin-right:5px; font-weight:700; }
         .profile-side-actions { position:absolute; top:0; right:0; display:flex; gap:8px; align-items:center; }
         .follow-btn { min-width:96px; }
-        .profile-divider { height:1px; background:var(--border-color); margin:0 0 24px; }
-        .profile-tabs { display:flex; justify-content:center; gap:14px; margin-bottom:26px; }
-        .profile-tab-btn { padding:9px 38px; border-radius:22px; border:1px solid var(--border-light); background:transparent; color:var(--text-secondary); font-size:0.92rem; transition:all var(--transition); }
+        .profile-divider { height:1px; background:var(--border-color); margin:0 0 18px; }
+        .profile-tabs { display:flex; justify-content:center; gap:10px; margin-bottom:18px; }
+        .profile-tab-btn { padding:7px 26px; border-radius:18px; border:1px solid var(--border-light); background:transparent; color:var(--text-secondary); font-size:0.85rem; transition:all var(--transition); }
+        .profile-section h2 { font-size:0.98rem; margin-bottom:10px; }
+        .profile-section .post-item { padding:12px 14px; }
+        .profile-post-list { gap:8px; }
+        .edit-avatar-row { display:flex; align-items:center; gap:14px; margin-bottom:18px; }
+        .edit-avatar-preview { width:56px; height:56px; border-radius:50%; overflow:hidden; background:var(--accent-cyan); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.3rem; flex-shrink:0; }
+        .edit-avatar-preview img { width:100%; height:100%; object-fit:cover; }
+        .edit-avatar-label { font-size:0.8rem; color:var(--text-secondary); margin-bottom:6px; }
         .profile-tab-btn:hover { color:var(--text-primary); border-color:var(--accent-cyan); background:rgba(43,167,255,0.05); }
         .profile-tab-btn.active { background:var(--accent-cyan); border-color:var(--accent-cyan); color:#fff; font-weight:600; }
         .history-line { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
@@ -596,12 +583,17 @@
         .lit-item-thumb .thumb-placeholder .icon { font-size: 2rem; }
 
         /* ========== 原创志论坛样式 ========== */
-        .forum-layout { display: flex; flex-direction: column; gap: 20px; }
-        .forum-toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 0; }
-        .forum-tabs { display: flex; gap: 4px; background: var(--bg-input); border-radius: var(--radius-sm); padding: 3px; border: 1px solid var(--border-color); }
-        .forum-tab-btn { padding: 7px 18px; border-radius: 4px; background: transparent; color: var(--text-secondary); font-size: 0.85rem; transition: all var(--transition); border: none; }
-        .forum-tab-btn.active { background: var(--accent-cyan); color: #fff; font-weight: 500; }
-        .forum-tab-btn:hover:not(.active) { color: var(--text-primary); }
+        /* ========== 分类筛选下拉按钮（文献库 / 原创志右上角） ========== */
+        .filter-menu-wrap { position: relative; display: flex; justify-content: flex-end; margin-bottom: 14px; }
+        .filter-menu-btn { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border-light); background: var(--bg-card); color: var(--text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow); transition: all var(--transition); }
+        .filter-menu-btn:hover { color: var(--accent-cyan); border-color: var(--accent-cyan); }
+        .filter-menu-btn svg { width: 17px; height: 17px; }
+        .filter-menu-btn svg path { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+        .filter-menu { position: absolute; top: calc(100% + 8px); right: 0; min-width: 172px; padding: 6px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); box-shadow: var(--shadow-hover); z-index: 1200; opacity: 0; pointer-events: none; transform: translateY(-6px); transition: all var(--transition); }
+        .filter-menu.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .filter-menu .forum-tab-btn { display: block; width: 100%; text-align: left; padding: 10px 12px; border-radius: var(--radius-sm); background: transparent; border: none; color: var(--text-secondary); font-size: 0.88rem; transition: all var(--transition); }
+        .filter-menu .forum-tab-btn:hover:not(.active) { background: rgba(0,0,0,0.045); color: var(--text-primary); }
+        .filter-menu .forum-tab-btn.active { background: rgba(43,167,255,0.08); color: var(--accent-cyan); font-weight: 600; }
 
         .post-item {
             padding: 20px 24px;
@@ -806,10 +798,6 @@
 
         /* ========== 响应式 ========== */
         @media (max-width: 900px) {
-            .lit-layout { grid-template-columns: 1fr; }
-            .lit-sidebar { position: static; flex-direction: row; flex-wrap: wrap; gap: 6px; }
-            .lit-sidebar .sidebar-title { width: 100%; margin-bottom: 0; }
-            .lit-cat-btn { width: auto; }
             .hero-fullpage h1 { font-size: 2rem; }
             .nav-search { width: 140px; }
             .nav-search:focus-within { width: 180px; }
@@ -850,8 +838,6 @@
             }
             .nav-search input { display: none; }
             .nav-search .search-icon { width: 22px; height: 22px; cursor: pointer; color: var(--text-primary); }
-            .nav-search .search-icon::before { width: 13px; height: 13px; border-width: 2.4px; }
-            .nav-search .search-icon::after { width: 10px; height: 2.4px; left: 14px; top: 18px; }
             .nav-mobile-publish-wrap { display: block; grid-column: 3; grid-row: 1; justify-self: end; margin-right: 12px; position: relative; }
             .nav-mobile-publish { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border-radius: 50%; background: transparent; color: var(--text-primary); }
             .nav-mobile-publish svg { width: 27px; height: 27px; }
@@ -899,32 +885,11 @@
             .publish-canvas { min-height: 92px; padding: 14px; }
             .publish-type { font-size: 0.75rem; padding-left: 3px; padding-right: 3px; }
             .profile-layout, .admin-grid { grid-template-columns: 1fr; }
-            .forum-toolbar { flex-direction: column; align-items: stretch; }
-            .forum-tabs { justify-content: center; }
-            .breadcrumb { display: none; }
             .page-header { margin-bottom: 14px; padding-bottom: 12px; }
             .page-header h1 { font-size: 1.25rem; }
             .page-header .subtitle { font-size: 0.76rem; }
-            .media-subnav {
-                flex-direction: row;
-                margin: -16px -12px 16px;
-                padding: 0 6px;
-                background: var(--bg-card);
-                border: none;
-                border-bottom: 1px solid var(--border-color);
-                border-radius: 0;
-                overflow-x: auto;
-            }
-            .media-subnav-btn {
-                flex: 1;
-                padding: 13px 6px;
-                border-radius: 0;
-                text-align: center;
-                position: relative;
-                font-size: 0.9rem;
-            }
-            .media-subnav-btn.active { background: transparent; color: var(--accent-cyan); font-weight: 600; }
-            .media-subnav-btn.active::after { content: ''; position: absolute; left: 50%; bottom: 5px; transform: translateX(-50%); width: 30px; height: 3px; border-radius: 2px; background: var(--accent-cyan); }
+            .media-subnav { margin: 0 0 14px; }
+            .media-subnav-btn { flex: 1; padding: 9px 4px; text-align: center; font-size: 0.88rem; }
             .article-card { flex-direction: column; gap: 10px; padding: 14px; }
             .article-card-cover { width: 100%; aspect-ratio: 16/9; }
             .article-card-footer { display: flex; flex-wrap: wrap; row-gap: 6px; }
@@ -958,7 +923,7 @@
             <a href="#tools" class="nav-tab" data-page="tools" onclick="navigateTo('tools')">实用工具</a>
         </div>
         <div class="nav-search">
-            <span class="search-icon" aria-hidden="true" onclick="mobileSearchTap(event)"></span>
+            <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true" onclick="mobileSearchTap(event)"><circle cx="11" cy="11" r="7"></circle><path d="M20.4 20.4l-4.5-4.5"></path></svg>
             <input type="text" placeholder="搜索文献、帖子、数据集..." id="globalSearchInput" oninput="handleGlobalSearch(this.value)">
         </div>
         <div class="account-area" id="accountArea">
@@ -1022,44 +987,28 @@
 
             <!-- 文献库子页面 -->
             <div id="media-literature" class="media-subpage" style="display:none;">
-                <div class="page-header">
-                    <div class="breadcrumb">媒体平台 <span>›</span> 文献库</div>
-                    <h1>文献库</h1>
-                    <p class="subtitle">学术文献索引 · 精要提炼 · 核心图表</p>
+                <div class="filter-menu-wrap">
+                    <button class="filter-menu-btn" onclick="toggleFilterMenu('litFilterMenu', event)" aria-label="文献分类筛选"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+                    <div class="filter-menu" id="litFilterMenu"></div>
                 </div>
-                <div class="lit-layout">
-                    <!-- 侧边栏将动态生成 -->
-                    <div class="lit-sidebar" id="litSidebar"></div>
-                    <div class="lit-list" id="litList"></div>
-                </div>
+                <div class="lit-list" id="litList"></div>
             </div>
 
             <!-- 原创志子页面 -->
             <div id="media-original" class="media-subpage" style="display:none;">
-                <div class="page-header">
-                    <div class="breadcrumb">媒体平台 <span>›</span> 原创志</div>
-                    <h1>原创志</h1>
-                    <p class="subtitle">深度分析 · 数据记录 · 自由发帖</p>
-                </div>
-                <div class="forum-layout">
-                    <div class="forum-toolbar">
-                        <div class="forum-tabs">
-                            <button class="forum-tab-btn active" data-subcat="all" onclick="filterPosts('all', this)">全部</button>
-                            <button class="forum-tab-btn" data-subcat="article" onclick="filterPosts('article', this)">文章</button>
-                            <button class="forum-tab-btn" data-subcat="dynamic" onclick="filterPosts('dynamic', this)">动态</button>
-                        </div>
+                <div class="filter-menu-wrap">
+                    <button class="filter-menu-btn" onclick="toggleFilterMenu('forumFilterMenu', event)" aria-label="内容分类筛选"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+                    <div class="filter-menu" id="forumFilterMenu">
+                        <button class="forum-tab-btn active" data-subcat="all" onclick="filterPosts('all', this)">全部</button>
+                        <button class="forum-tab-btn" data-subcat="article" onclick="filterPosts('article', this)">文章</button>
+                        <button class="forum-tab-btn" data-subcat="dynamic" onclick="filterPosts('dynamic', this)">动态</button>
                     </div>
-                    <div id="postList" style="display:flex; flex-direction:column; gap:12px;"></div>
                 </div>
+                <div id="postList" style="display:flex; flex-direction:column; gap:12px;"></div>
             </div>
 
             <!-- 数据中心子页面 -->
             <div id="media-datacenter" class="media-subpage" style="display:none;">
-                <div class="page-header">
-                    <div class="breadcrumb">媒体平台 <span>›</span> 数据中心</div>
-                    <h1>数据中心</h1>
-                    <p class="subtitle">历史气象数据集存档 · 纯粹的数据仓库</p>
-                </div>
                 <div class="data-grid" id="dataGrid"></div>
             </div>
         </div>
@@ -1332,7 +1281,7 @@
             interactionPostId = id;
             const isProfile = mode === 'profile';
             document.getElementById('interactionTitle').textContent = isProfile ? '编辑资料' : '发表评论';
-            document.getElementById('interactionFields').innerHTML = isProfile ? `<div class="form-group"><label>姓名</label><input name="name" value="${currentUser.name || ''}" required></div><div class="form-group"><label>手机号</label><input name="phone" value="${currentUser.phone || ''}" required></div><div class="form-group"><label>个人签名</label><input name="signature" value="${currentUser.signature || ''}"></div><div class="form-group"><label>新密码（留空不修改）</label><input name="password" type="password"></div>` : '<div class="form-group"><label>评论内容</label><textarea name="content" required></textarea></div>';
+            document.getElementById('interactionFields').innerHTML = isProfile ? `<div class="edit-avatar-row"><div class="edit-avatar-preview">${currentUser.avatar ? `<img src="${currentUser.avatar}" alt="头像">` : (currentUser.name || currentUser.username || '用').slice(0, 1).toUpperCase()}</div><div><div class="edit-avatar-label">头像</div><label class="file-choice" for="editAvatarInput">更换头像</label><input id="editAvatarInput" type="file" accept="image/*" hidden onchange="previewEditAvatar(this.files[0])"></div></div><div class="form-group"><label>姓名</label><input name="name" value="${currentUser.name || ''}" required></div><div class="form-group"><label>手机号</label><input name="phone" value="${currentUser.phone || ''}" required></div><div class="form-group"><label>个人签名</label><input name="signature" value="${currentUser.signature || ''}"></div><div class="form-group"><label>新密码（留空不修改）</label><input name="password" type="password"></div>` : '<div class="form-group"><label>评论内容</label><textarea name="content" required></textarea></div>';
             document.getElementById('interactionModal').classList.add('show');
             document.body.style.overflow = 'hidden';
         }
@@ -1341,7 +1290,12 @@
             event.preventDefault();
             const data = Object.fromEntries(new FormData(event.target).entries());
             try {
-                if (interactionMode === 'profile') await saveProfile(data);
+                if (interactionMode === 'profile') {
+                    const avatarInput = document.getElementById('editAvatarInput');
+                    const avatarFile = avatarInput && avatarInput.files[0];
+                    if (avatarFile) await uploadAvatar(avatarFile);
+                    await saveProfile(data);
+                }
                 else {
                     await apiRequest(postEndpoint(API_CONFIG.endpoints.postComments, interactionPostId), { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ content:data.content }) });
                     const post = postsData.find(item => item.id === interactionPostId);
@@ -1435,10 +1389,8 @@
             const likesReceived = ownPosts.reduce((sum, p) => sum + (p.likes || 0), 0);
             const tabs = [['publish', '发布'], ['favorites', '收藏'], ['history', '历史']];
             document.getElementById('page-profile').innerHTML = `
-                <div class="page-header"><h1>个人中心</h1><p class="subtitle">账户资料与个人内容</p></div>
                 <div class="profile-top">
-                    <div class="profile-avatar" title="点击更换头像" onclick="document.getElementById('avatarInput').click()">${avatar}</div>
-                    <input class="avatar-input" type="file" id="avatarInput" accept="image/*" onchange="uploadAvatar(this.files[0])">
+                    <div class="profile-avatar">${avatar}</div>
                     <div class="profile-info">
                         <div class="profile-name">${currentUser.name || currentUser.username}</div>
                         <div class="profile-signature">${currentUser.signature || '还没有个人签名'}</div>
@@ -1446,7 +1398,6 @@
                     </div>
                     <div class="profile-side-actions">
                         <button class="btn btn-outline btn-sm" onclick="editProfile()">编辑资料</button>
-                        <button class="btn btn-outline btn-sm" onclick="document.getElementById('avatarInput').click()">更换头像</button>
                     </div>
                 </div>
                 <div class="profile-divider"></div>
@@ -1568,8 +1519,20 @@
                 updateAccountUI();
                 renderProfile();
             } catch (error) { alert(error.message); }
-            const input = document.getElementById('avatarInput');
-            if (input) input.value = '';
+            ['avatarInput', 'editAvatarInput'].forEach(function (inputId) {
+                const input = document.getElementById(inputId);
+                if (input) input.value = '';
+            });
+        }
+
+        function previewEditAvatar(file) {
+            if (!file || !file.type.startsWith('image/')) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                const preview = document.getElementById('editAvatarPreview');
+                if (preview) preview.innerHTML = `<img src="${reader.result}" alt="头像预览">`;
+            };
+            reader.readAsDataURL(file);
         }
 
         async function renderAdminCenter() {
@@ -1894,7 +1857,7 @@
                 literatureCategories.push(savedCategory);
                 localStorage.setItem('weatherPlatformLiteratureCategories', JSON.stringify(literatureCategories));
                 populateLiteratureCategorySelect(savedCategory.value);
-                if (document.getElementById('litSidebar')) {
+                if (document.getElementById('litFilterMenu')) {
                     renderLiteratureSidebar(currentLitCategory);
                 }
             } catch (error) { alert(error.message); }
@@ -2055,21 +2018,20 @@
         }
 
         function renderLiteratureSidebar(activeCategory = 'all') {
-            const sidebar = document.getElementById('litSidebar');
-            if (!sidebar) return;
+            const menu = document.getElementById('litFilterMenu');
+            if (!menu) return;
             const categories = literatureCategories;
             const counts = {};
             categories.forEach(cat => {
                 counts[cat.value] = literatureData.filter(d => d.category === cat.value).length;
             });
             const total = literatureData.length;
-            let html = '<div class="sidebar-title">学科分类</div>';
-            html += `<button class="lit-cat-btn ${activeCategory === 'all' ? 'active' : ''}" data-cat="all" onclick="filterLiterature('all', this)">全部文献 <span class="cat-count">${total}</span></button>`;
+            let html = `<button class="lit-cat-btn ${activeCategory === 'all' ? 'active' : ''}" data-cat="all" onclick="filterLiterature('all', this)">全部文献 <span class="cat-count">${total}</span></button>`;
             categories.forEach(cat => {
                 const count = counts[cat.value] || 0;
                 html += `<button class="lit-cat-btn ${activeCategory === cat.value ? 'active' : ''}" data-cat="${cat.value}" onclick="filterLiterature('${cat.value}', this)">${cat.label} <span class="cat-count">${count}</span></button>`;
             });
-            sidebar.innerHTML = html;
+            menu.innerHTML = html;
         }
 
         async function renderLiterature() {
@@ -2535,7 +2497,8 @@
         document.getElementById('datasetUploadModal').addEventListener('click', function(e) { if(e.target===this) closeDatasetUploadModal(); });
         document.addEventListener('click', closeAccountMenu);
         document.addEventListener('click', closeMobilePublish);
-        document.addEventListener('keydown', function(e) { if(e.key==='Escape') { closePostModal(); closeInteractionModal(); closeDatasetUploadModal(); closeMobilePublish(); } });
+        document.addEventListener('click', closeFilterMenus);
+        document.addEventListener('keydown', function(e) { if(e.key==='Escape') { closePostModal(); closeInteractionModal(); closeDatasetUploadModal(); closeMobilePublish(); closeFilterMenus(); } });
 
         // ==================== 全局搜索 ====================
         function matchesSearchTitle(title) {
@@ -2569,6 +2532,21 @@
             if (menu) menu.classList.remove('show');
         }
 
+        function toggleFilterMenu(id, event) {
+            event.stopPropagation();
+            closeAccountMenu();
+            closeMobilePublish();
+            const menu = document.getElementById(id);
+            if (!menu) return;
+            const wasOpen = menu.classList.contains('show');
+            closeFilterMenus();
+            if (!wasOpen) menu.classList.add('show');
+        }
+
+        function closeFilterMenus() {
+            document.querySelectorAll('.filter-menu.show').forEach(m => m.classList.remove('show'));
+        }
+
         function mobilePublishAction(kind) {
             closeMobilePublish();
             if (kind === 'dynamic') openPostModal('dynamic');
@@ -2582,18 +2560,27 @@
             if (!container) return;
             container.innerHTML = `
                 <div class="mobile-search-bar">
-                    <button class="mobile-search-back" onclick="navigateTo('home')" aria-label="返回">←</button>
-                    <div class="mobile-search-box"><span class="search-icon" aria-hidden="true"></span><input type="text" id="mobileSearchInput" placeholder="搜索文章、动态、论文、数据集" oninput="handleMobileSearch(this.value)"></div>
+                    <button class="mobile-search-back" onclick="navigateTo('home')" aria-label="返回"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button>
+                    <div class="mobile-search-box"><svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20.4 20.4l-4.5-4.5"></path></svg><input type="text" id="mobileSearchInput" placeholder="搜索文章、动态、论文、数据集" oninput="handleMobileSearch(this.value)"><button class="mobile-search-clear" id="mobileSearchClear" onclick="clearMobileSearch()" aria-label="清空" hidden>×</button></div>
                 </div>
                 <div id="mobileSearchResults"></div>`;
             const input = document.getElementById('mobileSearchInput');
             if (input) setTimeout(function () { input.focus(); }, 200);
         }
 
+        function clearMobileSearch() {
+            const input = document.getElementById('mobileSearchInput');
+            if (input) input.value = '';
+            handleMobileSearch('');
+            if (input) input.focus();
+        }
+
         function handleMobileSearch(value) {
             const query = (value || '').trim().toLowerCase();
             const container = document.getElementById('mobileSearchResults');
             if (!container) return;
+            const clearBtn = document.getElementById('mobileSearchClear');
+            if (clearBtn) clearBtn.hidden = !query;
             if (!query) { container.innerHTML = ''; return; }
             const posts = postsData.filter(p => (p.title || '').toLowerCase().includes(query) || (p.author || '').toLowerCase().includes(query));
             const lits = literatureData.filter(d => (d.title || '').toLowerCase().includes(query) || (d.authors || '').toLowerCase().includes(query));
