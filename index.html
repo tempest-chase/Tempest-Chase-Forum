@@ -464,7 +464,6 @@
         .edit-avatar-row { display:flex; align-items:center; gap:14px; margin-bottom:18px; }
         .edit-avatar-preview { width:56px; height:56px; border-radius:50%; overflow:hidden; background:var(--accent-cyan); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.3rem; flex-shrink:0; }
         .edit-avatar-preview img { width:100%; height:100%; object-fit:cover; }
-        .edit-avatar-label { font-size:0.8rem; color:var(--text-secondary); margin-bottom:6px; }
         .profile-tab-btn:hover { color:var(--text-primary); border-color:var(--accent-cyan); background:rgba(43,167,255,0.05); }
         .profile-tab-btn.active { background:var(--accent-cyan); border-color:var(--accent-cyan); color:#fff; font-weight:600; }
         .history-line { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
@@ -492,15 +491,30 @@
         .lit-item-thumb .thumb-placeholder { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 20px; color: var(--text-muted); }
         .lit-item-thumb .thumb-placeholder .icon { font-size: 2rem; }
 
-        /* ========== 分类筛选按钮（文献库下拉 / 原创志分类） ========== */
-        .filter-menu-wrap { position: relative; display: flex; justify-content: flex-end; margin-bottom: 14px; }
-        .filter-menu-btn { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border-light); background: var(--bg-card); color: var(--text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow); transition: all var(--transition); }
-        .filter-menu-btn:hover { color: var(--accent-cyan); border-color: var(--accent-cyan); }
+        /* ========== 分类筛选按钮（原创志 / 文献库） ========== */
+        .filter-menu-wrap { position: relative; display: flex; justify-content: flex-end; gap: 10px; }
+        /* 悬浮式：不占独立一行，滚动时钉在导航栏下方（整体右下偏移，避开板块边缘线） */
+        .filter-menu-wrap.is-floating { position: sticky; top: calc(var(--nav-height) + 12px); z-index: 30; height: 0; margin-bottom: 0; align-items: flex-start; padding-right: 20px; }
+        .filter-menu-wrap.is-floating .filter-menu-btn { margin-top: 18px; }
+        .filter-menu-btn { position: relative; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border-light); background: var(--bg-card); color: var(--text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow); transition: all var(--transition); flex-shrink: 0; }
+        .filter-menu-btn:hover { color: var(--accent-cyan); border-color: var(--accent-cyan); box-shadow: var(--shadow-hover); }
+        /* 已选分类（非“全部”）时的小圆点提示 */
+        .filter-menu-btn.is-filtered { color: var(--accent-cyan); border-color: rgba(43,167,255,0.45); background: rgba(43,167,255,0.08); }
+        .filter-menu-btn.is-filtered::after { content: ''; position: absolute; top: -2px; right: -2px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent-cyan); border: 2px solid var(--bg-secondary); }
         .filter-menu-btn svg { width: 17px; height: 17px; }
-        .filter-menu-btn svg path { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+        .filter-menu-btn svg path { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
         .filter-menu { position: absolute; top: calc(100% + 8px); right: 0; min-width: 172px; padding: 6px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); box-shadow: var(--shadow-hover); z-index: 1200; opacity: 0; pointer-events: none; transform: translateY(-6px); transition: all var(--transition); }
         .filter-menu.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
-        /* —— 原创志分类按钮（首页内联使用，与换一批同一款设计） —— */
+        .filter-menu-wrap.is-floating .filter-menu { top: 64px; right: 20px; }
+        /* 原创志：分类 + 换一批 两枚按钮，按钮中心与首篇文章标题同高；下拉对齐分类按钮右缘 */
+        .filter-menu-wrap.feed-float-tools .filter-menu-btn { margin-top: 11px; }
+        .filter-menu-wrap.feed-float-tools .filter-menu { top: 57px; right: 68px; }
+        /* ========== 一键返回顶部（原创志 / 文献库，左下角小火箭） ========== */
+        .back-to-top-btn { position: fixed; left: 24px; bottom: 28px; z-index: 900; opacity: 0; transform: translateY(12px); pointer-events: none; transition: opacity var(--transition), transform var(--transition), color var(--transition), border-color var(--transition), box-shadow var(--transition); }
+        .back-to-top-btn.is-visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        .back-to-top-btn svg { width: 18px; height: 18px; }
+        .back-to-top-btn svg path { stroke-width: 1.8; }
+        /* —— 分类按钮（首页 / 文献库下拉内的选项） —— */
         .forum-tab-btn {
             display: inline-flex;
             align-items: center;
@@ -518,6 +532,7 @@
         }
         .forum-tab-btn:hover:not(.active) { background: rgba(0,0,0,0.045); color: var(--text-primary); }
         .forum-tab-btn.active { background: rgba(43,167,255,0.08); color: var(--accent-cyan); font-weight: 600; }
+        .filter-menu .forum-tab-btn { display: block; width: 100%; text-align: left; padding: 10px 12px; }
 
         .post-item {
             padding: 20px 24px;
@@ -578,7 +593,7 @@
         .dynamic-card-cover img { width:100%; height:100%; object-fit:cover; transition:transform 0.35s ease; }
         .dynamic-card-cover .dynamic-cover-placeholder { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; color:var(--text-muted); font-size:0.82rem; background:linear-gradient(145deg, #f7f8fa, #eef0f4); }
         .dynamic-card-cover .dynamic-cover-placeholder .icon { font-size:2rem; }
-        .dynamic-card-title { flex-shrink:0; padding:9px 12px 0; font-size:0.86rem; font-weight:600; line-height:1.4; color:var(--text-primary); display:-webkit-box; -webkit-line-clamp:2; line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+        .dynamic-card-title { flex-shrink:0; padding:9px 12px 0; font-size:0.86rem; font-weight:600; line-height:1.4; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .dynamic-card-footer { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 12px 10px; background:var(--bg-card); transition:background var(--transition); }
         .dynamic-card:hover .dynamic-card-footer { background:var(--bg-card-hover); }
         .dynamic-card-author { display:flex; align-items:center; gap:7px; min-width:0; font-size:0.78rem; color:var(--text-secondary); cursor:pointer; }
@@ -595,28 +610,14 @@
         .dynamic-card-like:hover .thumb-icon { transform:scale(1.12); }
         .dynamic-card-like .thumb-icon { width:15px; height:15px; margin-right:0; vertical-align:middle; }
 
-        /* ========== 原创志混合信息流（文章与动态随机交错） ========== */
-        .mixed-feed { display:flex; flex-direction:column; gap:26px; }
-        .feed-toolbar { display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; padding:0 2px 4px; }
-        .feed-toolbar-title { display:flex; align-items:baseline; gap:10px; font-size:1.02rem; font-weight:600; color:var(--text-primary); }
-        .feed-toolbar-actions { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-        .feed-filter-group { display:inline-flex; align-items:center; gap:2px; padding:3px; background:var(--bg-input); border:1px solid var(--border-color); border-radius:var(--radius-sm); }
-        .feed-filter-group .forum-tab-btn { padding:6px 15px; }
-        .feed-filter-group .forum-tab-btn.active { background:rgba(43,167,255,0.1); }
-        /* 换一批：与分类按钮同一款设计（透明底、圆角、灰字，悬停 / 激活变蓝） */
-        .feed-shuffle { padding:6px 15px; }
-        .feed-shuffle .shuffle-icon { display:inline-block; font-size:0.95rem; line-height:1; transition:transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-        .feed-shuffle:hover .shuffle-icon { transform:rotate(180deg); }
+        /* ========== 原创志混合信息流（文章与动态交替出现） ========== */
+        .mixed-feed { display:flex; flex-direction:column; gap:30px; }
+        /* 换一批：圆形图标按钮，与分类按钮同一款设计 */
+        .feed-shuffle-btn svg { transition:transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .feed-shuffle-btn:hover svg { transform:rotate(180deg); }
         .feed-block { display:flex; flex-direction:column; gap:12px; }
         .feed-block.is-new { animation:feedBlockIn 0.44s cubic-bezier(0.22, 0.8, 0.32, 1) both; }
         @keyframes feedBlockIn { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-        .feed-block-head { display:flex; align-items:center; gap:10px; }
-        .feed-block-head::after { content:''; flex:1; height:1px; background:linear-gradient(90deg, var(--border-color), rgba(232,233,238,0)); }
-        .feed-block-tag { display:inline-flex; align-items:center; gap:7px; padding:3px 11px; border-radius:999px; font-size:0.76rem; font-weight:600; letter-spacing:0.04em; border:1px solid transparent; }
-        .feed-block-tag .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
-        .feed-block-tag.is-article { color:var(--accent-cyan); background:rgba(43,167,255,0.07); border-color:rgba(43,167,255,0.25); }
-        .feed-block-tag.is-dynamic { color:var(--accent-teal); background:rgba(0,229,160,0.12); border-color:rgba(0,229,160,0.3); }
-        .feed-block-count { font-size:0.74rem; color:var(--text-muted); letter-spacing:0.02em; }
         .dynamic-row { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:16px; }
         .post-item:focus-visible { outline:2px solid var(--accent-cyan); outline-offset:3px; }
         .feed-footer { display:flex; flex-direction:column; align-items:center; gap:14px; padding:6px 0 2px; }
@@ -643,10 +644,13 @@
         .data-card:hover { background: var(--bg-card-hover); border-color: var(--border-light); box-shadow: var(--shadow-hover); transform: translateY(-2px); }
         .data-card-header { display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
         .data-card-title { font-size: 1rem; font-weight: 600; flex: 1; line-height: 1.4; }
-        .data-card-region { display: flex; align-items: center; gap: 4px; font-size: 0.8rem; color: var(--accent-amber); }
         .data-card-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.7; flex: 1; }
-        .data-card-stats { display: flex; gap: 16px; font-size: 0.78rem; color: var(--text-muted); border-top: 1px solid var(--border-color); padding-top: 12px; margin-top: 4px; }
-        .data-card-stats span { display: flex; align-items: center; gap: 4px; }
+        /* 数据资料（与“上传数据文件”表单字段一致：时间 / 地点 / 文件格式 / 文件大小 / 文件类型 / 昵称） */
+        .data-card-info { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px 18px; font-size: 0.8rem; border-top: 1px solid var(--border-color); padding-top: 13px; margin-top: 4px; }
+        .data-card-info-item { display: flex; align-items: baseline; gap: 7px; min-width: 0; }
+        .data-card-info-item .info-label { flex-shrink: 0; color: var(--text-muted); font-size: 0.75rem; letter-spacing: 0.02em; }
+        .data-card-info-item .info-label::after { content: '：'; }
+        .data-card-info-item .info-value { color: var(--text-primary); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .data-card .btn { margin-top: auto; align-self: flex-start; }
         .tools-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:20px; }
         .tool-card { padding:24px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); display:flex; flex-direction:column; gap:10px; transition:all var(--transition); }
@@ -834,7 +838,8 @@
             .dataset-auto-grid { grid-template-columns: 1fr; }
             .section-grid { grid-template-columns: 1fr; gap: 16px; }
             .data-grid { grid-template-columns: 1fr; }
-            .publish-panel { width: 100%; min-height: 0; padding: 16px 14px 12px; }
+            /* 手机端：发布栏隐藏，只保留右上角的发布按钮（PC 端不受影响） */
+            .publish-panel { display: none; }
             .publish-canvas { min-height: 92px; padding: 14px; }
             .publish-type { font-size: 0.75rem; padding-left: 3px; padding-right: 3px; }
             .profile-layout, .admin-grid { grid-template-columns: 1fr; }
@@ -850,8 +855,7 @@
             .article-card-footer .card-date { margin-left: auto; }
             .dynamic-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
             .dynamic-row { grid-template-columns: 1fr; gap: 12px; }
-            .feed-toolbar { flex-direction: column; align-items: flex-start; }
-            .feed-toolbar-actions { width: 100%; justify-content: space-between; }
+            .filter-menu-wrap.is-floating { top: 106px; }
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
@@ -922,13 +926,18 @@
                     </div>
                 </div>
                 <div class="media-latest">
+                    <div class="filter-menu-wrap is-floating feed-float-tools">
+                        <button class="filter-menu-btn" id="overviewFilterBtn" type="button" onclick="toggleFilterMenu('overviewFilterMenu', event)" aria-label="内容分类筛选" title="内容分类"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+                        <button class="filter-menu-btn feed-shuffle-btn" type="button" onclick="reshuffleOverviewFeed()" aria-label="换一批" title="换一批"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M20.5 12a8.5 8.5 0 1 1-2.5-6"/><path d="M14.6 6h3.4v-3.4"/></svg></button>
+                        <div class="filter-menu" id="overviewFilterMenu"></div>
+                    </div>
                     <div id="overviewFeed" class="mixed-feed" role="feed" aria-label="原创志内容流"></div>
                 </div>
             </div>
 
             <!-- 文献库子页面 -->
             <div id="media-literature" class="media-subpage" style="display:none;">
-                <div class="filter-menu-wrap">
+                <div class="filter-menu-wrap is-floating">
                     <button class="filter-menu-btn" onclick="toggleFilterMenu('litFilterMenu', event)" aria-label="文献分类筛选"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
                     <div class="filter-menu" id="litFilterMenu"></div>
                 </div>
@@ -951,6 +960,9 @@
         <div id="page-search" class="page-container" style="display:none;"></div>
         <div id="page-article-editor" class="page-container" style="display:none;"></div>
         <div id="page-literature-editor" class="page-container" style="display:none;"></div>
+
+        <!-- 一键返回顶部（原创志 / 文献库，固定左下角；下拉到一定位置才出现） -->
+        <button class="filter-menu-btn back-to-top-btn" id="backToTopBtn" type="button" onclick="scrollToTop()" aria-label="返回顶部" title="返回顶部"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></button>
     </div>
 
     <!-- ========== 账户弹窗 ========== -->
@@ -1208,7 +1220,7 @@
             interactionPostId = id;
             const isProfile = mode === 'profile';
             document.getElementById('interactionTitle').textContent = isProfile ? '编辑资料' : '发表评论';
-            document.getElementById('interactionFields').innerHTML = isProfile ? `<div class="edit-avatar-row"><div class="edit-avatar-preview">${currentUser.avatar ? `<img src="${currentUser.avatar}" alt="头像">` : (currentUser.name || currentUser.username || '用').slice(0, 1).toUpperCase()}</div><div><div class="edit-avatar-label">头像</div><label class="file-choice" for="editAvatarInput">更换头像</label><input id="editAvatarInput" type="file" accept="image/*" hidden onchange="previewEditAvatar(this.files[0])"></div></div><div class="form-group"><label>姓名</label><input name="name" value="${currentUser.name || ''}" required></div><div class="form-group"><label>手机号</label><input name="phone" value="${currentUser.phone || ''}" required></div><div class="form-group"><label>个人签名</label><input name="signature" value="${currentUser.signature || ''}"></div><div class="form-group"><label>新密码（留空不修改）</label><input name="password" type="password"></div>` : '<div class="form-group"><label>评论内容</label><textarea name="content" required></textarea></div>';
+            document.getElementById('interactionFields').innerHTML = isProfile ? `<div class="edit-avatar-row"><div class="edit-avatar-preview">${currentUser.avatar ? `<img src="${currentUser.avatar}" alt="头像">` : (currentUser.name || currentUser.username || '用').slice(0, 1).toUpperCase()}</div><div><label class="file-choice" for="editAvatarInput">更换头像</label><input id="editAvatarInput" type="file" accept="image/*" hidden onchange="previewEditAvatar(this.files[0])"></div></div><div class="form-group"><label>姓名</label><input name="name" value="${currentUser.name || ''}" required></div><div class="form-group"><label>手机号</label><input name="phone" value="${currentUser.phone || ''}" required></div><div class="form-group"><label>个人签名</label><input name="signature" value="${currentUser.signature || ''}"></div><div class="form-group"><label>新密码（留空不修改）</label><input name="password" type="password"></div>` : '<div class="form-group"><label>评论内容</label><textarea name="content" required></textarea></div>';
             document.getElementById('interactionModal').classList.add('show');
             document.body.style.overflow = 'hidden';
         }
@@ -1859,6 +1871,7 @@
 
             // 更新URL hash
             history.pushState(null, '', '#' + page);
+            updateBackToTop();
         }
 
         // 首页子页面切换
@@ -1881,6 +1894,7 @@
             if (tab === 'overview') { overviewFeedRenderedBlocks = 0; renderOverview(); }
             // 确保主媒体页面可见
             document.getElementById('page-media').style.display = 'block';
+            updateBackToTop();
         }
 
         function renderTools() {
@@ -1894,11 +1908,11 @@
             renderOverviewFeed();
         }
 
-        // ==================== 原创志混合信息流引擎（文章 / 动态随机交错） ====================
-        const MIXED_FEED_INITIAL_BLOCKS = 3;   // 首屏展示的内容块数（每块 = 一行文章 或 一行动态）
-        const MIXED_FEED_STEP_BLOCKS = 2;      // 每次“加载更多”追加的块数
-        const MIXED_FEED_DYNAMIC_ROW = 3;      // 动态每行三条
-        const MIXED_FEED_REPEAT_RATE = 0.15;   // 偶尔连续出现同类型行的概率，制造随机交织感
+        // ==================== 原创志混合信息流引擎（文章 / 动态交替出现） ====================
+        const MIXED_FEED_INITIAL_BLOCKS = 3;   // 首屏展示的内容块数（每块 = 一组文章 或 一行动态）
+        const MIXED_FEED_STEP_BLOCKS = 2;      // 每次触底加载追加的块数
+        const MIXED_FEED_ARTICLE_ROW = 2;      // 文章每次两篇（一篇一行）
+        const MIXED_FEED_DYNAMIC_ROW = 3;      // 动态每次三条（三条一行，不足留白）
 
         let overviewFeedSeed = Math.floor(Math.random() * 1e9);
         let overviewFeedPlan = null;
@@ -1925,40 +1939,28 @@
             return result;
         }
 
-        // 把队列切成“行”：动态严格每行 3 条（末行不足 3 条就自然留白），文章每行 1~2 条
-        function splitIntoRows(queue, maxSize, random) {
+        // 把队列切成“行”：动态每次 3 条一行（不足 3 条留白），文章每次 2 篇（一篇一行，不足 2 篇时只放 1 篇）
+        function splitIntoRows(queue, maxSize) {
             const rows = [];
             if (!queue.length) return rows;
-            if (maxSize === MIXED_FEED_DYNAMIC_ROW) {
-                for (let i = 0; i < queue.length; i += maxSize) rows.push(queue.slice(i, i + maxSize));
-                return rows;
-            }
-            let index = 0;
-            while (index < queue.length) {
-                const remaining = queue.length - index;
-                const size = remaining === 1 ? 1 : (random() < 0.62 ? 1 : 2);
-                rows.push(queue.slice(index, index + size));
-                index += size;
-            }
+            for (let i = 0; i < queue.length; i += maxSize) rows.push(queue.slice(i, i + maxSize));
             return rows;
         }
 
         function buildOverviewFeedPlan(articles, dynamics, signature) {
             const random = createSeededRandom(overviewFeedSeed);
-            const articleRows = splitIntoRows(shuffleWithRandom(articles, random), 2, random);
-            const dynamicRows = splitIntoRows(shuffleWithRandom(dynamics, random), MIXED_FEED_DYNAMIC_ROW, random);
+            const articleRows = splitIntoRows(shuffleWithRandom(articles, random), MIXED_FEED_ARTICLE_ROW);
+            const dynamicRows = splitIntoRows(shuffleWithRandom(dynamics, random), MIXED_FEED_DYNAMIC_ROW);
             const blocks = [];
             let articleIndex = 0;
             let dynamicIndex = 0;
             let lastType = '';
+            // 文章与动态严格交替：文章块 → 动态块 → 文章块 → 动态块……同类不连续出现
             while (articleIndex < articleRows.length || dynamicIndex < dynamicRows.length) {
                 let type;
                 if (articleIndex >= articleRows.length) type = 'dynamic';
                 else if (dynamicIndex >= dynamicRows.length) type = 'article';
-                else if (lastType && random() < MIXED_FEED_REPEAT_RATE) type = lastType; // 偶尔连续同类型，制造随机交错感
                 else type = lastType === 'article' ? 'dynamic' : 'article';
-                if (type === 'article' && articleIndex >= articleRows.length) type = 'dynamic';
-                if (type === 'dynamic' && dynamicIndex >= dynamicRows.length) type = 'article';
                 if (type === 'article') {
                     blocks.push({ type: 'article', items: articleRows[articleIndex] });
                     articleIndex += 1;
@@ -1980,18 +1982,12 @@
         function renderFeedBlock(block, items, animationClass) {
             if (!items.length) return '';
             if (block.type === 'article') {
-                return `<section class="feed-block ${animationClass}">
-                    <div class="feed-block-head"><span class="feed-block-tag is-article"><span class="dot"></span>文章</span><span class="feed-block-count">${items.length} 篇</span></div>
-                    ${items.map(renderArticleCard).join('')}
-                </section>`;
+                return `<section class="feed-block ${animationClass}">${items.map(renderArticleCard).join('')}</section>`;
             }
-            return `<section class="feed-block ${animationClass}">
-                    <div class="feed-block-head"><span class="feed-block-tag is-dynamic"><span class="dot"></span>动态</span><span class="feed-block-count">${items.length} 条</span></div>
-                    <div class="dynamic-row">${items.map(renderDynamicCard).join('')}</div>
-                </section>`;
+            return `<section class="feed-block ${animationClass}"><div class="dynamic-row">${items.map(renderDynamicCard).join('')}</div></section>`;
         }
 
-        // 分类按钮（原“原创志”分类功能）
+        // 分类菜单（原“原创志”分类功能，收进圆形按钮的下拉里）
         const OVERVIEW_FILTERS = [
             { value: 'all', label: '全部' },
             { value: 'article', label: '文章' },
@@ -2002,9 +1998,21 @@
             return OVERVIEW_FILTERS.map(item => `<button class="forum-tab-btn ${currentPostSubcat === item.value ? 'active' : ''}" type="button" data-subcat="${item.value}" onclick="filterOverviewFeed('${item.value}', this)">${item.label}</button>`).join('');
         }
 
+        // 同步悬浮分类按钮的下拉选项、选中态与提示
+        function renderOverviewFilterMenu() {
+            const menu = document.getElementById('overviewFilterMenu');
+            if (menu) menu.innerHTML = renderOverviewFilterButtons();
+            const button = document.getElementById('overviewFilterBtn');
+            if (!button) return;
+            const current = OVERVIEW_FILTERS.find(item => item.value === currentPostSubcat) || OVERVIEW_FILTERS[0];
+            button.classList.toggle('is-filtered', currentPostSubcat !== 'all');
+            button.title = `内容分类：${current.label}`;
+            button.setAttribute('aria-label', `内容分类筛选（当前：${current.label}）`);
+        }
+
         function filterOverviewFeed(subcat, btn) {
             currentPostSubcat = subcat;
-            document.querySelectorAll('.feed-filter-group .forum-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.subcat === subcat));
+            closeFilterMenus();
             renderOverviewFeed();
         }
 
@@ -2025,16 +2033,10 @@
                 window.clearTimeout(overviewFeedAutoLoadTimer);
                 overviewFeedLoading = false;
             }
-            const toolbar = `
-                <div class="feed-toolbar">
-                    <div class="feed-toolbar-title">原创志</div>
-                    <div class="feed-toolbar-actions">
-                        <div class="feed-filter-group" role="group" aria-label="内容分类">${renderOverviewFilterButtons()}</div>
-                        <button class="forum-tab-btn feed-shuffle" type="button" onclick="reshuffleOverviewFeed()"><span class="shuffle-icon" aria-hidden="true">⟳</span>换一批</button>
-                    </div>
-                </div>`;
+            // 分类按钮与换一批现在是悬浮按钮（静态节点），这里只同步下拉选项与状态
+            renderOverviewFilterMenu();
             if (!overviewFeedPlan.total) {
-                container.innerHTML = toolbar + '<div class="empty-state"><span class="icon">🗂️</span><p>这里还没有内容，换个分类或关键词试试。</p></div>';
+                container.innerHTML = '<div class="empty-state"><span class="icon">🗂️</span><p>这里还没有内容，换个分类或关键词试试。</p></div>';
                 return;
             }
             const visibleBlocks = Math.min(overviewFeedVisibleBlocks, overviewFeedPlan.blocks.length);
@@ -2049,7 +2051,6 @@
             }
             const remaining = overviewFeedPlan.total - shown;
             container.innerHTML = `
-                ${toolbar}
                 ${html}
                 ${remaining > 0
                     ? `<div class="feed-autoload" id="overviewFeedLoader"><span class="feed-spinner" aria-hidden="true"></span>正在加载更多内容…</div>
@@ -2344,15 +2345,22 @@
         function renderDatasets() {
             const container = document.getElementById('dataGrid');
             const filtered = datasetsData.filter(dataset => matchesSearchTitle(dataset.name));
+            // 数据资料统一按“上传数据文件”表单的字段展示
+            const infoItems = (ds) => [
+                { label: '时间', value: ds.period },
+                { label: '地点', value: ds.region },
+                { label: '文件格式', value: ds.format },
+                { label: '文件大小', value: ds.size },
+                { label: '文件类型', value: ds.type },
+                { label: '昵称', value: ds.uploader || ds.source || '匿名用户' }
+            ].map(item => `<div class="data-card-info-item"><span class="info-label">${item.label}</span><span class="info-value" title="${item.value || '—'}">${item.value || '—'}</span></div>`).join('');
             container.innerHTML = filtered.map(ds => `
                 <div class="data-card">
                     <div class="data-card-header">
                         <span class="data-card-title">${ds.name}</span>
-                        <span class="data-card-region">${ds.region}</span>
                     </div>
                     <div class="data-card-desc">${ds.description}</div>
-                    <div class="data-card-stats"><span>${ds.period}</span><span>${ds.size}</span><span>${ds.format}</span></div>
-                    <div class="data-card-stats" style="border-top:none; padding-top:0;"><span>${ds.source}</span><span>${ds.type}</span></div>
+                    <div class="data-card-info">${infoItems(ds)}</div>
                     <div style="display:flex; gap:8px; flex-wrap:wrap;">
                         <button class="btn btn-outline btn-sm" onclick="downloadDataset(${ds.id})">下载数据集</button>
                         ${hasPermission('own-dataset', ds) ? `<button class="btn btn-outline btn-sm" onclick="deleteDataset(${ds.id}, event)">删除</button>` : ''}
@@ -2597,6 +2605,29 @@
             document.querySelectorAll('.filter-menu.show').forEach(m => m.classList.remove('show'));
         }
 
+        // ==================== 一键返回顶部（原创志 / 文献库，左下角小火箭） ====================
+        const BACK_TO_TOP_THRESHOLD = 400;   // 下拉超过该像素后小火箭才出现
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function initBackToTop() {
+            if (!document.getElementById('backToTopBtn')) return;
+            window.addEventListener('scroll', updateBackToTop, { passive: true });
+            window.addEventListener('resize', updateBackToTop);
+            updateBackToTop();
+        }
+
+        // 仅在“原创志 / 文献库”且已下拉到一定位置时显示
+        function updateBackToTop() {
+            const button = document.getElementById('backToTopBtn');
+            if (!button) return;
+            const isFeedPage = currentPage === 'media' && (currentMediaTab === 'overview' || currentMediaTab === 'literature');
+            const scrolled = window.scrollY > BACK_TO_TOP_THRESHOLD;
+            button.classList.toggle('is-visible', isFeedPage && scrolled);
+        }
+
         function mobilePublishAction(kind) {
             closeMobilePublish();
             if (kind === 'dynamic') openPostModal('dynamic');
@@ -2667,6 +2698,7 @@
             restoreSession();
             loadLiteratureCategories();
             loadBackendContent();
+            initBackToTop();
         }
         init();
     </script>
