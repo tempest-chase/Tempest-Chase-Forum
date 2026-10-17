@@ -986,7 +986,8 @@
         @media (max-width: 600px) {
             /* —— PC 端专属组件的移动端处理 —— */
             /* 动态 / 通知 / 主题切换仅 PC 端显示；未登录头像图标在手机端保留为登录入口 */
-            #navFeedBtn, #navNotifyBtn, #navMessageBtn, #themeToggleBtn { display: none; }
+            /* 12.2：移动端保留动态与通知入口，私信收进账户菜单 */
+            #navFeedBtn, #themeToggleBtn, #navMessageBtn { display: none; }
             /* 动态板块：手机端兜底为单列（入口已隐藏，仅 hash 直达时可见） */
             .dynamic-layout { grid-template-columns: 1fr; }
             .dynamic-col-left, .dynamic-col-right { position: static; }
@@ -2085,7 +2086,7 @@
             } else {
                 const avatarUrl = safeUrl(currentUser.avatar);
                 const avatar = avatarUrl ? `<img src="${escapeHtml(avatarUrl)}" alt="账户头像">` : escapeHtml((currentUser.name || currentUser.username || '用').slice(0, 1).toUpperCase());
-                area.innerHTML = `<div class="account-avatar" title="账户菜单" onclick="toggleAccountMenu(event)">${avatar}</div><div class="account-menu"><button onclick="profileTab='publish'; navigateTo('profile'); closeAccountMenu()">个人中心</button><button onclick="navigateTo('feed'); closeAccountMenu()">我的动态</button>${currentUser.role === 'admin' ? '<button onclick="navigateTo(\'admin\'); closeAccountMenu()">管理员中心</button>' : ''}<button onclick="logout()">退出登录</button></div>`;
+                area.innerHTML = `<div class="account-avatar" title="账户菜单" onclick="toggleAccountMenu(event)">${avatar}</div><div class="account-menu"><button onclick="profileTab='publish'; navigateTo('profile'); closeAccountMenu()">个人中心</button><button onclick="navigateTo('feed'); closeAccountMenu()">我的动态</button><button onclick="navigateTo('messages'); closeAccountMenu()">私信</button>${currentUser.role === 'admin' ? '<button onclick="navigateTo(\'admin\'); closeAccountMenu()">管理员中心</button>' : ''}<button onclick="logout()">退出登录</button></div>`;
             }
             document.querySelectorAll('[data-permission]').forEach(element => {
                 element.style.display = hasPermission(element.dataset.permission) ? '' : 'none';
@@ -2603,12 +2604,13 @@
         }
 
         // P3.0：上传体积上限（前后端应保持一致）
-        const MAX_UPLOAD_SIZE = 100 * 1024 * 1024;
+        const MAX_UPLOAD_SIZE = 100 * 1024 * 1024;   // 数据类文件上限
+        const MAX_IMAGE_SIZE = 10 * 1024 * 1024;     // 图片类上限（12.3 分类型限制）
         // 校验文件体积，超限时清空 input 并提示；返回 true 表示通过
-        function validateUploadSize(file, inputId, label = '文件') {
+        function validateUploadSize(file, inputId, label = '文件', maxBytes = MAX_UPLOAD_SIZE) {
             if (!file) return false;
-            if (file.size > MAX_UPLOAD_SIZE) {
-                showToast(`${label}过大（${formatFileSize(file.size)}），请限制在 100MB 以内`, 'error');
+            if (file.size > maxBytes) {
+                showToast(`${label}过大（${formatFileSize(file.size)}），请限制在 ${Math.round(maxBytes / 1024 / 1024)}MB 以内`, 'error');
                 const input = inputId ? document.getElementById(inputId) : null;
                 if (input) input.value = '';
                 return false;
@@ -2748,7 +2750,6 @@
         const pageScrollPositions = new Map();
         let currentAuthorId = '';
         let globalSearchQuery = '';
-        let editorFormatPainter = false;
 
         // P1-03：通知中心数据（MVP，内存态）
         // P1-03：通知中心数据（P2.5：已读状态持久化到 localStorage）
@@ -3015,6 +3016,10 @@
         // 首页子页面切换
         function switchMediaTab(tab, btn) {
             currentMediaTab = tab;
+            // 12.1：子 Tab 写入 URL（replace，不新增历史），刷新/回退可还原
+            if (currentPage === 'media') {
+                history.replaceState(null, '', tab === 'overview' ? '#media' : '#media?tab=' + encodeURIComponent(tab));
+            }
             // 隐藏所有媒体子页面
             document.querySelectorAll('.media-subpage').forEach(el => el.style.display = 'none');
             // 显示目标
@@ -3801,7 +3806,8 @@
             const filtered = category === 'all' 
                 ? literatureData 
                 : literatureData.filter(d => d.category === category);
-            const finalFiltered = filtered.filter(item => matchesSearchTitle(item.title) || (!globalSearchQuery ? false : String(item.authors || '').toLowerCase().includes(globalSearchQuery)));
+            // 12.10：文献搜索统一走同一匹配函数（标题 + 作者 + 期刊 + 摘要）
+        const finalFiltered = filtered.filter(item => matchesFields(item, ['title', 'authors', 'journal', 'excerpt']));
             const container = document.getElementById('litList');
             if (finalFiltered.length === 0) {
                 container.innerHTML = emptyStateMarkup('literature', '该分类下暂无文献');
@@ -4452,7 +4458,7 @@
         function attachCommentImage(file, kind = 'main') {
             if (!file) return;
             if (!/^image\//.test(file.type)) { showToast('只能上传图片文件', 'error'); return; }
-            if (!validateUploadSize(file, null, '评论图片')) return;
+            if (!validateUploadSize(file, null, '评论图片', MAX_IMAGE_SIZE)) return;
             // P0-04：评论图片用会话级 Blob URL，重绘后仍有效，页面卸载时统一回收
             const url = SessionMediaScope.create(file);
             if (kind === 'reply') replyComposerImage = { file, url };
@@ -4566,6 +4572,7 @@
             const reply = findReply(comment, replyId);
             if (!reply) return;
             if (!canManageComment(reply)) { showToast('只能删除自己的回复', 'error'); return; }
+            try {
                 // 4.2：必须带上 commentId + replyId，只删目标回复
                 await apiRequest(endpoint(API_CONFIG.endpoints.replyDelete, { postId, commentId, replyId }), { method:'DELETE' });
                 // 保留楼层占位，显示「该回复已删除」，避免子楼错位
@@ -4753,7 +4760,8 @@
             preview.innerHTML = '';
             PostModalScope.revokeAll();                           // 只回收本弹窗的旧 URL
 
-            const accepted = Array.from(files || []).filter(file => /^image\//.test(file.type));
+            // 12.3：图片类统一限制 10MB
+            const accepted = Array.from(files || []).filter(file => /^image\//.test(file.type)).filter(file => validateUploadSize(file, 'dynamicImageInput', '图片', MAX_IMAGE_SIZE));
             accepted.forEach(file => {
                 const url = PostModalScope.create(file);          // 注册到 PostModalScope
                 const image = document.createElement('img');
@@ -4772,7 +4780,7 @@
             // 每次进入编辑器重置图片缓存，并回收上一轮的 Blob URL
             ArticleEditorScope.revokeAll();
             pendingArticleImages.clear();
-            pendingArticleCover = null;            container.innerHTML = `<div class="article-editor-page"><div class="page-header"><button class="btn btn-outline btn-sm" onclick="navigateTo('media')">← 返回原创志</button><h1>发布文章</h1><p class="subtitle">写下你的分析、复盘和气象观察</p></div><form onsubmit="submitArticle(event)"><div class="article-editor-canvas"><div class="article-editor-toolbar"><button type="button" class="editor-tool" onclick="toggleFormatPainter(this)">格式刷</button><button type="button" class="editor-tool" onclick="cancelFormatPainter()">取消格式刷</button><button type="button" class="editor-tool"><select aria-label="字体大小" onchange="applyEditorCommand('fontSize', this.value)"><option value="3">字体大小</option><option value="2">小号</option><option value="3">标准</option><option value="5">大号</option><option value="7">特大</option></select></button><button type="button" class="editor-tool" onclick="applyEditorCommand('italic')"><i>斜体</i></button><button type="button" class="editor-tool" onclick="applyEditorCommand('bold')"><b>粗体</b></button><button type="button" class="editor-tool" onclick="applyEditorCommand('underline')"><u>下划线</u></button><button type="button" class="editor-tool"><input type="color" aria-label="字体颜色选择" value="#e8f0f8" onchange="applyEditorCommand('foreColor', this.value)"></button><button type="button" class="editor-tool" onclick="document.getElementById('articleImageInput').click()">插入图片</button><input type="file" id="articleImageInput" accept="image/*" hidden onchange="insertArticleImage(this.files[0])"></div><div class="article-editor-body"><input class="article-title-input" id="articleTitle" type="text" placeholder="输入文章标题" required><div class="article-content-editor" id="articleContent" contenteditable="true" data-placeholder="从这里开始写作..." role="textbox" aria-label="文章内容"></div><div class="article-editor-settings"><h2>发布设置</h2><div class="article-settings-grid"><div class="form-group"><label for="articleCover">文章封面</label><div class="cover-picker"><input type="file" id="articleCover" accept="image/*" onchange="previewArticleCover(this.files[0])"><img class="cover-preview" id="articleCoverPreview" alt="封面预览"></div><small class="post-compose-hint">不选封面时将按正文插图数量自动匹配卡片样式；无插图时发布前会询问确认</small></div><div class="form-group"><label for="articleTags">标签</label><input id="articleTags" type="text" placeholder="例如：台风, 强对流, 复盘"><label for="articlePublishAt">定时发布</label><input id="articlePublishAt" type="datetime-local"></div></div></div><div class="article-editor-actions"><button type="button" class="btn btn-outline" data-action="cancel-article-editor">取消</button><div class="article-editor-actions-right"><button type="button" class="btn btn-outline" data-action="save-draft">保存草稿</button><button type="submit" class="btn btn-primary">发布文章</button></div></div></div></div></form></div>`;
+            pendingArticleCover = null;            container.innerHTML = `<div class="article-editor-page"><div class="page-header"><button class="btn btn-outline btn-sm" onclick="navigateTo('media')">← 返回原创志</button><h1>发布文章</h1><p class="subtitle">写下你的分析、复盘和气象观察</p></div><form onsubmit="submitArticle(event)"><div class="article-editor-canvas"><div class="article-editor-toolbar"><button type="button" class="editor-tool"><select aria-label="字体大小" onchange="applyEditorCommand('fontSize', this.value)"><option value="3">字体大小</option><option value="2">小号</option><option value="3">标准</option><option value="5">大号</option><option value="7">特大</option></select></button><button type="button" class="editor-tool" onclick="applyEditorCommand('italic')"><i>斜体</i></button><button type="button" class="editor-tool" onclick="applyEditorCommand('bold')"><b>粗体</b></button><button type="button" class="editor-tool" onclick="applyEditorCommand('underline')"><u>下划线</u></button><button type="button" class="editor-tool"><input type="color" aria-label="字体颜色选择" value="#e8f0f8" onchange="applyEditorCommand('foreColor', this.value)"></button><button type="button" class="editor-tool" onclick="document.getElementById('articleImageInput').click()">插入图片</button><input type="file" id="articleImageInput" accept="image/*" hidden onchange="insertArticleImage(this.files[0])"></div><div class="article-editor-body"><input class="article-title-input" id="articleTitle" type="text" placeholder="输入文章标题" required><div class="article-content-editor" id="articleContent" contenteditable="true" data-placeholder="从这里开始写作..." role="textbox" aria-label="文章内容"></div><div class="article-editor-settings"><h2>发布设置</h2><div class="article-settings-grid"><div class="form-group"><label for="articleCover">文章封面</label><div class="cover-picker"><input type="file" id="articleCover" accept="image/*" onchange="previewArticleCover(this.files[0])"><img class="cover-preview" id="articleCoverPreview" alt="封面预览"></div><small class="post-compose-hint">不选封面时将按正文插图数量自动匹配卡片样式；无插图时发布前会询问确认</small></div><div class="form-group"><label for="articleTags">标签</label><input id="articleTags" type="text" placeholder="例如：台风, 强对流, 复盘"><label for="articlePublishAt">定时发布</label><input id="articlePublishAt" type="datetime-local"></div></div></div><div class="article-editor-actions"><button type="button" class="btn btn-outline" data-action="cancel-article-editor">取消</button><div class="article-editor-actions-right"><button type="button" class="btn btn-outline" data-action="save-draft">保存草稿</button><button type="submit" class="btn btn-primary">发布文章</button></div></div></div></div></form></div>`;
             // P2.5：进入编辑器后恢复上次草稿，并绑定输入自动暂存
             restoreArticleDraft();
             bindArticleDraftAutosave();
@@ -4907,20 +4915,12 @@
             document.execCommand(command, false, value);
         }
 
-        function toggleFormatPainter(button) {
-            editorFormatPainter = !editorFormatPainter;
-            button.classList.toggle('active', editorFormatPainter);
-            document.getElementById('articleContent')?.classList.toggle('format-painter-active', editorFormatPainter);
-        }
 
-        function cancelFormatPainter() {
-            editorFormatPainter = false;
-            document.querySelector('.editor-tool.active')?.classList.remove('active');
-            document.getElementById('articleContent')?.classList.remove('format-painter-active');
-        }
 
         function insertArticleImage(file) {
             if (!file) return;
+            // 12.3：正文图片同样限制体积（图片 10MB）
+            if (!validateUploadSize(file, 'articleImageInput', '图片', MAX_IMAGE_SIZE)) return;
             const editor = document.getElementById('articleContent');
             if (!editor) return;
             // P0-04：编辑器内插入 Blob URL（编辑态），发布时抽出对应 File 走 FormData
@@ -4932,6 +4932,7 @@
 
         function previewArticleCover(file) {
             if (!file) return;
+            if (!validateUploadSize(file, 'articleCover', '封面图片', MAX_IMAGE_SIZE)) return;
             const preview = document.getElementById('articleCoverPreview');
             const coverInput = document.getElementById('articleCover');
             if (!preview || !coverInput) return;
@@ -5110,6 +5111,13 @@
         // ==================== 全局搜索 ====================
         function matchesSearchTitle(title) {
             return !globalSearchQuery || String(title || '').toLowerCase().includes(globalSearchQuery);
+        }
+
+        // 12.10：通用多字段搜索（文献 / 数据集 / 评论等复用）
+        function matchesFields(record, fields) {
+            if (!globalSearchQuery) return true;
+            if (!record) return false;
+            return fields.some(field => String(record[field] || '').toLowerCase().includes(globalSearchQuery));
         }
 
         // P4.0：帖子搜索同时命中标题 / 作者 / 摘要 / 标签
@@ -5403,6 +5411,8 @@
                 if (!currentRelationUserId) currentRelationUserId = currentUser ? currentUser.id : 'u-101';
             }
             if (page === 'messages' && query.chatId) currentChatUserId = query.chatId;
+            // 12.1：从 URL 还原媒体子 Tab
+            if (page === 'media' && query.tab && ['overview', 'literature', 'datacenter'].includes(query.tab)) currentMediaTab = query.tab;
         }
 
         // ==================== 路由回退（P2.5 / P4.5） ====================
