@@ -4,6 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>逐风之地</title>
+    <!-- P4.5：首屏前置主题，避免深色模式先白后黑的闪烁（阻塞式，必须早于 <style>） -->
+    <script>
+        (function () {
+            try {
+                const savedTheme = localStorage.getItem('weatherPlatformTheme');
+                const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.documentElement.setAttribute('data-theme', savedTheme || (prefersDark ? 'dark' : 'light'));
+            } catch (ignored) {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        })();
+    </script>
     <style>
         /* ========== 全局变量与基础样式 ========== */
         :root {
@@ -483,9 +495,46 @@
         .comment-item { padding: 14px 16px; background: #f7f8fa; border: 1px solid var(--border-color); border-radius: var(--radius-sm); }
         .comment-head { display: flex; justify-content: space-between; gap: 10px; color: var(--accent-cyan); font-size: 0.82rem; }
         .comment-content { margin: 6px 0 8px; color: var(--text-secondary); white-space: pre-wrap; }
-        .comment-actions { display: flex; gap: 12px; }
-        .comment-actions button { padding: 0; background: transparent; color: var(--text-muted); font-size: 0.78rem; }
+        .comment-actions { display: flex; align-items: center; gap: 14px; }
+        .comment-actions button { display: inline-flex; align-items: center; gap: 5px; padding: 0; background: transparent; border: 0; color: var(--text-muted); font-size: 0.78rem; cursor: pointer; transition: color var(--transition); }
         .comment-actions button:hover, .comment-actions button.active { color: var(--accent-cyan); }
+        .comment-actions .comment-action-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+        .comment-actions .action-count { font-variant-numeric: tabular-nums; }
+        /* P4.5：评论作者可点击 + 回复标签紧贴名字 */
+        .comment-author.is-link { cursor: pointer; transition: color var(--transition); }
+        .comment-author.is-link:hover { color: var(--accent-cyan); text-decoration: underline; }
+        .comment-head .head-left { display: inline-flex; align-items: center; gap: 4px; min-width: 0; flex-wrap: wrap; }
+        .comment-head .head-date { color: var(--text-muted); white-space: nowrap; }
+        .comment-reply .comment-head .head-left { gap: 4px; }
+
+        /* P4.6：富文本表格不撑破布局 */
+        .post-detail-content table,
+        .article-content-editor table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; }
+        .post-detail-content table td, .post-detail-content table th,
+        .article-content-editor table td, .article-content-editor table th { border: 1px solid var(--border-color); padding: 6px 10px; }
+
+        /* P4.6：正文链接悬浮更明显 */
+        .post-detail-content a { color: var(--accent-cyan); text-decoration: none; }
+        .post-detail-content a:hover { text-decoration: underline; }
+
+        /* P4.6：加载更多按钮的加载态 */
+        .comment-more.is-loading { opacity: 0.7; cursor: progress; pointer-events: none; }
+        /* P4.5：统一删除按钮（垃圾桶图标，悬浮变红） */
+        .icon-delete { display: inline-flex; align-items: center; justify-content: center; padding: 4px 6px; border: 1px solid transparent; border-radius: var(--radius-sm); background: transparent; color: var(--text-muted); cursor: pointer; transition: color var(--transition), background var(--transition), border-color var(--transition); }
+        .icon-delete .icon-trash { width: 15px; height: 15px; display: block; }
+        .icon-delete:hover { color: #ef4444; border-color: rgba(239,68,68,0.45); background: rgba(239,68,68,0.08); }
+        .icon-delete:focus-visible { outline: none; color: #ef4444; border-color: rgba(239,68,68,0.6); }
+        .comment-actions button.icon-delete { padding: 0; border: 0; }
+        .comment-actions button.icon-delete:hover { color: #ef4444; }
+        .article-card-stats button.icon-delete { padding: 2px 4px; border: 0; }
+        .article-card-stats button.icon-delete:hover { color: #ef4444; }
+        .dynamic-card-delete.icon-delete { padding: 2px 4px; }
+        .dynamic-card-delete.icon-delete:hover { color: #ef4444; }
+        .comment-title { display: flex; align-items: baseline; gap: 2px; font-size: 1.15rem; margin-bottom: 14px; }
+        /* P4.5：评论锚点高亮 */
+        .highlight-flash { animation: flashBg 2s ease-out; border-radius: var(--radius-sm); }
+        @keyframes flashBg { 0% { background: rgba(43,167,255,0.22); } 100% { background: transparent; } }
+        .comment-title .comment-count { font-size: 1rem; color: var(--text-muted); font-weight: 500; }
 
         /* ========== 评论区（P4.0 楼中楼） ========== */
         .comment-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
@@ -1094,7 +1143,8 @@
         .fade-in-delay-3 { animation-delay: 0.3s; opacity: 0; }
 
         .empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); }
-        .empty-state .icon { font-size: 3rem; margin-bottom: 16px; }
+        .empty-state .icon { margin-bottom: 16px; display: flex; justify-content: center; }
+        .empty-state .icon svg { width: 44px; height: 44px; fill: none; stroke: var(--text-muted); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; opacity: 0.75; }
         .empty-state p { font-size: 0.95rem; }
 
         /* ========== 深色模式覆盖（P1-08） ========== */
@@ -1718,17 +1768,21 @@
                 inputWrap.style.display = 'none';
                 inputEl.value = '';
                 overlay.classList.add('show');
+                // P4.6：接入弹窗栈（ESC = 取消），关闭后归还焦点
+                registerModalOpen(overlay, () => { if (cancelBtn.onclick) cancelBtn.onclick(); });
 
                 const cleanup = () => {
                     overlay.classList.remove('show');
                     okBtn.onclick = null;
                     cancelBtn.onclick = null;
+                    registerModalClose(overlay);
                 };
 
                 okBtn.onclick = () => { cleanup(); resolve(true); };
                 cancelBtn.onclick = () => { cleanup(); resolve(false); };
             });
         }
+
 
         function showPrompt(message, defaultValue = '') {
             return new Promise(resolve => {
@@ -1744,11 +1798,13 @@
                 inputEl.value = defaultValue;
                 overlay.classList.add('show');
                 setTimeout(() => inputEl.focus(), 100);
+                registerModalOpen(overlay, () => { if (cancelBtn.onclick) cancelBtn.onclick(); });
 
                 const cleanup = () => {
                     overlay.classList.remove('show');
                     okBtn.onclick = null;
                     cancelBtn.onclick = null;
+                    registerModalClose(overlay);
                 };
 
                 okBtn.onclick = () => { cleanup(); resolve(inputEl.value); };
@@ -1802,6 +1858,10 @@
                 postFavorite: '/posts/{id}/favorite',
                 postComments: '/posts/{id}/comments',
                 commentLike: '/posts/{postId}/comments/{commentId}/like',
+                commentDelete: '/posts/{postId}/comments/{commentId}',
+                reply: '/posts/{postId}/comments/{commentId}/replies',
+                replyDelete: '/posts/{postId}/comments/{commentId}/replies/{replyId}',
+                replyLike: '/posts/{postId}/comments/{commentId}/replies/{replyId}/like',
                 datasets: '/datasets',
                 datasetDownload: '/datasets/{id}/download'
             }
@@ -2038,8 +2098,52 @@
         function toggleAccountMenu(event) { event.stopPropagation(); document.getElementById('accountArea').classList.toggle('menu-open'); }
         function closeAccountMenu() { document.getElementById('accountArea').classList.remove('menu-open'); }
 
-        function openAuthModal() { document.getElementById('authModal').classList.add('show'); document.body.style.overflow = 'hidden'; }
-        function closeAuthModal() { document.getElementById('authModal').classList.remove('show'); document.body.style.overflow = ''; }
+        // ==================== 弹窗栈（P4.6：ESC 只关最上层 + 焦点管理） ====================
+        const openModalStack = [];   // [{ el, closer, trigger }]
+
+        function focusablesIn(root) {
+            if (!root) return [];
+            return Array.from(root.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'))
+                .filter(el => el.offsetParent !== null || el === document.activeElement);
+        }
+
+        function registerModalOpen(overlayEl, closer) {
+            if (!overlayEl) return;
+            const trigger = document.activeElement;
+            openModalStack.push({ el: overlayEl, closer, trigger });
+            setTimeout(() => {
+                const list = focusablesIn(overlayEl);
+                if (list.length) list[0].focus();
+            }, 30);
+        }
+
+        function registerModalClose(overlayEl) {
+            const index = openModalStack.findIndex(item => item.el === overlayEl);
+            if (index < 0) return;
+            const [item] = openModalStack.splice(index, 1);
+            // 焦点归还给打开弹窗的元素
+            if (item.trigger && document.contains(item.trigger) && typeof item.trigger.focus === 'function') {
+                item.trigger.focus();
+            }
+        }
+
+        // Tab 焦点锁定在当前最上层弹窗内
+        document.addEventListener('keydown', event => {
+            if (event.key !== 'Tab' || !openModalStack.length) return;
+            const top = openModalStack[openModalStack.length - 1].el;
+            const list = focusablesIn(top);
+            if (!list.length) return;
+            const first = list[0];
+            const last = list[list.length - 1];
+            if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault(); last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault(); first.focus();
+            }
+        });
+
+        function openAuthModal() { const overlay = document.getElementById('authModal'); overlay.classList.add('show'); document.body.style.overflow = 'hidden'; registerModalOpen(overlay, () => closeAuthModal()); }
+        function closeAuthModal() { const overlay = document.getElementById('authModal'); overlay.classList.remove('show'); document.body.style.overflow = ''; registerModalClose(overlay); }
 
         let interactionMode = '';
         let interactionPostId = null;
@@ -2059,7 +2163,7 @@
             document.getElementById('interactionModal').classList.add('show');
             document.body.style.overflow = 'hidden';
         }
-        function closeInteractionModal() { AvatarEditorScope.revokeAll(); document.getElementById('interactionModal').classList.remove('show'); document.body.style.overflow = ''; }
+        function closeInteractionModal() { AvatarEditorScope.revokeAll(); const overlay = document.getElementById('interactionModal'); overlay.classList.remove('show'); document.body.style.overflow = ''; registerModalClose(overlay); }
         async function submitInteractionForm(event) {
             event.preventDefault();
             const form = event.target;
@@ -2204,8 +2308,8 @@
                 const ownPosts = postsData.filter(post => String(post.ownerId) === String(currentUser.id));
                 const ownDatasets = datasetsData.filter(dataset => String(dataset.ownerId) === String(currentUser.id));
                 container.innerHTML = `
-                    <div class="profile-section"><h2>我发布的文章与动态</h2><div class="profile-post-list">${ownPosts.length ? ownPosts.map(post => `<div class="post-item"><div class="post-item-title">${escapeHtml(post.title)}</div><div class="post-item-meta">${escapeHtml(post.subcatLabel || '')} · ${escapeHtml(post.date)}</div><div class="post-item-actions"><button class="btn btn-sm btn-outline" data-action="view-post" data-post-id="${escapeHtml(post.id)}">查看</button><button class="btn btn-sm btn-outline" data-action="delete-post" data-post-id="${escapeHtml(post.id)}">删除</button></div></div>`).join('') : '<div class="empty-state">暂无上传内容</div>'}</div></div>
-                    <div class="profile-section"><h2>我的数据文件</h2><div class="profile-post-list">${ownDatasets.length ? ownDatasets.map(dataset => `<div class="post-item"><div class="post-item-title">${escapeHtml(dataset.name)}</div><div class="post-item-meta">${escapeHtml(dataset.format || '数据文件')} · ${escapeHtml(dataset.size || '')}</div><div class="post-item-actions"><button class="btn btn-sm btn-outline" data-action="delete-dataset" data-dataset-id="${escapeHtml(dataset.id)}">删除</button></div></div>`).join('') : '<div class="empty-state">暂无上传数据</div>'}</div></div>`;
+                    <div class="profile-section"><h2>我发布的文章与动态</h2><div class="profile-post-list">${ownPosts.length ? ownPosts.map(post => `<div class="post-item"><div class="post-item-title">${escapeHtml(post.title)}</div><div class="post-item-meta">${escapeHtml(post.subcatLabel || '')} · ${escapeHtml(post.date)}</div><div class="post-item-actions"><button class="btn btn-sm btn-outline" data-action="view-post" data-post-id="${escapeHtml(post.id)}">查看</button>${deleteButtonMarkup(`data-action="delete-post" data-post-id="${escapeHtml(post.id)}"`, 'btn btn-sm btn-outline')}</div></div>`).join('') : '<div class="empty-state">暂无上传内容</div>'}</div></div>
+                    <div class="profile-section"><h2>我的数据文件</h2><div class="profile-post-list">${ownDatasets.length ? ownDatasets.map(dataset => `<div class="post-item"><div class="post-item-title">${escapeHtml(dataset.name)}</div><div class="post-item-meta">${escapeHtml(dataset.format || '数据文件')} · ${escapeHtml(dataset.size || '')}</div><div class="post-item-actions">${deleteButtonMarkup(`data-action="delete-dataset" data-dataset-id="${escapeHtml(dataset.id)}"`, 'btn btn-sm btn-outline')}</div></div>`).join('') : '<div class="empty-state">暂无上传数据</div>'}</div></div>`;
             } else if (profileTab === 'favorites') {
                 const favoritePosts = postsData.filter(post => favoritePostIds.includes(post.id));
                 container.innerHTML = `
@@ -2220,7 +2324,7 @@
         }
 
         function renderHistoryList() {
-            if (!historyData.length) return '<div class="empty-state"><p>暂无浏览记录，去看看文章、动态、数据和论文吧</p></div>';
+            if (!historyData.length) return emptyStateMarkup('history', '暂无浏览记录，去看看文章、动态、数据和论文吧');
             return historyData.map(h => {
                 let label = '记录';
                 if (h.kind === 'post') label = h.subcat === 'dynamic' ? '动态' : '文章';
@@ -2236,7 +2340,7 @@
 
         function openAuthorProfile(authorId) {
             currentAuthorId = authorId;
-            navigateTo('author');
+            navigateTo('author', { authorId });
         }
 
         function renderAuthorProfile(authorId) {
@@ -2477,13 +2581,17 @@
         function openDatasetUploadModal() {
             if (!requirePermission('dataset')) return;
             document.getElementById('datasetUploader').value = currentUser.name || currentUser.username || '';
-            document.getElementById('datasetUploadModal').classList.add('show');
+            const datasetOverlay = document.getElementById('datasetUploadModal');
+            datasetOverlay.classList.add('show');
+            registerModalOpen(datasetOverlay, () => closeDatasetUploadModal());
             document.body.style.overflow = 'hidden';
         }
 
         function closeDatasetUploadModal() {
-            document.getElementById('datasetUploadModal').classList.remove('show');
+            const overlay = document.getElementById('datasetUploadModal');
+            overlay.classList.remove('show');
             document.body.style.overflow = '';
+            registerModalClose(overlay);
         }
 
         function formatFileSize(bytes) {
@@ -2631,6 +2739,11 @@
         let currentLitCategory = 'all';
         let currentPostSubcat = 'all';
         let currentPostDetailId = null;
+        // P4.5：渲染详情页时要定位的评论（navigateTo 内先渲染后写 URL，不能靠 location 解析）
+        let pendingCommentAnchor = null;
+        // P4.5：长列表首帧骨架屏标记（首次进入才模拟网络延迟）
+        let literatureDataLoaded = false;
+        let datasetsDataLoaded = false;
         // P4.0：页面滚动位置记忆（返回列表/详情时恢复）
         const pageScrollPositions = new Map();
         let currentAuthorId = '';
@@ -2642,7 +2755,7 @@
         // targetPostId 用于点击通知直接跳转对应文章
         let notificationsData = [
             { id:'n1', type:'like', actorName:'风暴眼', targetTitle:'2021年郑州"7·20"特大暴雨过程拆解', targetPostId:null, date:'2025-03-18 10:30', read:false },
-            { id:'n2', type:'comment', actorName:'南风观测', targetTitle:'2023年台风"杜苏芮"北上致灾过程分析', targetPostId:null, content:'分析得非常透彻，尤其是地形增幅那部分！', date:'2025-03-17 15:20', read:false },
+            { id:'n2', type:'comment', actorName:'南风观测', targetTitle:'2023年台风"杜苏芮"北上致灾过程分析', targetPostId:null, targetCommentId:'c-102-0', content:'分析得非常透彻，尤其是地形增幅那部分！', date:'2025-03-17 15:20', read:false },
             { id:'n3', type:'follow', actorName:'北国气象', date:'2025-03-16 09:15', read:true },
             { id:'n4', type:'system', content:'欢迎加入逐风之地！请完善您的个人资料。', date:'2025-03-15 08:00', read:true }
         ];
@@ -2806,7 +2919,7 @@
         applyOutlineThumbIcons();
 
         // ==================== 导航主函数 ====================
-        function navigateTo(page, historyMode = 'push') {
+        function navigateTo(page, query = {}, historyMode = 'push') {
             // P4.0：离开前记录当前页滚动位置，返回时恢复
             if (currentPage && currentPage !== page) pageScrollPositions.set(currentPage, window.scrollY || 0);
             // —— 页面级 Scope 离场统一回收 ——
@@ -2875,13 +2988,27 @@
                 const restoreScroll = () => window.scrollTo({ top: savedScroll, behavior: 'auto' });
                 setTimeout(restoreScroll, 0);
                 setTimeout(restoreScroll, 160);
+                requestAnimationFrame(restoreScroll);
+                // P4.6：图片加载撑高布局后再校正，避免被 clamp 到错误位置
+                Array.from(document.querySelectorAll('#page-' + page + ' img')).slice(0, 12).forEach(img => {
+                    if (img.complete) return;
+                    img.addEventListener('load', restoreScroll, { once: true });
+                });
+                setTimeout(restoreScroll, 420);
             } else {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
 
-            // 更新 URL hash（popstate 回退时不写历史，避免破坏前进/后退栈）
-            if (historyMode === 'push') history.pushState(null, '', '#' + page);
-            else if (historyMode === 'replace') history.replaceState(null, '', '#' + page);
+            // 更新 URL hash（带 query，刷新后可还原页面状态）
+            let url = '#' + page;
+            const queryKeys = (query && typeof query === 'object') ? Object.keys(query).filter(key => query[key] !== undefined && query[key] !== null && query[key] !== '') : [];
+            if (queryKeys.length) {
+                const params = new URLSearchParams();
+                queryKeys.forEach(key => params.set(key, query[key]));
+                url += '?' + params.toString();
+            }
+            if (historyMode === 'push') history.pushState(null, '', url);
+            else if (historyMode === 'replace') history.replaceState(null, '', url);
             updateBackToTop();
         }
 
@@ -2900,8 +3027,19 @@
             // 更新子导航按钮高亮
             document.querySelectorAll('.media-subnav-btn').forEach(b => b.classList.toggle('active', b.dataset.msub === tab));
             // 渲染对应内容
-            if (tab === 'literature') renderLiterature();
-            if (tab === 'datacenter') renderDatasets();
+            // P4.5：长列表先出骨架屏，再延迟渲染真实内容（首次进入才模拟延迟）
+            if (tab === 'literature') {
+                if (!literatureDataLoaded) {
+                    document.getElementById('litList').innerHTML = listSkeletonMarkup(4);
+                    setTimeout(() => { literatureDataLoaded = true; renderLiterature(); }, 300);
+                } else { renderLiterature(); }
+            }
+            if (tab === 'datacenter') {
+                if (!datasetsDataLoaded) {
+                    document.getElementById('dataGrid').innerHTML = listSkeletonMarkup(3);
+                    setTimeout(() => { datasetsDataLoaded = true; renderDatasets(); }, 300);
+                } else { renderDatasets(); }
+            }
             if (tab === 'overview') { overviewFeedRenderedBlocks = 0; renderOverview(); }
             // 确保主媒体页面可见
             document.getElementById('page-media').style.display = 'block';
@@ -2949,7 +3087,7 @@
                 // P2.5：有关联文章的通知可点击直达
                 const clickable = Boolean(n.targetPostId);
                 const actionAttrs = clickable
-                    ? ` data-action="open-notification" data-notify-id="${escapeHtml(n.id)}" data-post-id="${escapeHtml(n.targetPostId)}" role="link" tabindex="0" title="查看对应文章"`
+                    ? ` data-action="open-notification" data-notify-id="${escapeHtml(n.id)}" data-post-id="${escapeHtml(n.targetPostId)}" data-comment-id="${escapeHtml(n.targetCommentId || '')}" role="link" tabindex="0" title="查看对应文章"`
                     : '';
 
                 return `
@@ -2962,7 +3100,7 @@
                     </div>
                     ${n.read ? '' : '<div class="notify-dot"></div>'}
                 </div>`;
-            }).join('') : '<div class="empty-state"><div class="icon">🔔</div><p>暂无通知</p></div>';
+            }).join('') : emptyStateMarkup('notifications', '暂无通知');
 
             container.innerHTML = `
                 <div class="page-header notify-header">
@@ -2976,11 +3114,11 @@
         }
 
         // 点击通知：标记该条已读并跳转对应文章
-        function openNotification(notifyId, postId) {
+        function openNotification(notifyId, postId, commentId) {
             const id = Number(postId);
             markNotifyRead(notifyId);
             if (id && postsData.some(p => p.id === id)) {
-                viewPost(id);
+                viewPost(id, commentId || null);
                 return; // 已跳转，无需再重绘通知页
             }
             renderNotifications();
@@ -3006,7 +3144,20 @@
             ]
         };
 
+        // P4.5：首次进入私信页先给骨架屏，避免空屏闪一下
         function renderMessagesPage() {
+            const container = document.getElementById('page-messages');
+            if (!container) return;
+            if (container.dataset.rendered !== '1') {
+                container.innerHTML = listSkeletonMarkup(3);
+                container.dataset.rendered = '1';
+                setTimeout(renderMessagesContent, 300);
+                return;
+            }
+            renderMessagesContent();
+        }
+
+        function renderMessagesContent() {
             const container = document.getElementById('page-messages');
             if (!container) return;
 
@@ -3024,7 +3175,7 @@
                         <div class="chat-preview">${escapeHtml(lastMsg ? lastMsg.text : '暂无消息')}</div>
                     </div>
                 </div>`;
-            }).join('') : '<div class="empty-state"><p>暂无会话</p></div>';
+            }).join('') : emptyStateMarkup('messages', '暂无会话');
 
             container.innerHTML = `
                 <div class="page-header messages-page-head"><h1>私信</h1><p class="subtitle">与其他气象爱好者实时交流</p></div>
@@ -3045,7 +3196,7 @@
             const chatMsgs = messagesData[currentChatUserId] || [];
             const msgsHtml = chatMsgs.length
                 ? chatMsgs.map(m => `<div class="message-bubble ${m.from === 'me' ? 'message-right' : 'message-left'}">${escapeHtml(m.text)}</div>`).join('')
-                : '<div class="empty-state"><div class="icon">✉️</div><p>还没有聊天记录，打个招呼吧</p></div>';
+                : emptyStateMarkup('messages', '还没有聊天记录，打个招呼吧');
 
             return `
                 <div class="messages-header">
@@ -3072,6 +3223,7 @@
             const input = document.getElementById('messageInput');
             if (form) form.addEventListener('submit', submitMessage);
             if (input) {
+                bindKeyboardSafeFocus(input);
                 // Enter 发送 / Shift+Enter 换行（不用内联 handler）
                 input.addEventListener('keydown', e => {
                     if (e.key === 'Enter' && !e.shiftKey) {
@@ -3099,6 +3251,8 @@
 
         function switchChat(id) {
             currentChatUserId = id;
+            // P4.5：把当前会话写进 URL（刷新后仍停在该会话）
+            if (currentPage === 'messages') history.replaceState(null, '', '#messages?chatId=' + encodeURIComponent(id));
             // 左侧高亮同步 + 只重绘右侧
             document.querySelectorAll('#page-messages .chat-item').forEach(item => {
                 item.classList.toggle('active', item.dataset.chatId === id);
@@ -3132,7 +3286,7 @@
         function openRelations(userId, tab) {
             currentRelationUserId = userId;
             currentRelationTab = tab;
-            navigateTo('relations');
+            navigateTo('relations', { userId, tab });
         }
 
         function renderRelationsPage() {
@@ -3165,7 +3319,7 @@
                     </div>
                     ${btnHtml}
                 </div>`;
-            }).join('') : '<div class="empty-state">暂无用户</div>';
+            }).join('') : emptyStateMarkup('relations', '这里空荡荡的，去关注几位气象达人吧');
 
             const followingCount = (currentRelationTab === 'following' && (String(currentRelationUserId) === String(currentUser?.id) || String(currentRelationUserId) === getCurrentAuthorId()))
                 ? follows.length
@@ -3332,7 +3486,7 @@
             // 分类按钮与换一批现在是悬浮按钮（静态节点），这里只同步下拉选项与状态
             renderOverviewFilterMenu();
             if (!overviewFeedPlan.total) {
-                container.innerHTML = '<div class="empty-state"><span class="icon">🗂️</span><p>这里还没有内容，换个分类或关键词试试。</p></div>';
+                container.innerHTML = emptyStateMarkup('feed', '这里还没有内容，换个分类或关键词试试。');
                 return;
             }
             const visibleBlocks = Math.min(overviewFeedVisibleBlocks, overviewFeedPlan.blocks.length);
@@ -3353,6 +3507,8 @@
                        <div class="feed-sentinel" id="overviewFeedSentinel" aria-hidden="true"></div>`
                     : `<div class="feed-footer"><span class="feed-end">我可是有底线的</span></div>`}`;
             overviewFeedRenderedBlocks = blockIndex;
+            // P4.6：真实内容已渲染，移除残留骨架
+            document.querySelectorAll('.overview-feed-skeleton').forEach(el => el.remove());
             applyOutlineThumbIcons();
             observeOverviewFeedSentinel();
         }
@@ -3361,9 +3517,19 @@
         const MIXED_FEED_AUTOLOAD_DELAY = 260;   // 触底后稍作停顿再加载，避免瞬间全部展开
         const MIXED_FEED_AUTOLOAD_MARGIN = 240;  // 距底部多少像素开始预加载
 
+        // P3.0/P4.5：通用骨架屏（feed 卡片形态 + list 列表形态）
+        function listSkeletonMarkup(count = 4) {
+            return `<div class="skeleton-block">${Array.from({ length: count }).map(() => `
+                <div class="skeleton-card">
+                    <div class="sk-line h-18 w-45 sk-shimmer"></div>
+                    <div class="sk-line w-90 sk-shimmer"></div>
+                    <div class="sk-line w-70 sk-shimmer"></div>
+                </div>`).join('')}</div>`;
+        }
+
         // P3.0：骨架屏占位（加载态的视觉反馈）
         function feedSkeletonMarkup(count = 2) {
-            return `<div class="skeleton-block" id="overviewFeedSkeleton">${Array.from({ length: count }).map(() => `
+            return `<div class="skeleton-block overview-feed-skeleton">${Array.from({ length: count }).map(() => `
                 <div class="skeleton-card">
                     <div class="sk-row">
                         <div class="sk-thumb sk-shimmer"></div>
@@ -3415,10 +3581,9 @@
             const loader = document.getElementById('overviewFeedLoader');
             if (loader) {
                 loader.classList.add('is-loading');
-                // 在加载提示前插入骨架卡片，真实网络延迟下不再只有小转圈
-                if (!document.getElementById('overviewFeedSkeleton')) {
-                    loader.insertAdjacentHTML('beforebegin', feedSkeletonMarkup(2));
-                }
+                // P4.6：用 class 标记并先去重，避免快速触底时插入多份骨架
+                document.querySelectorAll('.overview-feed-skeleton').forEach(el => el.remove());
+                loader.insertAdjacentHTML('beforebegin', feedSkeletonMarkup(2));
             }
             window.clearTimeout(overviewFeedAutoLoadTimer);
             overviewFeedAutoLoadTimer = window.setTimeout(function () {
@@ -3443,7 +3608,10 @@
             if (page && Array.isArray(page.data) && page.data.length) {
                 feedPageState.cursor = page.nextCursor !== undefined ? page.nextCursor : (feedPageState.cursor + 1);
                 feedPageState.hasMore = Boolean(page.hasMore);
-                feedPageState.serverPages = (feedPageState.serverPages || []).concat(page.data);
+                // P4.5：游标分页可能返回重复帖子，用 Map 按 id 去重并保持顺序
+                const pageMap = new Map((feedPageState.serverPages || []).map(item => [item.id, item]));
+                page.data.forEach(item => pageMap.set(item.id, item));
+                feedPageState.serverPages = Array.from(pageMap.values());
             }
             overviewFeedVisibleBlocks += MIXED_FEED_STEP_BLOCKS;
             renderOverviewFeed();
@@ -3636,7 +3804,7 @@
             const finalFiltered = filtered.filter(item => matchesSearchTitle(item.title) || (!globalSearchQuery ? false : String(item.authors || '').toLowerCase().includes(globalSearchQuery)));
             const container = document.getElementById('litList');
             if (finalFiltered.length === 0) {
-                container.innerHTML = '<div class="empty-state"><p>该分类下暂无文献</p></div>';
+                container.innerHTML = emptyStateMarkup('literature', '该分类下暂无文献');
                 return;
             }
             container.innerHTML = finalFiltered.map(item => {
@@ -3667,7 +3835,7 @@
                     <div class="lit-item-footer">
                         <button class="btn btn-sm btn-outline" data-action="open-literature" data-target="doi" data-literature-id="${escapeHtml(item.id)}">DOI: ${doi}</button>
                         <button class="btn btn-sm btn-outline" data-action="open-literature" data-target="link" data-literature-id="${escapeHtml(item.id)}">知网</button>
-                        ${hasPermission('admin') ? `<button class="btn btn-sm btn-outline" data-action="delete-literature" data-literature-id="${escapeHtml(item.id)}">删除</button>` : ''}
+                        ${hasPermission('admin') ? `${deleteButtonMarkup(`data-action="delete-literature" data-literature-id="${escapeHtml(item.id)}"`, 'btn btn-sm btn-outline')}` : ''}
                     </div>
                 </div>
                 `;
@@ -3704,6 +3872,31 @@
                         <button class="${isPostFavorited(post) ? 'active' : ''}" aria-label="收藏" data-action="toggle-favorite" data-post-id="${postId}">${favoriteIconMarkup()}${escapeHtml(post.favorites || 0)}</button>`;
         }
 
+        // P4.5：全平台统一的删除按钮（垃圾桶图标，悬浮变红）
+        const TRASH_ICON_PATH = 'M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6';
+        function trashIconMarkup() {
+            return `<svg class="icon-trash" viewBox="0 0 24 24" aria-hidden="true"><path d="${TRASH_ICON_PATH}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+        }
+        // 统一生成删除按钮（aria-label + title + 图标）
+        function deleteButtonMarkup(attrs, extraClass = '') {
+            return `<button class="icon-delete ${extraClass}" ${attrs} aria-label="删除" title="删除">${trashIconMarkup()}</button>`;
+        }
+
+        // P4.5：统一空状态（SVG 线条图标 + 场景化文案）
+        const EMPTY_STATE_ICONS = {
+            search: '<circle cx="11" cy="11" r="7"/><path d="M20.4 20.4l-4.5-4.5"/><path d="M8 8l6 6M14 8l-6 6"/>',
+            relations: '<path d="M12 21c4.5-3 7-6.2 7-9.5A4 4 0 0 0 12 8a4 4 0 0 0-7 3.5C5 14.8 7.5 18 12 21z"/>',
+            messages: '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/>',
+            notifications: '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',
+            feed: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 10v10"/>',
+            literature: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
+            history: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'
+        };
+        function emptyStateMarkup(kind, text) {
+            const path = EMPTY_STATE_ICONS[kind] || EMPTY_STATE_ICONS.feed;
+            return `<div class="empty-state"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true">${path}</svg></div><p>${escapeHtml(text)}</p></div>`;
+        }
+
         // P4.0：标签胶囊（#台风# 样式）
         function renderPostTags(post) {
             const tags = Array.isArray(post && post.tags) ? post.tags.filter(Boolean) : [];
@@ -3716,7 +3909,7 @@
             const author = escapeHtml(post.author);
             const title = escapeHtml(post.title);
             const date = escapeHtml(post.date);
-            const deleteBtn = hasPermission('own-post', post) ? `<button class="stat-delete" aria-label="删除" data-action="delete-post" data-post-id="${postId}">删除</button>` : '';
+            const deleteBtn = hasPermission('own-post', post) ? `${deleteButtonMarkup(`data-action="delete-post" data-post-id="${postId}"`, 'stat-delete')}` : '';
             const authorLink = `<span class="author" data-action="open-author" data-author-id="${escapeHtml(post.authorId || post.author)}">${author}</span>`;
             const images = getPostImages(post);
             // 模式一：有自定义封面，或无封面但插图不足三张（以正文首图充当左侧封面）
@@ -3724,7 +3917,7 @@
                 const coverSrc = safeUrl(post.cover || images[0]);
                 return `
                 <article class="post-item article-card" tabindex="0" role="link" data-action="view-post" data-post-id="${postId}" aria-label="阅读文章：${title}">
-                    <div class="article-card-cover"><img src="${escapeHtml(coverSrc)}" alt="${title}封面" loading="lazy" data-action="open-lightbox" data-images='${escapeHtml(JSON.stringify(images.length ? images : [coverSrc]))}' data-index="0"></div>
+<div class="article-card-cover"><img src="${escapeHtml(coverSrc)}" alt="${title}封面" loading="lazy"></div>
                     <div class="article-card-body">
                         <h3 class="article-card-title">${title}</h3>
                         <div class="article-card-meta">${authorLink}<span>发布于 ${date}</span></div>
@@ -3736,7 +3929,7 @@
             // 模式二：无封面且插图不少于三张，按帖子固定种子取三张展示在卡片中部（避免重复渲染时图片跳动）
             if (images.length >= 3) {
                 const picked = shuffleWithRandom(images, createSeededRandom(Number(post.id) || 1));
-                const middle = `<div class="article-card-media">${picked.slice(0, 3).map((src, i) => `<div class="media-slot"><img src="${escapeHtml(src)}" alt="${title}插图" loading="lazy" data-action="open-lightbox" data-images='${escapeHtml(JSON.stringify(picked))}' data-index="${i}"></div>`).join('')}</div>`;
+                const middle = `<div class="article-card-media">${picked.slice(0, 3).map(src => `<div class="media-slot"><img src="${escapeHtml(src)}" alt="${title}插图" loading="lazy"></div>`).join('')}</div>`;
                 return `
                 <article class="post-item article-card plain" tabindex="0" role="link" data-action="view-post" data-post-id="${postId}" aria-label="阅读文章：${title}">
                     <h3 class="article-card-title">${title}</h3>
@@ -3769,13 +3962,13 @@
             const title = escapeHtml(post.title);
             const images = getPostImages(post);
             const cover = images.length
-                ? `<img src="${escapeHtml(images[0])}" alt="${title}配图" loading="lazy" data-action="open-lightbox" data-images='${escapeHtml(JSON.stringify(images))}' data-index="0">`
+                    ? `<img src="${escapeHtml(images[0])}" alt="${title}配图" loading="lazy">`
                 : `<div class="dynamic-cover-placeholder"><span class="icon">🌪️</span><span>纯文字动态</span></div>`;
             const avatarUrl = safeUrl(post.authorAvatar);
             const avatar = avatarUrl
                 ? `<img src="${escapeHtml(avatarUrl)}" alt="${author}头像">`
                 : escapeHtml(String(post.author || '匿').slice(0, 1).toUpperCase());
-            const deleteBtn = hasPermission('own-post', post) ? `<button class="dynamic-card-delete" aria-label="删除" data-action="delete-post" data-post-id="${postId}">删除</button>` : '';
+            const deleteBtn = hasPermission('own-post', post) ? `${deleteButtonMarkup(`data-action="delete-post" data-post-id="${postId}"`, 'dynamic-card-delete')}` : '';
             return `
                 <article class="post-item dynamic-card" tabindex="0" role="link" data-action="view-post" data-post-id="${postId}" aria-label="查看动态：${title}">
                     <div class="dynamic-card-cover">${cover}</div>
@@ -3787,12 +3980,14 @@
                 </article>`;
         }
 
-        function viewPost(id) {
+        function viewPost(id, commentId) {
             const post = postsData.find(p=>p.id===id);
             if(!post) return;
             recordHistory({ kind:'post', id: post.id, title: post.title, subcat: post.subcat });
             currentPostDetailId = id;
-            navigateTo('post-detail');
+            // P4.5：带 postId（可选 commentId）写入 URL，刷新后仍停留在该详情页
+            pendingCommentAnchor = commentId || null;
+            navigateTo('post-detail', commentId ? { postId: id, commentId } : { postId: id });
         }
 
         // P4.0：Mock 评论种子数据（首次进入时补齐，便于演示楼中楼 / 折叠 / 排序）
@@ -3872,7 +4067,11 @@
                 </div>`;
             // 评论区渲染后统一绑定输入类事件
             bindCommentInteractions(post);
-            // P1-06：详情页正文图片接入灯箱
+            // P4.5：带 commentId 时滚动到对应楼层并高亮
+            // P4.5：优先使用本次跳转携带的锚点（一次性），否则回退到 URL 参数
+            const anchorCommentId = pendingCommentAnchor || parseRoute().query.commentId;
+            pendingCommentAnchor = null;
+            highlightCommentAnchor(post.id, anchorCommentId);
             const postImages = getPostImages(post);
             if (postImages.length) {
                 // 注意：setAttribute 不做 HTML 实体解码，这里不能再 escapeHtml，否则 dataset 取到 &quot; 会导致 JSON 解析失败
@@ -3966,20 +4165,21 @@
             return haystack.includes(commentSearchQuery);
         }
 
-        function renderCommentSection(post) {
+        // P4.5：评论区内容与外壳分离，支持「只重绘评论区」而不动正文
+        function renderCommentContent(post) {
             normalizePostComments(post);
             const all = sortedMainComments(post.comments.filter(commentMatchesQuery));
             const visibleCount = commentVisibleCounts.get(String(post.id)) || COMMENT_PAGE_SIZE;
             const visible = all.slice(0, visibleCount);
             const remaining = all.length - visible.length;
-            const totalMain = post.comments.length;
+            // 数量 = 一级评论 + 二级回复的总和（不分开显示），用「评论-N」形式
             const totalReplies = post.comments.reduce((sum, comment) => sum + (comment.replies || []).length, 0);
+            const totalCount = post.comments.length + totalReplies;
 
             const sortTab = (value, label) => `<button type="button" class="comment-sort-tab ${currentCommentSort === value ? 'active' : ''}" data-action="comment-sort" data-sort="${value}">${label}</button>`;
 
             return `
-            <section class="post-detail-comments" id="postComments" data-post-id="${escapeHtml(post.id)}">
-                <h2>评论（${escapeHtml(totalMain)}${totalReplies ? ` · 回复 ${escapeHtml(totalReplies)}` : ''}）</h2>
+                <h2 class="comment-title">评论<span class="comment-count">-${escapeHtml(totalCount)}</span></h2>
                 <div class="comment-toolbar">
                     <div class="comment-sort-tabs">${sortTab('hot', '热度')}${sortTab('new', '最新')}${sortTab('old', '最早')}</div>
                     <label class="comment-search">
@@ -3999,14 +4199,69 @@
                 <div class="comment-list">
                     ${visible.length ? visible.map(comment => renderCommentItem(post, comment)).join('') : `<div class="comment-empty">${commentSearchQuery ? '没有匹配的评论' : '暂无评论，来发表第一条评论吧。'}</div>`}
                 </div>
-                ${remaining > 0 ? `<button type="button" class="btn btn-outline btn-sm comment-more" data-action="comment-load-more" data-post-id="${escapeHtml(post.id)}">加载更多评论（剩余 ${escapeHtml(remaining)} 条）</button>` : ''}
-            </section>`;
+                ${remaining > 0 ? `<button type="button" class="btn btn-outline btn-sm comment-more" data-action="comment-load-more" data-post-id="${escapeHtml(post.id)}">加载更多评论（剩余 ${escapeHtml(remaining)} 条）</button>` : ''}`;
+        }
+
+        function renderCommentSection(post) {
+            return `
+            <section class="post-detail-comments" id="postComments" data-post-id="${escapeHtml(post.id)}">${renderCommentContent(post)}</section>`;
+        }
+
+        // 只刷新评论区：正文 / 图片不重新解析，避免长文重绘卡顿
+        function refreshCommentSectionOnly(postId) {
+            const post = postsData.find(item => item.id === Number(postId));
+            if (!post) return;
+            const section = document.getElementById('postComments');
+            if (!section) { renderPostDetail(postId); return; }
+            section.innerHTML = renderCommentContent(post);
+            bindCommentInteractions(post);
+        }
+
+        // P4.5：定位到指定评论（必要时放宽分页/展开回复），滚动并高亮
+        function highlightCommentAnchor(postId, commentId) {
+            if (!commentId) return;
+            const post = postsData.find(item => item.id === Number(postId));
+            if (!post) return;
+            normalizePostComments(post);
+            const index = sortedMainComments(post.comments).findIndex(comment => String(comment.id) === String(commentId));
+            if (index >= 0) {
+                const needCount = index + 1;
+                if (needCount > (commentVisibleCounts.get(String(postId)) || COMMENT_PAGE_SIZE)) {
+                    commentVisibleCounts.set(String(postId), needCount);
+                    refreshCommentSectionOnly(postId);
+                }
+            }
+            setTimeout(() => {
+                const target = document.querySelector(`#postComments [data-comment-id="${commentId}"]`);
+                if (!target) return;
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                target.classList.add('highlight-flash');
+                setTimeout(() => target.classList.remove('highlight-flash'), 2000);
+            }, 120);
         }
 
         function renderComposerImagePreview(kind) {
-            const pending = kind === 'reply' ? replyComposerImage : commentComposerImage;
-            if (!pending) return '';
+            const pending = kind === 'reply' ? replyComposerImage : commentComposerImage;            if (!pending) return '';
             return `<div class="comment-image-preview"><img src="${escapeHtml(pending.url)}" alt="待发送图片"><button type="button" class="remove-image" data-action="comment-image-clear" data-kind="${kind}" title="移除图片">×</button></div>`;
+        }
+
+        // P4.5：作者名 → authorId（用于评论区点击跳转主页）
+        function resolveAuthorIdByName(name) {
+            const text = String(name || '').trim();
+            if (!text) return '';
+            if (AUTHOR_ID_MAP.has(text)) return AUTHOR_ID_MAP.get(text);
+            const owned = postsData.find(post => post.author === text && post.authorId);
+            if (owned) return owned.authorId;
+            if (currentUser && text === (currentUser.name || currentUser.username)) return getCurrentAuthorId();
+            return '';
+        }
+        // 评论作者名（可点击则带 data-action）
+        function commentAuthorMarkup(name) {
+            const safe = escapeHtml(name || '匿名用户');
+            const id = resolveAuthorIdByName(name);
+            return id
+                ? `<span class="comment-author is-link" data-action="open-author" data-author-id="${escapeHtml(id)}" title="查看主页">${safe}</span>`
+                : `<span class="comment-author">${safe}</span>`;
         }
 
         function renderCommentItem(post, comment) {
@@ -4029,7 +4284,7 @@
                 ? `<img class="comment-image" src="${escapeHtml(safeUrl(comment.image))}" alt="评论图片" loading="lazy" data-action="open-lightbox" data-images='${escapeHtml(JSON.stringify([comment.image]))}' data-index="0">`
                 : '';
             const deleteHtml = canManageComment(comment)
-                ? `<button data-action="comment-delete" data-post-id="${postIdAttr}" data-comment-id="${commentIdAttr}">删除</button>` : '';
+                ? `${deleteButtonMarkup(`data-action="comment-delete" data-post-id="${postIdAttr}" data-comment-id="${commentIdAttr}"`)}` : '';
             const replyBoxHtml = isReplyTarget ? `
                     <div class="inline-reply-box">
                         <div class="reply-hint">回复 @${escapeHtml(comment.author || '匿名用户')}</div>
@@ -4046,12 +4301,12 @@
 
             return `
                 <div class="comment-item" data-comment-id="${commentIdAttr}">
-                    <div class="comment-head"><span class="comment-author">${escapeHtml(comment.author || '匿名用户')}</span><span>${escapeHtml(comment.date || '')}</span></div>
+                    <div class="comment-head">${commentAuthorMarkup(comment.author)}<span class="head-date">${escapeHtml(comment.date || '')}</span></div>
                     <div class="comment-content">${escapeHtml(comment.content || '')}</div>
                     ${imageHtml}
                     <div class="comment-actions">
-                        <button class="${likedClass}" data-action="like-comment" data-post-id="${postIdAttr}" data-comment-id="${commentIdAttr}">赞 ${escapeHtml(comment.likes || 0)}</button>
-                        <button data-action="reply-comment" data-post-id="${postIdAttr}" data-comment-id="${commentIdAttr}">回复</button>
+                        <button class="comment-action-btn ${likedClass}" data-action="like-comment" data-post-id="${postIdAttr}" data-comment-id="${commentIdAttr}" aria-label="点赞" title="点赞">${thumbIconMarkup()}<span class="action-count">${escapeHtml(comment.likes || 0)}</span></button>
+                        <button class="comment-action-btn" data-action="reply-comment" data-post-id="${postIdAttr}" data-comment-id="${commentIdAttr}" aria-label="回复" title="回复">${commentIconMarkup()}<span class="action-count">${escapeHtml((comment.replies || []).length)}</span></button>
                         ${deleteHtml}
                     </div>
                     ${repliesHtml}
@@ -4068,10 +4323,14 @@
             const imageHtml = (!deleted && reply.image)
                 ? `<img class="comment-image" src="${escapeHtml(safeUrl(reply.image))}" alt="回复图片" loading="lazy" data-action="open-lightbox" data-images='${escapeHtml(JSON.stringify([reply.image]))}' data-index="0">`
                 : '';
-            const actionsHtml = deleted ? '' : `<div class="comment-actions"><button class="${reply.liked ? 'active' : ''}" data-action="like-reply" data-post-id="${escapeHtml(post.id)}" data-comment-id="${escapeHtml(comment.id)}" data-reply-id="${escapeHtml(reply.id)}">赞 ${escapeHtml(reply.likes || 0)}</button>${canManageComment(reply) ? `<button data-action="comment-reply-delete" data-post-id="${escapeHtml(post.id)}" data-comment-id="${escapeHtml(comment.id)}" data-reply-id="${escapeHtml(reply.id)}">删除</button>` : ''}</div>`;
+            // 回复一级评论（目标就是楼主）时不显示「回复@」，只有回复二级评论才显示，且紧贴作者名
+            const replyTargetHtml = (!deleted && reply.replyToUser && String(reply.replyToUser) !== String(comment.author))
+                ? `<span class="reply-target">回复@${escapeHtml(reply.replyToUser)}</span>`
+                : '';
+            const actionsHtml = deleted ? '' : `<div class="comment-actions"><button class="comment-action-btn ${reply.liked ? 'active' : ''}" data-action="like-reply" data-post-id="${escapeHtml(post.id)}" data-comment-id="${escapeHtml(comment.id)}" data-reply-id="${escapeHtml(reply.id)}" aria-label="点赞" title="点赞">${thumbIconMarkup()}<span class="action-count">${escapeHtml(reply.likes || 0)}</span></button>${canManageComment(reply) ? `${deleteButtonMarkup(`data-action="comment-reply-delete" data-post-id="${escapeHtml(post.id)}" data-comment-id="${escapeHtml(comment.id)}" data-reply-id="${escapeHtml(reply.id)}"`)}` : ''}</div>`;
             return `
                 <div class="comment-reply" data-reply-id="${escapeHtml(reply.id)}">
-                    <div class="comment-head"><span class="comment-author">${escapeHtml(reply.author || '匿名用户')}</span><span class="reply-target">回复 @${escapeHtml(reply.replyToUser || comment.author || '')}</span><span>${escapeHtml(reply.date || '')}</span></div>
+                    <div class="comment-head"><span class="head-left">${commentAuthorMarkup(reply.author)}${replyTargetHtml}</span><span class="head-date">${escapeHtml(reply.date || '')}</span></div>
                     ${contentHtml}
                     ${imageHtml}
                     ${actionsHtml}
@@ -4079,6 +4338,14 @@
         }
 
         // 渲染后绑定输入类事件（不用内联 handler）
+        // P4.6：移动端输入框聚焦后滚动到可视区，避免软键盘遮挡
+        function bindKeyboardSafeFocus(input) {
+            if (!input) return;
+            input.addEventListener('focus', () => {
+                setTimeout(() => input.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+            });
+        }
+
         function bindCommentInteractions(post) {
             const section = document.getElementById('postComments');
             if (!section) return;
@@ -4087,7 +4354,7 @@
             if (form) {
                 form.addEventListener('submit', event => submitPostComment(event, post.id));
                 const textarea = form.querySelector('textarea');
-                if (textarea) textarea.addEventListener('input', () => commentDrafts.set('main-' + post.id, textarea.value));
+                if (textarea) { textarea.addEventListener('input', () => commentDrafts.set('main-' + post.id, textarea.value)); bindKeyboardSafeFocus(textarea); }
             }
 
             const imageInput = document.getElementById('commentImageInput');
@@ -4101,7 +4368,9 @@
             if (searchInput) {
                 searchInput.addEventListener('input', () => {
                     commentSearchQuery = searchInput.value.trim().toLowerCase();
-                    renderPostDetail(post.id);
+                    // P4.6：搜索条件变化时重置分页游标
+                    commentVisibleCounts.set(String(post.id), COMMENT_PAGE_SIZE);
+                    refreshCommentSectionOnly(post.id);
                     const next = document.getElementById('commentSearchInput');
                     if (next) { next.focus(); next.setSelectionRange(next.value.length, next.value.length); }
                 });
@@ -4113,6 +4382,7 @@
                 const textarea = replyForm.querySelector('textarea');
                 if (textarea) {
                     textarea.addEventListener('input', () => commentDrafts.set(`reply-${post.id}-${commentId}`, textarea.value));
+                    bindKeyboardSafeFocus(textarea);
                     textarea.focus();
                     textarea.setSelectionRange(textarea.value.length, textarea.value.length);
                 }
@@ -4128,35 +4398,55 @@
         // —— 交互动作 ——
         function setCommentSort(sort) {
             currentCommentSort = ['hot', 'new', 'old'].includes(sort) ? sort : 'hot';
-            if (currentPage === 'post-detail') renderPostDetail(currentPostDetailId);
+            // P4.6：切换排序后重置分页游标，避免沿用上一次的可见条数
+            if (currentPostDetailId !== null) commentVisibleCounts.set(String(currentPostDetailId), COMMENT_PAGE_SIZE);
+            if (currentPage === 'post-detail') refreshCommentSectionOnly(currentPostDetailId);
         }
 
         function toggleCommentReplies(postId, commentId) {
             const set = commentExpandedSet(postId);
             if (set.has(String(commentId))) set.delete(String(commentId));
             else set.add(String(commentId));
-            if (currentPage === 'post-detail') renderPostDetail(Number(postId));
+            if (currentPage === 'post-detail') refreshCommentSectionOnly(postId);
         }
 
-        function loadMoreComments(postId) {
+        function loadMoreComments(postId, btn) {
+            // P4.6：加载期间禁用按钮，避免连点触发多次渲染
+            if (btn) { btn.classList.add('is-loading'); btn.disabled = true; }
             const key = String(postId);
             commentVisibleCounts.set(key, (commentVisibleCounts.get(key) || COMMENT_PAGE_SIZE) + COMMENT_PAGE_SIZE);
-            if (currentPage === 'post-detail') renderPostDetail(Number(postId));
+            if (currentPage === 'post-detail') refreshCommentSectionOnly(postId);
         }
 
         function startInlineReply(postId, commentId) {
             if (!requirePermission('user')) return;
             inlineReplyTarget = { postId: Number(postId), commentId: String(commentId) };
             replyComposerImage = null;
-            renderPostDetail(Number(postId));
+            refreshCommentSectionOnly(postId);
             const box = document.querySelector('#postComments .inline-reply-box textarea');
             if (box) box.focus();
+        }
+
+        // P4.6：离开文章编辑器时询问是否保留草稿
+        async function cancelArticleEditor() {
+            if (articleEditorHasContent()) {
+                const keep = await showConfirm('是否保存草稿？选择“取消”将丢弃本次编辑内容。');
+                if (keep) {
+                    saveArticleDraft(false);
+                    showToast('草稿已保存到本地', 'success');
+                } else {
+                    clearArticleDraft();
+                    commentDrafts.clear();
+                    pendingCommentAnchor = null;
+                }
+            }
+            navigateTo('media');
         }
 
         function cancelInlineReply() {
             inlineReplyTarget = null;
             replyComposerImage = null;
-            if (currentPage === 'post-detail') renderPostDetail(currentPostDetailId);
+            if (currentPage === 'post-detail') refreshCommentSectionOnly(currentPostDetailId);
         }
 
         function attachCommentImage(file, kind = 'main') {
@@ -4167,13 +4457,16 @@
             const url = SessionMediaScope.create(file);
             if (kind === 'reply') replyComposerImage = { file, url };
             else commentComposerImage = { file, url };
-            if (currentPage === 'post-detail') renderPostDetail(currentPostDetailId);
+            if (currentPage === 'post-detail') refreshCommentSectionOnly(currentPostDetailId);
         }
 
         function clearCommentImage(kind = 'main') {
+            const pending = kind === 'reply' ? replyComposerImage : commentComposerImage;
+            // P4.6：取消上传时立即回收临时 Blob URL，避免反复上传堆积
+            if (pending && pending.url) SessionMediaScope.revoke(pending.url);
             if (kind === 'reply') replyComposerImage = null;
             else commentComposerImage = null;
-            if (currentPage === 'post-detail') renderPostDetail(currentPostDetailId);
+            if (currentPage === 'post-detail') refreshCommentSectionOnly(currentPostDetailId);
         }
 
         async function submitPostComment(event, id) {
@@ -4201,9 +4494,11 @@
                     });
                 }
                 commentDrafts.delete('main-' + id);
+                // P4.6：提交成功后回收临时预览 URL（真实地址应由后端返回）
+                if (commentComposerImage && commentComposerImage.url) SessionMediaScope.revoke(commentComposerImage.url);
                 commentComposerImage = null;
                 commentVisibleCounts.set(String(id), COMMENT_PAGE_SIZE);
-                renderPostDetail(id);
+                refreshCommentSectionOnly(id);
                 showToast('评论已发布', 'success');
             } catch (error) { showToast(error.message, 'error'); }
         }
@@ -4237,8 +4532,10 @@
                 commentExpandedSet(postId).add(String(parent.id));   // 回复后自动展开
                 commentDrafts.delete(`reply-${postId}-${commentId}`);
                 inlineReplyTarget = null;
+                // P4.6：提交成功后回收临时预览 URL
+                if (replyComposerImage && replyComposerImage.url) SessionMediaScope.revoke(replyComposerImage.url);
                 replyComposerImage = null;
-                renderPostDetail(Number(postId));
+                refreshCommentSectionOnly(postId);
                 showToast('回复已发布', 'success');
             } catch (error) { showToast(error.message, 'error'); }
         }
@@ -4253,9 +4550,10 @@
             const replyCount = (comment.replies || []).length;
             if (replyCount > 0 && !(await showConfirm(`删除这条评论会同时删除其下 ${replyCount} 条回复，确定继续？`))) return;
             try {
-                await apiRequest(postEndpoint(API_CONFIG.endpoints.postComments, postId), { method:'DELETE' });
+                // 4.1：必须带上 commentId，否则后端无法定位删除对象
+                await apiRequest(endpoint(API_CONFIG.endpoints.commentDelete, { postId, commentId }), { method:'DELETE' });
                 post.comments = post.comments.filter(item => String(item.id) !== String(commentId));
-                renderPostDetail(Number(postId));
+                refreshCommentSectionOnly(postId);
                 showToast(replyCount > 0 ? `评论及其 ${replyCount} 条回复已删除` : '评论已删除', 'success');
             } catch (error) { showToast(error.message, 'error'); }
         }
@@ -4268,13 +4566,13 @@
             const reply = findReply(comment, replyId);
             if (!reply) return;
             if (!canManageComment(reply)) { showToast('只能删除自己的回复', 'error'); return; }
-            try {
-                await apiRequest(postEndpoint(API_CONFIG.endpoints.postComments, postId), { method:'DELETE' });
+                // 4.2：必须带上 commentId + replyId，只删目标回复
+                await apiRequest(endpoint(API_CONFIG.endpoints.replyDelete, { postId, commentId, replyId }), { method:'DELETE' });
                 // 保留楼层占位，显示「该回复已删除」，避免子楼错位
                 reply.deleted = true;
                 reply.content = '';
                 reply.image = '';
-                renderPostDetail(Number(postId));
+                refreshCommentSectionOnly(postId);
                 showToast('回复已删除', 'success');
             } catch (error) { showToast(error.message, 'error'); }
         }
@@ -4290,7 +4588,7 @@
             } catch (error) { showToast(error.message, 'error'); return; }
             comment.liked = !liked;
             comment.likes = Math.max(0, (comment.likes || 0) + (liked ? -1 : 1));
-            renderPostDetail(Number(postId));
+            refreshCommentSectionOnly(postId);
         }
 
         async function toggleReplyLike(postId, commentId, replyId) {
@@ -4300,9 +4598,13 @@
             const reply = findReply(comment, replyId);
             if (!reply) return;
             const liked = Boolean(reply.liked);
+            // 4.3：回复点赞同样走接口（后端需保证幂等）
+            try {
+                await apiRequest(endpoint(API_CONFIG.endpoints.replyLike, { postId, commentId, replyId }), { method: liked ? 'DELETE' : 'POST' });
+            } catch (error) { showToast(error.message, 'error'); return; }
             reply.liked = !liked;
             reply.likes = Math.max(0, (reply.likes || 0) + (liked ? -1 : 1));
-            renderPostDetail(Number(postId));
+            refreshCommentSectionOnly(postId);
         }
 
         function renderDatasets() {
@@ -4326,7 +4628,7 @@
                     <div class="data-card-info">${infoItems(ds)}</div>
                     <div style="display:flex; gap:8px; flex-wrap:wrap;">
                         <button class="btn btn-outline btn-sm" data-action="download-dataset" data-dataset-id="${escapeHtml(ds.id)}">下载数据集</button>
-                        ${hasPermission('own-dataset', ds) ? `<button class="btn btn-outline btn-sm" data-action="delete-dataset" data-dataset-id="${escapeHtml(ds.id)}">删除</button>` : ''}
+                        ${hasPermission('own-dataset', ds) ? `${deleteButtonMarkup(`data-action="delete-dataset" data-dataset-id="${escapeHtml(ds.id)}"`, 'btn btn-outline btn-sm')}` : ''}
                     </div>
                 </div>
             `).join('');
@@ -4378,8 +4680,10 @@
             const postFormEl = document.getElementById('postForm');
             postFormEl.dataset.subcat = subcat;
             postFormEl.__pendingFiles = [];
-            document.getElementById('postModal').classList.add('show');
+            const postOverlay = document.getElementById('postModal');
+            postOverlay.classList.add('show');
             document.body.style.overflow = 'hidden';
+            registerModalOpen(postOverlay, () => closePostModal());
         }
         function closePostModal() {
             PostModalScope.revokeAll();                           // 只回收本弹窗的 URL
@@ -4387,8 +4691,9 @@
             if (form) form.__pendingFiles = [];
             const preview = document.getElementById('dynamicImagePreview');
             if (preview) preview.innerHTML = '';
-            document.getElementById('postModal').classList.remove('show');
+            postOverlay.classList.remove('show');
             document.body.style.overflow = '';
+            registerModalClose(postOverlay);
         }
         async function submitPost(e) {
             e.preventDefault();
@@ -4467,7 +4772,7 @@
             // 每次进入编辑器重置图片缓存，并回收上一轮的 Blob URL
             ArticleEditorScope.revokeAll();
             pendingArticleImages.clear();
-            pendingArticleCover = null;            container.innerHTML = `<div class="article-editor-page"><div class="page-header"><button class="btn btn-outline btn-sm" onclick="navigateTo('media')">← 返回原创志</button><h1>发布文章</h1><p class="subtitle">写下你的分析、复盘和气象观察</p></div><form onsubmit="submitArticle(event)"><div class="article-editor-canvas"><div class="article-editor-toolbar"><button type="button" class="editor-tool" onclick="toggleFormatPainter(this)">格式刷</button><button type="button" class="editor-tool" onclick="cancelFormatPainter()">取消格式刷</button><button type="button" class="editor-tool"><select aria-label="字体大小" onchange="applyEditorCommand('fontSize', this.value)"><option value="3">字体大小</option><option value="2">小号</option><option value="3">标准</option><option value="5">大号</option><option value="7">特大</option></select></button><button type="button" class="editor-tool" onclick="applyEditorCommand('italic')"><i>斜体</i></button><button type="button" class="editor-tool" onclick="applyEditorCommand('bold')"><b>粗体</b></button><button type="button" class="editor-tool" onclick="applyEditorCommand('underline')"><u>下划线</u></button><button type="button" class="editor-tool"><input type="color" aria-label="字体颜色选择" value="#e8f0f8" onchange="applyEditorCommand('foreColor', this.value)"></button><button type="button" class="editor-tool" onclick="document.getElementById('articleImageInput').click()">插入图片</button><input type="file" id="articleImageInput" accept="image/*" hidden onchange="insertArticleImage(this.files[0])"></div><div class="article-editor-body"><input class="article-title-input" id="articleTitle" type="text" placeholder="输入文章标题" required><div class="article-content-editor" id="articleContent" contenteditable="true" data-placeholder="从这里开始写作..." role="textbox" aria-label="文章内容"></div><div class="article-editor-settings"><h2>发布设置</h2><div class="article-settings-grid"><div class="form-group"><label for="articleCover">文章封面</label><div class="cover-picker"><input type="file" id="articleCover" accept="image/*" onchange="previewArticleCover(this.files[0])"><img class="cover-preview" id="articleCoverPreview" alt="封面预览"></div><small class="post-compose-hint">不选封面时将按正文插图数量自动匹配卡片样式；无插图时发布前会询问确认</small></div><div class="form-group"><label for="articleTags">标签</label><input id="articleTags" type="text" placeholder="例如：台风, 强对流, 复盘"><label for="articlePublishAt">定时发布</label><input id="articlePublishAt" type="datetime-local"></div></div></div><div class="article-editor-actions"><button type="button" class="btn btn-outline" onclick="navigateTo('media')">取消</button><div class="article-editor-actions-right"><button type="button" class="btn btn-outline" data-action="save-draft">保存草稿</button><button type="submit" class="btn btn-primary">发布文章</button></div></div></div></div></form></div>`;
+            pendingArticleCover = null;            container.innerHTML = `<div class="article-editor-page"><div class="page-header"><button class="btn btn-outline btn-sm" onclick="navigateTo('media')">← 返回原创志</button><h1>发布文章</h1><p class="subtitle">写下你的分析、复盘和气象观察</p></div><form onsubmit="submitArticle(event)"><div class="article-editor-canvas"><div class="article-editor-toolbar"><button type="button" class="editor-tool" onclick="toggleFormatPainter(this)">格式刷</button><button type="button" class="editor-tool" onclick="cancelFormatPainter()">取消格式刷</button><button type="button" class="editor-tool"><select aria-label="字体大小" onchange="applyEditorCommand('fontSize', this.value)"><option value="3">字体大小</option><option value="2">小号</option><option value="3">标准</option><option value="5">大号</option><option value="7">特大</option></select></button><button type="button" class="editor-tool" onclick="applyEditorCommand('italic')"><i>斜体</i></button><button type="button" class="editor-tool" onclick="applyEditorCommand('bold')"><b>粗体</b></button><button type="button" class="editor-tool" onclick="applyEditorCommand('underline')"><u>下划线</u></button><button type="button" class="editor-tool"><input type="color" aria-label="字体颜色选择" value="#e8f0f8" onchange="applyEditorCommand('foreColor', this.value)"></button><button type="button" class="editor-tool" onclick="document.getElementById('articleImageInput').click()">插入图片</button><input type="file" id="articleImageInput" accept="image/*" hidden onchange="insertArticleImage(this.files[0])"></div><div class="article-editor-body"><input class="article-title-input" id="articleTitle" type="text" placeholder="输入文章标题" required><div class="article-content-editor" id="articleContent" contenteditable="true" data-placeholder="从这里开始写作..." role="textbox" aria-label="文章内容"></div><div class="article-editor-settings"><h2>发布设置</h2><div class="article-settings-grid"><div class="form-group"><label for="articleCover">文章封面</label><div class="cover-picker"><input type="file" id="articleCover" accept="image/*" onchange="previewArticleCover(this.files[0])"><img class="cover-preview" id="articleCoverPreview" alt="封面预览"></div><small class="post-compose-hint">不选封面时将按正文插图数量自动匹配卡片样式；无插图时发布前会询问确认</small></div><div class="form-group"><label for="articleTags">标签</label><input id="articleTags" type="text" placeholder="例如：台风, 强对流, 复盘"><label for="articlePublishAt">定时发布</label><input id="articlePublishAt" type="datetime-local"></div></div></div><div class="article-editor-actions"><button type="button" class="btn btn-outline" data-action="cancel-article-editor">取消</button><div class="article-editor-actions-right"><button type="button" class="btn btn-outline" data-action="save-draft">保存草稿</button><button type="submit" class="btn btn-primary">发布文章</button></div></div></div></div></form></div>`;
             // P2.5：进入编辑器后恢复上次草稿，并绑定输入自动暂存
             restoreArticleDraft();
             bindArticleDraftAutosave();
@@ -4505,6 +4810,13 @@
                 event.preventDefault();
                 files.forEach(file => insertArticleImage(file));
                 showToast(`已插入 ${files.length} 张图片`, 'success');
+            });
+
+            // P4.5：回车统一生成 <p>，避免浏览器产出 <div>/<br> 混杂
+            editor.addEventListener('keydown', event => {
+                if (event.key !== 'Enter' || event.shiftKey || event.isComposing) return;
+                event.preventDefault();
+                document.execCommand('insertParagraph', false, null);
             });
         }
 
@@ -4615,7 +4927,7 @@
             const url = ArticleEditorScope.create(file);
             pendingArticleImages.set(url, file);
             editor.focus();
-            document.execCommand('insertHTML', false, `<img src="${escapeHtml(url)}" alt="文章图片"><p><br></p>`);
+            document.execCommand('insertHTML', false, `<img src="${escapeHtml(url)}" alt="文章图片" contenteditable="false" style="display:block;max-width:100%;border-radius:8px;margin:12px 0;"><p><br></p>`);
         }
 
         function previewArticleCover(file) {
@@ -4706,7 +5018,18 @@
         document.addEventListener('click', closeAccountMenu);
         document.addEventListener('click', closeMobilePublish);
         document.addEventListener('click', closeFilterMenus);
-        document.addEventListener('keydown', function(e) { if(e.key==='Escape') { closePostModal(); closeInteractionModal(); closeDatasetUploadModal(); closeMobilePublish(); closeFilterMenus(); } });
+        // P4.6：ESC 只关闭最上层弹窗；没有弹窗时才收起零散浮层
+        document.addEventListener('keydown', function(e) {
+            if (e.key !== 'Escape') return;
+            if (openModalStack.length) {
+                e.preventDefault();
+                const top = openModalStack[openModalStack.length - 1];
+                if (typeof top.closer === 'function') top.closer();
+                return;
+            }
+            closeMobilePublish();
+            closeFilterMenus();
+        });
         // PC 端键盘操作：卡片聚焦后回车 / 空格即可打开（不影响卡片内的点赞、评论等按钮）
         document.addEventListener('keydown', function(e) {
             if (e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
@@ -4740,8 +5063,9 @@
             'switch-relation-tab': el => openRelations(currentRelationUserId, el.dataset.tab),
             'switch-chat':        el => switchChat(el.dataset.chatId),
             'save-draft':         () => saveArticleDraft(true),
+            'cancel-article-editor': () => cancelArticleEditor(),
             'messages-back':      () => setMessagesMobileView('list'),
-            'open-notification':  el => openNotification(el.dataset.notifyId, el.dataset.postId),
+            'open-notification':  el => openNotification(el.dataset.notifyId, el.dataset.postId, el.dataset.commentId),
             'open-lightbox':     (el, e) => { e.stopPropagation(); openLightbox(el.dataset.images, Number(el.dataset.index || 0)); },
             'like-comment':      el => toggleCommentLike(Number(el.dataset.postId), el.dataset.commentId),
             'like-reply':        el => toggleReplyLike(Number(el.dataset.postId), el.dataset.commentId, el.dataset.replyId),
@@ -4750,7 +5074,7 @@
             'comment-delete':    el => deleteComment(el.dataset.postId, el.dataset.commentId),
             'comment-reply-delete': el => deleteReply(el.dataset.postId, el.dataset.commentId, el.dataset.replyId),
             'comment-replies-toggle': el => toggleCommentReplies(el.dataset.postId, el.dataset.commentId),
-            'comment-load-more': el => loadMoreComments(el.dataset.postId),
+            'comment-load-more': el => loadMoreComments(el.dataset.postId, el),
             'comment-sort':      el => setCommentSort(el.dataset.sort),
             'comment-attach':    el => {
                 const input = document.getElementById('commentImageInput');
@@ -4861,7 +5185,12 @@
 
         function initBackToTop() {
             if (!document.getElementById('backToTopBtn')) return;
-            window.addEventListener('scroll', updateBackToTop, { passive: true });
+            // P4.5：滚动事件节流（200ms），避免高频触发布局计算
+            let scrollThrottleTimer = null;
+            window.addEventListener('scroll', () => {
+                if (scrollThrottleTimer) return;
+                scrollThrottleTimer = setTimeout(() => { updateBackToTop(); scrollThrottleTimer = null; }, 200);
+            }, { passive: true });
             window.addEventListener('resize', updateBackToTop);
             updateBackToTop();
         }
@@ -4923,7 +5252,7 @@
             if (dss.length) {
                 html += `<div class="search-group"><div class="feed-section-title">数据集</div>${dss.map(d => `<div class="search-item" data-action="download-dataset" data-dataset-id="${escapeHtml(d.id)}"><span class="badge badge-teal">数据集</span><span class="search-item-title">${escapeHtml(d.name)}</span><span class="search-item-meta">${escapeHtml(d.region || '')}</span></div>`).join('')}</div>`;
             }
-            container.innerHTML = html || '<div class="empty-state"><p>没有找到相关内容</p></div>';
+            container.innerHTML = html || emptyStateMarkup('search', '没有找到相关内容，换个关键词试试吧');
         }
 
         function openDatasetCenter() {
@@ -5031,22 +5360,12 @@
             postsData.forEach(p => {
                 if (!p.authorId) p.authorId = AUTHOR_ID_MAP.get(p.author) || ('u-anon-' + p.id);
             });
-            const hash = location.hash.replace('#','');
-            if(hash==='tools') {
-                navigateTo('tools');
-            } else if(hash==='feed') {
-                navigateTo('feed');
-            } else if(hash==='notifications') {
-                navigateTo('notifications');
-            } else if (hash === 'messages') {
-                navigateTo('messages');
-            } else if (hash === 'profile') {
-                navigateTo('profile');
-            } else if (hash === 'relations') {
-                // 深链直达：缺省展示当前用户（或演示作者）的关注列表
-                if (!currentRelationUserId) currentRelationUserId = currentUser ? currentUser.id : 'u-101';
-                currentRelationTab = currentRelationTab || 'following';
-                navigateTo('relations');
+            // P4.5：解析 #page?query 路由（刷新后仍停留在原页面）
+            const route = parseRoute();
+            applyRouteParams(route);
+            const knownPages = ['tools', 'feed', 'notifications', 'messages', 'profile', 'relations', 'post-detail', 'author', 'admin', 'search', 'article-editor', 'literature-editor'];
+            if (route.page && knownPages.includes(route.page)) {
+                navigateTo(route.page, route.query, 'replace');
             } else {
                 navigateTo('media');
             }
@@ -5060,19 +5379,46 @@
             applyReadNotifies();
             updateNotifyDot();
         }
-        // ==================== 路由回退（P2.5） ====================
-        // 浏览器前进/后退时按 URL hash 还原页面；不写历史，避免污染后退栈
-        window.addEventListener('popstate', () => {
-            const hash = location.hash.replace('#', '');
-            if (!hash) return;
-            const page = hash;
-            if (page === currentPage) return;
-            if (page === 'relations' && !currentRelationUserId) {
-                currentRelationUserId = currentUser ? currentUser.id : 'u-101';
-                currentRelationTab = currentRelationTab || 'following';
+        // ==================== 路由解析（P4.5：支持 query 参数） ====================
+        // #page?key=value&key2=value2 → { page, query }
+        function parseRoute() {
+            const raw = location.hash.replace(/^#/, '');
+            const [page, search] = raw.split('?');
+            let query = {};
+            try { query = Object.fromEntries(new URLSearchParams(search || '').entries()); } catch (ignored) { query = {}; }
+            return { page: page || '', query };
+        }
+
+        // 把 query 里的状态写回内存（刷新 / 回退时保持页面上下文）
+        function applyRouteParams(route) {
+            const { page, query } = route;
+            if (page === 'post-detail' && query.postId) {
+                const id = Number(query.postId);
+                if (Number.isFinite(id)) currentPostDetailId = id;
             }
-            navigateTo(page, 'none');
+            if (page === 'author' && query.authorId) currentAuthorId = query.authorId;
+            if (page === 'relations') {
+                if (query.userId) currentRelationUserId = query.userId;
+                if (query.tab) currentRelationTab = query.tab;
+                if (!currentRelationUserId) currentRelationUserId = currentUser ? currentUser.id : 'u-101';
+            }
+            if (page === 'messages' && query.chatId) currentChatUserId = query.chatId;
+        }
+
+        // ==================== 路由回退（P2.5 / P4.5） ====================
+        // 浏览器前进/后退时按 URL 还原页面；不写历史，避免污染后退栈
+        window.addEventListener('popstate', () => {
+            const route = parseRoute();
+            if (!route.page) return;
+            applyRouteParams(route);
+            if (route.page === currentPage) { renderRoutePage(route); return; }
+            navigateTo(route.page, route.query, 'none');
         });
+
+        // 同一页面内参数变化（如 #post-detail?postId=101 → 102）时重新渲染
+        function renderRoutePage(route) {
+            if (route.page === 'post-detail' && currentPostDetailId) renderPostDetail(currentPostDetailId);
+        }
 
         // ==================== 图片加载失败兜底（P2.5） ====================
         // 捕获阶段监听所有 <img> 的 error，替换为文字占位，避免破图
@@ -5142,6 +5488,10 @@
             event.preventDefault();
             event.returnValue = '';   // 触发浏览器原生「离开此网站？」提示
         });
+
+        // ==================== 网络状态监听（P4.5） ====================
+        window.addEventListener('offline', () => showToast('网络连接已断开，请检查网络设置', 'error', 5000));
+        window.addEventListener('online', () => showToast('网络已恢复', 'success'));
 
         init();
     </script>
