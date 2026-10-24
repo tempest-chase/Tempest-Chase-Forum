@@ -442,28 +442,49 @@
             .filter-menu-wrap.is-floating { display: none; }
         }
 
-        /* ========== 移动端搜索：图标右滑 + 输入框渐显 ========== */
+        /* ========== 关注的博主：红点 / 未更新态 ========== */
+        .dynamic-blogger-avatar-wrap { position: relative; display: inline-flex; flex-shrink: 0; }
+        .dynamic-blogger-avatar { display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .dynamic-blogger-dot {
+            position: absolute;
+            right: -1px;
+            bottom: -1px;
+            width: 8px;
+            height: 8px;
+            border-radius: var(--radius-circle);
+            background: var(--accent-red);
+            border: 1.5px solid var(--bg-card);
+            box-shadow: 0 0 0 1px rgba(240,68,56,0.25);
+        }
+        .dynamic-blogger-idle { color: var(--text-muted); }
+        .dynamic-blogger:has(.dynamic-blogger-dot) .dynamic-blogger-name { font-weight: 600; }
+
+        /* ========== 移动端搜索：从居中位置向右滑出 + 外框轮廓 ========== */
         @media (max-width: 600px) {
             .nav-search,
             .nav-search:focus-within {
-                position: relative;
-                z-index: 4;
+                position: absolute;
+                top: 0;
+                left: calc(50% - 21px);   /* 居中：整行宽度一半再减去自身一半 */
+                width: 42px;
+                height: 52px;
+                grid-column: 1 / -1;    /* 含块始终是整行，避免展开时切换导致抽动 */
+                grid-row: 1;
+                transform: none;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                width: 42px;
-                height: 42px;
                 padding: 0;
-                border: 0;
-                border-radius: var(--radius-circle);
+                gap: 0;
+                border: 1px solid transparent;
+                border-radius: var(--radius-pill);
                 background: transparent;
                 box-shadow: none;
                 outline: none;
-                overflow: hidden;
-                transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                            background-color 0.3s ease,
-                            border-radius 0.3s ease,
-                            padding 0.3s ease;
+                overflow: visible;
+                z-index: 12;
+                transition: left 0.34s cubic-bezier(0.33, 1, 0.68, 1), width 0.34s cubic-bezier(0.33, 1, 0.68, 1),
+                            padding 0.3s ease, border-color 0.3s ease, background-color 0.3s ease, border-radius 0.3s ease;
             }
             .nav-search input { display: none; }
             .nav-search .search-icon {
@@ -472,34 +493,30 @@
                 order: 2;
                 cursor: pointer;
                 color: var(--text-primary);
-                transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
-            /* 展开态：铺满整行，图标滑到最右，输入框从左渐显 */
+            /* 展开态：整行铺开，图标滑到最右，外框描边显现 */
             .nav-search.is-open,
             .nav-search.is-open:focus-within {
-                position: absolute;
-                grid-column: 1 / -1;   /* 展开时覆盖整行（网格定位的子元素以网格区为包含块） */
+                left: 12px;
+                grid-column: 1 / -1;   /* 展开时跨整行，宽度按整条导航计算 */
                 grid-row: 1;
-                justify-self: stretch;
-                left: 0;
-                right: 0;
-                top: 0;
-                width: 100%;
-                height: 52px;
-                padding: 0 16px;
-                border-radius: 0;
+                width: calc(100% - 24px);
+                transform: none;
                 justify-content: flex-start;
-                background: var(--bg-page);
+                padding: 0 14px;
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius-pill);
+                background: var(--bg-card);
                 box-shadow: none;
-                z-index: 12;
+                z-index: 30;
             }
             .nav-search.is-open input {
                 display: block;
                 flex: 1 1 auto;
                 min-width: 0;
                 order: 1;
-                padding: 0 10px 0 0;
+                padding: 0 8px 0 2px;
                 border: 0;
                 outline: none;
                 box-shadow: none;
@@ -510,14 +527,87 @@
             }
             .nav-search.is-open input::placeholder { color: var(--text-muted); }
             .nav-search.is-open .search-icon { margin-left: auto; }
+
+            @keyframes mobileSearchFade {
+                from { opacity: 0; transform: translateX(-8px); }
+                to { opacity: 1; transform: translateX(0); }
+            }
+
             /* 展开搜索时隐藏头像与发布按钮，避免与输入框重叠 */
             body.search-open .account-area,
             body.search-open .nav-mobile-publish-wrap { opacity: 0; pointer-events: none; }
-            .nav-search.is-open { z-index: 30; background: var(--bg-card); }
+        }
 
-            @keyframes mobileSearchFade {
-                from { opacity: 0; transform: translateX(-10px); }
-                to { opacity: 1; transform: translateX(0); }
+        /* ========== 搜索历史面板（PC / 移动端通用） ========== */
+        .nav-search { position: relative; }
+        .search-history-panel {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            right: auto;
+            min-width: 100%;
+            width: max-content;
+            max-width: min(340px, calc(100vw - 32px));
+            padding: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-card-hover);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-6px);
+            transition: opacity 0.18s ease, transform 0.18s ease;
+            z-index: 40;
+        }
+        .search-history-panel.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .search-history-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 2px 4px 8px;
+            font-size: 0.76rem;
+            color: var(--text-muted);
+        }
+        .search-history-clear {
+            border: 0;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 0.74rem;
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: var(--radius-xs);
+        }
+        .search-history-clear:hover { color: var(--accent-cyan); }
+        .search-history-list { display: flex; flex-direction: column; gap: 2px; }
+        .search-history-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 8px 6px;
+            border: 0;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.84rem;
+            text-align: left;
+            cursor: pointer;
+        }
+        .search-history-item:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+        .search-history-item svg {
+            width: 14px; height: 14px; flex-shrink: 0;
+            fill: none; stroke: var(--text-muted);
+            stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+        }
+        .search-history-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        @media (max-width: 600px) {
+            .nav-search.is-open .search-history-panel {
+                top: calc(100% + 8px);
+                left: 0;
+                right: 0;
+                width: auto;
+                max-width: none;
             }
         }
 
@@ -952,24 +1042,75 @@
         .lit-item-thumb .thumb-placeholder { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 20px; color: var(--text-muted); }
         .lit-item-thumb .thumb-placeholder .icon { font-size: 2rem; }
 
+        /* 分类下拉面板（默认隐藏，点按钮后加 .show 展开） */
+        .filter-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            min-width: 136px;
+            padding: 6px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-card-hover);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-6px);
+            transition: opacity 0.18s ease, transform 0.18s ease;
+            z-index: 40;
+        }
+        .filter-menu.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
         /* ========== 分类筛选按钮（原创志 / 文献库） ========== */
         .filter-menu-wrap { position: relative; display: flex; justify-content: flex-end; gap: 10px; }
-        /* 悬浮式：不占独立一行，滚动时钉在导航栏下方（整体右下偏移，避开板块边缘线） */
-        .filter-menu-wrap.is-floating { position: sticky; top: calc(var(--nav-height) + 12px); z-index: 30; height: 0; margin-bottom: 0; align-items: flex-start; padding-right: 20px; }
-        .filter-menu-wrap.is-floating .filter-menu-btn { margin-top: 18px; }
-        .filter-menu-btn { position: relative; width: 38px; height: 38px; border-radius: var(--radius-circle); border: 1px solid var(--border-light); background: var(--bg-card); color: var(--text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow); transition: all var(--transition); flex-shrink: 0; }
+        /* 悬浮式：不占独立一行，浮在卡片之上；按钮中心与文章标题同高，左侧留出内缩避开卡片边框 */
+        .filter-menu-wrap.is-floating {
+            position: sticky;
+            top: calc(var(--nav-height) + 14px);
+            z-index: 30;
+            height: 0;
+            margin: 0;
+            padding-right: 34px;   /* 相对卡片右缘再向左内缩，避免压住卡片边框线 */
+            align-items: flex-start;
+            pointer-events: none;  /* 零高度容器不拦截卡片点击 */
+        }
+        .filter-menu-wrap.is-floating .filter-menu-btn {
+            margin-top: 13px;      /* 与卡片内标题行同一水平高度（卡片 padding 16px） */
+            pointer-events: auto;
+        }
+        /* 原创志：分类 + 换一批 两枚按钮；下拉对齐按钮右缘 */
+        .filter-menu-wrap.feed-float-tools .filter-menu-btn { margin-top: 13px; }
+        .filter-menu-wrap.feed-float-tools .filter-menu { top: 52px; right: 34px; }
+        .filter-menu-wrap.is-floating .filter-menu { position: absolute; top: 52px; right: 34px; }
+        /* 分类 / 换一批 圆形按钮基础样式 */
+        .filter-menu-btn {
+            position: relative;
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-circle);
+            border: 1px solid var(--border-light);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all var(--transition);
+            flex-shrink: 0;
+        }
         .filter-menu-btn:hover { color: var(--accent-cyan); border-color: var(--accent-cyan); box-shadow: var(--shadow-hover); }
-        /* 已选分类（非“全部”）时的小圆点提示 */
         .filter-menu-btn.is-filtered { color: var(--accent-cyan); border-color: rgba(43,167,255,0.45); background: rgba(43,167,255,0.08); }
-        .filter-menu-btn.is-filtered::after { content: ''; position: absolute; top: -2px; right: -2px; width: 9px; height: 9px; border-radius: var(--radius-circle); background: var(--accent-cyan); border: 2px solid var(--bg-secondary); }
+        .filter-menu-btn.is-filtered::after {
+            content: '';
+            position: absolute;
+            top: -2px; right: -2px;
+            width: 9px; height: 9px;
+            border-radius: var(--radius-circle);
+            background: var(--accent-cyan);
+        }
         .filter-menu-btn svg { width: 17px; height: 17px; }
         .filter-menu-btn svg path { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-        .filter-menu { position: absolute; top: calc(100% + 8px); right: 0; min-width: 172px; padding: 6px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); box-shadow: var(--shadow-hover); z-index: 1200; opacity: 0; pointer-events: none; transform: translateY(-6px); transition: all var(--transition); }
-        .filter-menu.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
-        .filter-menu-wrap.is-floating .filter-menu { top: 64px; right: 20px; }
-        /* 原创志：分类 + 换一批 两枚按钮，按钮中心与首篇文章标题同高；下拉对齐分类按钮右缘 */
-        .filter-menu-wrap.feed-float-tools .filter-menu-btn { margin-top: 11px; }
-        .filter-menu-wrap.feed-float-tools .filter-menu { top: 57px; right: 68px; }
         /* ========== 一键返回顶部（原创志 / 文献库，左下角小火箭） ========== */
         .back-to-top-btn { position: fixed; left: 24px; bottom: 28px; z-index: 900; opacity: 0; transform: translateY(12px); pointer-events: none; transition: opacity var(--transition), transform var(--transition), color var(--transition), border-color var(--transition), box-shadow var(--transition); }
         .back-to-top-btn.is-visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
@@ -1049,37 +1190,122 @@
 
         /* —— 动态卡片（小红书风：方形图卡） —— */
         .dynamic-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(232px, 1fr)); gap:18px; }
-        .dynamic-card { padding:0; overflow:hidden; display:flex; flex-direction:column; aspect-ratio:1/1; }
-        .dynamic-card-cover { flex:1; min-height:0; position:relative; background:var(--bg-input); overflow:hidden; }
-        .dynamic-card-cover img { width:100%; height:100%; object-fit:cover; transition:transform 0.35s ease; }
-        .dynamic-card-cover .dynamic-cover-placeholder { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; color:var(--text-muted); font-size:0.82rem; background:linear-gradient(145deg, #f7f8fa, #eef0f4); }
-        .dynamic-card-cover .dynamic-cover-placeholder .icon { font-size:2rem; }
-        .dynamic-card-title { flex-shrink:0; padding:9px 12px 0; font-size:0.86rem; font-weight:600; line-height:1.4; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-        .dynamic-card-footer { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 12px 10px; background:var(--bg-card); transition:background var(--transition); }
-        .dynamic-card:hover .dynamic-card-footer { background:var(--bg-card-hover); }
-        .dynamic-card-author { display:flex; align-items:center; gap:7px; min-width:0; font-size:0.78rem; color:var(--text-secondary); cursor:pointer; }
-        .dynamic-card-author .mini-avatar { width:20px; height:20px; border-radius: var(--radius-circle); flex-shrink:0; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, var(--accent-cyan), var(--accent-blue)); color:#fff; font-size:0.62rem; font-weight:700; overflow:hidden; }
-        .dynamic-card-author .mini-avatar img { width:100%; height:100%; object-fit:cover; }
-        .dynamic-card-author .name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; transition:color var(--transition); }
-        .dynamic-card-author:hover .name { color:var(--text-primary); }
-        .dynamic-card-actions { display:flex; align-items:center; gap:12px; flex-shrink:0; }
-        .dynamic-card-delete { border:0; background:transparent; padding:0; color:var(--text-muted); font-size:0.72rem; transition:color var(--transition); }
-        .dynamic-card-delete:hover { color:var(--accent-red); }
-        .dynamic-card-like { display:inline-flex; align-items:center; gap:4px; border:0; background:transparent; padding:0; color:var(--text-muted); font-size:0.78rem; flex-shrink:0; transition:color var(--transition), transform var(--transition); }
-        .dynamic-card-like:hover { color:var(--text-primary); }
-        .dynamic-card-like.active { color:#ef5350; }
-        .dynamic-card-like:hover .thumb-icon { transform:scale(1.12); }
-        .dynamic-card-like .thumb-icon { width:15px; height:15px; margin-right:0; vertical-align:middle; }
+        /* ========== 动态卡片（v5.6 重设计：头像栏 + 四行文字 + 1:1 缩略图） ========== */
+        .dynamic-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
+        .dynamic-card {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 16px;
+            aspect-ratio: auto;
+            height: auto;
+            min-height: 0;
+            cursor: pointer;
+        }
+        .dynamic-header { display: flex; align-items: center; gap: 8px; }
+        .dynamic-avatar {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            border-radius: var(--radius-circle);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(43,167,255,0.12);
+            color: var(--accent-cyan);
+            font-size: 0.92rem;
+            font-weight: 600;
+        }
+        .dynamic-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .dynamic-author-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; }
+        .dynamic-author-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            width: fit-content;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-underline-offset: 3px;
+        }
+        .dynamic-author-name:hover { color: var(--accent-cyan); text-decoration: underline; }
+        .dynamic-time { font-size: 0.74rem; color: var(--text-muted); }
+        .dynamic-header-actions { flex-shrink: 0; }
 
-        /* ========== 原创志混合信息流（文章与动态交替出现） ========== */
-        .mixed-feed { display:flex; flex-direction:column; gap:30px; }
-        /* 换一批：圆形图标按钮，与分类按钮同一款设计 */
-        .feed-shuffle-btn svg { transition:transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-        .feed-shuffle-btn:hover svg { transform:rotate(180deg); }
-        .feed-block { display:flex; flex-direction:column; gap:12px; }
-        .feed-block.is-new { animation:feedBlockIn 0.44s cubic-bezier(0.22, 0.8, 0.32, 1) both; }
-        @keyframes feedBlockIn { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-        .dynamic-row { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:16px; }
+        .dynamic-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-primary);
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            word-break: break-word;
+        }
+        .dynamic-text strong { font-weight: 600; }
+
+        .dynamic-images { display: flex; gap: 8px; }
+        .dynamic-image-wrapper {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            background: var(--bg-input);
+        }
+        .dynamic-image-wrapper img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .image-more-mask {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            font-size: 1.05rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+        html[data-theme="dark"] .image-more-mask { background: rgba(0,0,0,0.6); color: #fff; }
+
+        .dynamic-footer-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: auto;
+        }
+        .dynamic-more-btn {
+            border: 0;
+            background: transparent;
+            padding: 0;
+            color: var(--accent-cyan);
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        .dynamic-more-btn:hover { text-decoration: underline; text-underline-offset: 3px; }
+        .dynamic-interactions { display: flex; align-items: center; gap: 14px; }
+        .dynamic-interactions button {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            border: 0;
+            background: transparent;
+            padding: 0;
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: color var(--transition);
+        }
+        .dynamic-interactions button:hover { color: var(--text-primary); }
+        .dynamic-interactions button.active { color: var(--accent-red); }
+        .dynamic-interactions svg { width: 15px; height: 15px; }
+        .dynamic-card-delete.icon-delete { padding: 2px; }
+
+
+        .dynamic-row { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:16px; align-items:start; }
         .post-item:focus-visible { outline:2px solid var(--accent-cyan); outline-offset:3px; }
         .feed-footer { display:flex; flex-direction:column; align-items:center; gap:14px; padding:6px 0 2px; }
         .feed-end { display:flex; align-items:center; justify-content:center; gap:14px; width:100%; font-size:0.82rem; color:var(--text-muted); letter-spacing:0.14em; }
@@ -1319,9 +1545,9 @@
             .account-area .account-menu { left: 0; right: auto; }
             .nav-search,
             .nav-search:focus-within {
-                grid-column: 2;
+                grid-column: 1 / -1;   /* 与展开态同包含块，避免过渡中切换导致抽动 */
                 grid-row: 1;
-                justify-self: center;
+                left: calc(50% - 21px);
                 width: 42px;
                 height: 42px;
                 min-width: 0;
@@ -1802,7 +2028,7 @@
 
         /* —— 话题详情：内容流间距与首页一致（30px 块间隔 / 12px 卡间隔） —— */
         .topic-feed { display: flex; flex-direction: column; gap: 30px; }
-        .topic-feed .feed-block { gap: 12px; }
+        .topic-feed .feed-block { display: flex; flex-direction: column; gap: var(--feed-card-gap); }
         .topic-feed .topics-toolbar { margin-bottom: 0; }
         /* 侧栏分区间距：规则区与管理团队保持同一节奏 */
         .topic-side h3:not(:first-child) { margin-top: 20px; }
@@ -2310,6 +2536,175 @@
             body { padding-bottom: env(safe-area-inset-bottom); }
         }
 
+        /* 移动端：动态卡片单列（覆盖旧规则，放在样式表末尾） */
+        @media (max-width: 600px) {
+            .dynamic-row,
+            .dynamic-grid,
+            .dynamic-feed-list .dynamic-row { grid-template-columns: 1fr; gap: var(--feed-card-gap); }
+            .dynamic-card { padding: 14px; gap: 10px; }
+            .dynamic-text { font-size: 0.92rem; }
+        }        /* ========== 卡片间距统一 & 文章卡单行标题 / 标签同行（v5.7） ========== */
+        :root {
+            --feed-card-gap: 20px;   /* 卡片纵向间距 */
+            --feed-card-gap-x: 20px; /* 同一行卡片的横向间距 */
+            --feed-block-gap: 20px;  /* 内容块之间的间距（与卡片纵向一致） */
+        }
+        .mixed-feed,
+        .topic-feed,
+        .dynamic-feed-list { display: flex; flex-direction: column; gap: var(--feed-block-gap); }
+        .feed-block { display: flex; flex-direction: column; gap: var(--feed-card-gap); }
+        .dynamic-row, .dynamic-grid { gap: var(--feed-card-gap-x); }
+
+        /* 文章标题：只留一行，超出省略 */
+        .article-card-title {
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-clamp: none;
+            -webkit-line-clamp: unset;
+        }
+
+        /* 话题 + 标签同一行，超出一行右侧用省略号提示 */
+        .article-card-chips {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            padding-right: 2px;
+        }
+        .article-card-chips .post-topics,
+        .article-card-chips .post-tags {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin: 0;
+            flex-wrap: nowrap;
+            flex-shrink: 0;
+        }
+        .article-card-chips .chips-more {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            display: none;
+            align-items: center;
+            padding-left: 14px;
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            background: linear-gradient(90deg, transparent, var(--bg-card) 45%);
+        }
+        .article-card-chips.has-more .chips-more { display: flex; }
+
+        /* 动态卡片：全文跟在省略号后面（贴住文字块右下角） */
+        .dynamic-text-wrap { position: relative; }
+        .dynamic-more-btn {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            padding-left: 16px;
+            border: 0;
+            background: linear-gradient(90deg, transparent, var(--bg-card) 40%);
+            color: var(--accent-cyan);
+            font-size: 0.86rem;
+            line-height: 1.6;
+            cursor: pointer;
+        }
+        .dynamic-more-btn:hover { text-decoration: underline; text-underline-offset: 3px; }
+        .dynamic-text-wrap:not(.has-more) .dynamic-more-btn { display: none; }
+
+        /* 移动端：文章卡与 PC 同款横排（左封面 + 右内容），一屏容纳更多 */
+        @media (max-width: 600px) {
+            .article-card { flex-direction: row; gap: 12px; padding: 12px; align-items: flex-start; }
+            .article-card-cover { width: 104px; aspect-ratio: 1 / 1; }
+            .article-card-body { gap: 6px; }
+            .article-card-title { font-size: 0.94rem; }
+            .article-card-meta { gap: 8px; font-size: 0.74rem; }
+            .article-card-stats { gap: 12px; font-size: 0.74rem; }
+            .article-card.plain { flex-direction: column; }
+            .article-card.plain .article-card-title { white-space: normal; }
+            .article-card-footer { display: flex; flex-wrap: wrap; row-gap: 6px; }
+            .article-card-footer .article-card-stats { flex: 1 1 100%; justify-content: flex-start; order: 3; }
+            .article-card-footer .card-date { margin-left: auto; }
+        }        /* 移动端单列：动态之间也用纵向间距（30px），与卡片节奏一致 */
+        @media (max-width: 600px) {
+            .dynamic-row,
+            .dynamic-grid { gap: var(--feed-card-gap); }
+        }        /* ========== 动态配图：统一尺寸（PC 每张半宽 / 移动端每张 1/3 宽） ========== */
+        .dynamic-images { display: flex; gap: 8px; }
+        .dynamic-image-wrapper {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            background: var(--bg-input);
+            flex: 0 0 auto;
+        }
+        /* 一张、两张（或多张）都按同一尺寸：卡内可用宽度的一半 */
+        .dynamic-images .dynamic-image-wrapper { width: calc((100% - 8px) / 2); }
+        .dynamic-image-wrapper img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .image-more-mask {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            font-size: 1.05rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+        html[data-theme="dark"] .image-more-mask { background: rgba(0,0,0,0.6); color: #fff; }
+
+        /* 移动端：每张按卡内可用宽度的 1/3，一屏可并排三张 */
+        @media (max-width: 600px) {
+            .dynamic-images .dynamic-image-wrapper { width: calc((100% - 16px) / 3); }
+        }
+
+        /* ========== 动态文字两行截断 + 蓝色「…全文」尾标 ========== */
+        .dynamic-text {
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+        }
+        .dynamic-more-btn {
+            color: var(--accent-cyan);
+            font-size: 0.86rem;
+            padding: 0 0 0 6px;
+            background: var(--bg-card);   /* 实底：遮住 clamp 自带的省略号，只留我们的「…全文」 */
+            text-decoration: none;
+            transition: font-weight 0.15s ease;
+        }
+        .dynamic-more-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: -16px;
+            width: 16px;
+            background: linear-gradient(90deg, transparent, var(--bg-card));
+            pointer-events: none;
+        }
+        .dynamic-more-btn:hover {
+            font-weight: 700;
+            text-decoration: none;
+        }
+        @media (max-width: 600px) {
+            .dynamic-text { -webkit-line-clamp: 2; line-clamp: 2; }
+        }
+
+        /* 纯文字动态上下堆叠：填满与图片卡同行的竖向空缺 */
+        .dynamic-stack {
+            display: flex;
+            flex-direction: column;
+            gap: var(--feed-card-gap);
+            min-width: 0;
+        }
+        .dynamic-stack > .dynamic-card { width: 100%; }
+
     </style>
 </head>
 <body>
@@ -2326,7 +2721,8 @@
         </div>
         <div class="nav-search">
             <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true" onclick="toggleMobileSearch(event)"><circle cx="11" cy="11" r="7"></circle><path d="M20.4 20.4l-4.5-4.5"></path></svg>
-            <input type="text" placeholder="搜索文献、帖子、数据集..." id="globalSearchInput" oninput="handleGlobalSearch(this.value)" onkeydown="if(event.key==='Enter'){submitMobileSearch();}else if(event.key==='Escape'){closeMobileSearch();}">
+                <input type="text" placeholder="搜索文献、帖子、数据集..." id="globalSearchInput" oninput="handleGlobalSearch(this.value)" onfocus="openSearchHistoryPanel()" onkeydown="if(event.key==='Enter'){submitMobileSearch();}else if(event.key==='Escape'){closeMobileSearch();closeSearchHistoryPanel();}">
+                <div class="search-history-panel" id="searchHistoryPanel"></div>
         </div>
         <div class="nav-actions" id="navActions">
         <!-- 话题入口（# 图标）：位于搜索框与动态按钮之间 -->
@@ -3258,11 +3654,15 @@
                         <button type="button" class="btn btn-outline btn-sm" data-action="settings-toggle-theme">${isDark ? '切到浅色' : '切到深色'}</button>
                     </div>
                     <div class="info-row">
+                        <div class="info-row-main"><b>搜索历史</b><span>点击搜索框时展示最近搜索</span></div>
+                        <button type="button" class="btn btn-outline btn-sm" data-action="settings-toggle-history">${searchHistoryEnabled ? '已开启' : '已关闭'}</button>
+                    </div>
+                    <div class="info-row">
                         <div class="info-row-main"><b>清除本地演示数据</b><span>草稿、点赞、收藏、关注等本地记录</span></div>
                         <button type="button" class="btn btn-outline btn-sm" data-action="settings-clear-local">清除</button>
                     </div>
                     <div class="info-row">
-                        <div class="info-row-main"><b>版本</b><span>逐风之地 v5.4 · 前端演示版</span></div>
+                        <div class="info-row-main"><b>版本</b><span>逐风之地 v5.5 · 前端演示版</span></div>
                     </div>`;
             }
             overlay.classList.add('show');
@@ -4457,6 +4857,27 @@
             return renderPostTopics(post) + renderPostTags(post);
         }
 
+        function renderArticleChips(post) {
+            const topicsHtml = renderPostTopics(post);
+            const tagsHtml = renderPostTags(post);
+            if (!topicsHtml && !tagsHtml) return '';
+            return `<div class="article-card-chips">${topicsHtml}${tagsHtml}<span class="chips-more">…</span></div>`;
+        }
+
+        // 渲染后探测溢出：给需要「…」/「全文」的容器加标记
+        function applyOverflowMarks(root) {
+            const scope = root || document;
+            scope.querySelectorAll('.article-card-chips').forEach(el => {
+                el.classList.toggle('has-more', el.scrollWidth > el.clientWidth + 2);
+            });
+            scope.querySelectorAll('.dynamic-text-wrap').forEach(el => {
+                const text = el.querySelector('.dynamic-text');
+                if (!text) return;
+                el.classList.toggle('has-more', text.scrollHeight > text.clientHeight + 2);
+            });
+        }
+
+
         // 编辑用：标签编辑器的 chips
         function tagChipsMarkup(tags) {
             return tags.map((tag, index) => `<span class="tag-chip">${escapeHtml(tag)}<button type="button" class="tag-chip-remove" data-action="remove-tag" data-tag-index="${index}" data-tag-prefix="${escapeHtml('')}" aria-label="删除标签 ${escapeHtml(tag)}">×</button></span>`).join('');
@@ -5424,7 +5845,7 @@
         const MIXED_FEED_INITIAL_BLOCKS = 3;   // 首屏展示的内容块数（每块 = 一组文章 或 一行动态）
         const MIXED_FEED_STEP_BLOCKS = 2;      // 每次触底加载追加的块数
         const MIXED_FEED_ARTICLE_ROW = 2;      // 文章每次两篇（一篇一行）
-        const MIXED_FEED_DYNAMIC_ROW = 3;      // 动态每次三条（三条一行，不足留白）
+        const MIXED_FEED_DYNAMIC_ROW = 2;      // 动态每行两条（与文章卡片同宽）
 
         let overviewFeedSeed = Math.floor(Math.random() * 1e9);
         let overviewFeedPlan = null;
@@ -5463,10 +5884,36 @@
         // options: { articleRow, dynamicRow, seed }
         function buildMixedFeedPlan(articles, dynamics, signature, options = {}) {
             const articleRow = options.articleRow || MIXED_FEED_ARTICLE_ROW;
-            const dynamicRow = options.dynamicRow || MIXED_FEED_DYNAMIC_ROW;
             const random = createSeededRandom(options.seed === undefined ? overviewFeedSeed : options.seed);
             const articleRows = splitIntoRows(shuffleWithRandom(articles, random), articleRow);
-            const dynamicRows = splitIntoRows(shuffleWithRandom(dynamics, random), dynamicRow);
+
+            // 动态分行：图片卡与纯文字卡分开；「图片卡 + 两张纯文字上下堆叠」可填满竖向空缺
+            const shuffledDynamics = shuffleWithRandom(dynamics, random);
+            const withImages = shuffledDynamics.filter(post => getPostImages(post).length > 0);
+            const textOnly = shuffledDynamics.filter(post => getPostImages(post).length === 0);
+            const dynamicRows = [];
+            let wi = 0;
+            let ti = 0;
+            while (wi < withImages.length || ti < textOnly.length) {
+                const imgLeft = withImages.length - wi;
+                const textLeft = textOnly.length - ti;
+                const row = [];
+                if (imgLeft >= 1 && textLeft >= 2) {
+                    row.push(withImages[wi++]);
+                    row.push([textOnly[ti++], textOnly[ti++]]);   // 两张纯文字上下堆叠
+                } else if (imgLeft >= 2) {
+                    row.push(withImages[wi++]);
+                    row.push(withImages[wi++]);
+                } else if (imgLeft === 1) {
+                    row.push(withImages[wi++]);
+                    if (textLeft === 1) row.push(textOnly[ti++]);
+                } else {
+                    row.push(textOnly[ti++]);
+                    if (ti < textOnly.length) row.push(textOnly[ti++]);
+                }
+                dynamicRows.push(row);
+            }
+
             const blocks = [];
             let articleIndex = 0;
             let dynamicIndex = 0;
@@ -5495,14 +5942,21 @@
             };
         }
 
+        // 行内槽位可能是单张卡片，也可能是「上下堆叠」的卡片数组
+        function countFeedBlockPosts(items) {
+            return items.reduce((sum, item) => sum + (Array.isArray(item) ? item.length : 1), 0);
+        }
+
         function renderFeedBlock(block, items, animationClass) {
             if (!items.length) return '';
             if (block.type === 'article') {
                 return `<section class="feed-block ${animationClass}">${items.map(renderArticleCard).join('')}</section>`;
             }
-            return `<section class="feed-block ${animationClass}"><div class="dynamic-row">${items.map(renderDynamicCard).join('')}</div></section>`;
+            const inner = items.map(item => Array.isArray(item)
+                ? `<div class="dynamic-stack">${item.map(renderDynamicCard).join('')}</div>`
+                : renderDynamicCard(item)).join('');
+            return `<section class="feed-block ${animationClass}"><div class="dynamic-row">${inner}</div></section>`;
         }
-
         // 分类菜单（原“原创志”分类功能，收进圆形按钮的下拉里）
         const OVERVIEW_FILTERS = [
             { value: 'all', label: '全部' },
@@ -5599,7 +6053,7 @@
             let html = '';
             for (const block of overviewFeedPlan.blocks) {
                 if (blockIndex >= visibleBlocks) break;
-                shown += block.items.length;
+            shown += countFeedBlockPosts(block.items);
                 html += renderFeedBlock(block, block.items, blockIndex >= overviewFeedRenderedBlocks ? 'is-new' : '');
                 blockIndex += 1;
             }
@@ -5614,6 +6068,7 @@
             // P4.6：真实内容已渲染，移除残留骨架
             document.querySelectorAll('.overview-feed-skeleton').forEach(el => el.remove());
             applyOutlineThumbIcons();
+            applyOverflowMarks(container);
             observeOverviewFeedSentinel();
             schedulePublishRefresh();
         }
@@ -5766,6 +6221,42 @@
             return [...latest.values()].sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
         }
 
+        // 关注的博主：全部列出；有更新的排前面（按更新时间倒序），并带红点
+        function collectFollowedBloggers(followedIds, posts) {
+            const latest = new Map();
+            posts.forEach(post => {
+                const key = post.authorId || post.author;
+                const current = latest.get(key);
+                if (!current || String(post.date || '') > String(current.date || '')) {
+                    latest.set(key, {
+                        authorId: key,
+                        author: post.author || '匿名',
+                        date: post.date,
+                        title: post.title,
+                        subcat: post.subcat,
+                        avatar: post.authorAvatar || ''
+                    });
+                }
+            });
+            const rows = (followedIds || []).map(id => {
+                const info = getUserInfo(id) || {};
+                const latestPost = latest.get(id);
+                return {
+                    authorId: id,
+                    author: info.name || (latestPost && latestPost.author) || '未知博主',
+                    avatar: info.avatar || (latestPost && latestPost.avatar) || '',
+                    hasUpdate: Boolean(latestPost),
+                    date: latestPost ? latestPost.date : '',
+                    title: latestPost ? latestPost.title : '',
+                    subcat: latestPost ? latestPost.subcat : ''
+                };
+            });
+            return rows.sort((a, b) => {
+                if (a.hasUpdate !== b.hasUpdate) return a.hasUpdate ? -1 : 1;
+                return String(b.date || '').localeCompare(String(a.date || ''));
+            });
+        }
+
         function renderDynamicBlocks(posts, animationCount) {
             if (!posts.length) return '';
             const plan = buildMixedFeedPlan(
@@ -5774,7 +6265,9 @@
                 `feed-page|${posts.map(post => post.id).join(',')}`,
                 { dynamicRow: 2, seed: 20250808 }   // 中间列按两列展示，顺序固定
             );
-            return plan.blocks.map((block, index) => renderFeedBlock(block, block.items, index < animationCount ? 'is-new' : '')).join('');
+            const html = plan.blocks.map((block, index) => renderFeedBlock(block, block.items, index < animationCount ? 'is-new' : '')).join('');
+            setTimeout(() => applyOverflowMarks(document), 0);
+            return html;
         }
 
         function renderFeedPage() {
@@ -5813,20 +6306,29 @@
                 ? renderDynamicBlocks(centerPosts, 3)
                 : `<div class="dynamic-box"><div class="dynamic-empty">${loggedIn ? '你关注的博主还没有发布内容，去推荐博主名单里关注几位吧。' : '暂时没有可展示的内容。'}</div></div>`;
 
-            const bloggerList = updates.length
-                ? updates.map(item => {
-                    const safeAuthor = escapeHtml(item.author);
-                    return `
-                    <div class="dynamic-blogger" data-action="open-author" data-author-id="${escapeHtml(item.authorId)}" title="${escapeHtml(item.title)}">
+        const bloggerRows = loggedIn
+            ? collectFollowedBloggers(follows, sorted)
+            : updates;   // 未登录沿用「推荐博主」逻辑
+        const bloggerList = bloggerRows.length
+            ? bloggerRows.map(item => {
+                const safeAuthor = escapeHtml(item.author);
+                const subtitle = item.hasUpdate
+                    ? `${item.subcat === 'article' ? '文章' : '动态'} · ${escapeHtml(item.title)}`
+                    : '<span class="dynamic-blogger-idle">暂无更新</span>';
+                return `
+                <div class="dynamic-blogger" data-action="open-author" data-author-id="${escapeHtml(item.authorId)}" title="${escapeHtml(item.author)}">
+                    <span class="dynamic-blogger-avatar-wrap">
                         <span class="dynamic-blogger-avatar">${feedAuthorAvatar(item.author, item.avatar)}</span>
-                        <span class="dynamic-blogger-info">
-                            <span class="dynamic-blogger-name">${safeAuthor}</span>
-                            <span class="dynamic-blogger-latest">${item.subcat === 'article' ? '文章' : '动态'} · ${escapeHtml(item.title)}</span>
-                        </span>
-                        <span class="dynamic-blogger-time">${escapeHtml(feedShortDate(item.date))}</span>
-                    </div>`;
-                }).join('')
-                : '<div class="dynamic-empty">暂无更新</div>';
+                        ${item.hasUpdate ? '<i class="dynamic-blogger-dot" aria-label="有新内容"></i>' : ''}
+                    </span>
+                    <span class="dynamic-blogger-info">
+                        <span class="dynamic-blogger-name">${safeAuthor}</span>
+                        <span class="dynamic-blogger-latest">${subtitle}</span>
+                    </span>
+                    <span class="dynamic-blogger-time">${escapeHtml(item.date ? feedShortDate(item.date) : '')}</span>
+                </div>`;
+            }).join('')
+            : '<div class="dynamic-empty">还没有关注任何博主，去话题广场或内容页关注几位吧</div>';
 
             container.innerHTML = `
                 <div class="dynamic-layout">
@@ -5857,8 +6359,8 @@
                     <aside class="dynamic-col-right">
                         <div class="dynamic-box">
                             <div class="dynamic-box-head">
-                                <span class="dynamic-box-title">${loggedIn ? '更新的博主' : '推荐博主'}</span>
-                                <span class="dynamic-box-count">${escapeHtml(updates.length)} 位</span>
+                    <span class="dynamic-box-title">${loggedIn ? '关注的博主' : '推荐博主'}</span>
+                    <span class="dynamic-box-count">${escapeHtml(bloggerRows.length)} 位</span>
                             </div>
                             <div class="dynamic-blogger-list">${bloggerList}</div>
                         </div>
@@ -6021,7 +6523,7 @@
                     <div class="article-card-body">
                         <h3 class="article-card-title">${title}</h3>
                         <div class="article-card-meta">${authorLink}<span>发布于 ${date}</span></div>
-                        ${renderPostTopicsAndTags(post)}
+                        ${renderArticleChips(post)}
                         <div class="article-card-stats">${renderCardStats(post)}${deleteBtn}</div>
                     </div>
                 </article>`;
@@ -6033,7 +6535,7 @@
                 return `
                 <article class="post-item article-card plain" tabindex="0" role="link" data-action="view-post" data-post-id="${postId}" aria-label="阅读文章：${title}">
                     <h3 class="article-card-title">${title}</h3>
-                    ${renderPostTopicsAndTags(post)}
+                    ${renderArticleChips(post)}
                     ${middle}
                     <div class="article-card-footer">
                         ${authorLink}
@@ -6046,7 +6548,7 @@
             return `
                 <article class="post-item article-card plain" tabindex="0" role="link" data-action="view-post" data-post-id="${postId}" aria-label="阅读文章：${title}">
                     <h3 class="article-card-title">${title}</h3>
-                    ${renderPostTopicsAndTags(post)}
+                    ${renderArticleChips(post)}
                     <p class="article-card-plain-excerpt">${escapeHtml(post.excerpt || '')}</p>
                     <div class="article-card-footer">
                         ${authorLink}
@@ -6057,29 +6559,64 @@
         }
 
         function renderDynamicCard(post) {
-            const postId = escapeHtml(post.id);
+            const postId = post.id;
             const author = escapeHtml(post.author);
-            const title = escapeHtml(post.title);
-            const images = getPostImages(post);
-            const cover = images.length
-                    ? `<img src="${escapeHtml(images[0])}" alt="${title}配图" loading="lazy">`
-                : `<div class="dynamic-cover-placeholder"><span class="icon">🌪️</span><span>纯文字动态</span></div>`;
             const avatarUrl = safeUrl(post.authorAvatar);
             const avatar = avatarUrl
-                ? `<img src="${escapeHtml(avatarUrl)}" alt="${author}头像">`
-                : escapeHtml(String(post.author || '匿').slice(0, 1).toUpperCase());
-        const deleteBtn = hasPermission('own-post', post) ? `${deleteButtonMarkup(`data-action="delete-post" data-post-id="${postId}"`, 'dynamic-card-delete')}` : (canDeleteInCurrentTopic(post) ? `${deleteButtonMarkup(`data-action="delete-topic-post" data-post-id="${postId}" data-topic-id="${escapeHtml((post.topicIds || [])[0])}"`, 'dynamic-card-delete')}` : '');
-            return `
-                <article class="post-item dynamic-card" tabindex="0" role="link" data-action="view-post" data-post-id="${postId}" aria-label="查看动态：${title}">
-                    <div class="dynamic-card-cover">${cover}</div>
-                    <h3 class="dynamic-card-title">${title}</h3>
-                    <div class="dynamic-card-footer">
-                        <span class="dynamic-card-author" data-action="open-author" data-author-id="${escapeHtml(post.authorId || post.author)}">${renderAvatar({ src: post.authorAvatar, name: post.author, size: 'xs', className: 'mini-avatar' })}<span class="name">${author}</span></span>
-                        <span class="dynamic-card-actions">${deleteBtn}<button class="dynamic-card-like ${isPostLiked(post) ? 'active' : ''}" aria-label="点赞" data-action="toggle-like" data-post-id="${postId}">${thumbIconMarkup()}${escapeHtml(post.likes || 0)}</button></span>
-                    </div>
-                </article>`;
-        }
+        ? `<img src="${escapeHtml(avatarUrl)}" alt="${author}头像" loading="lazy">`
+        : escapeHtml(String(post.author || '匿').slice(0, 1).toUpperCase());
 
+            // 标题（若有）加粗置顶，正文紧随其后
+            const textContent = post.title
+        ? `<strong>${escapeHtml(post.title)}</strong><br>${escapeHtml(post.content || '')}`
+        : escapeHtml(post.content || '');
+
+            // 图片：PC 最多 2 张（各占一半），移动端最多 3 张（各占三分之一），多余的在最后一张叠加 +N
+            const images = getPostImages(post);
+            const maxShownImages = window.matchMedia('(max-width: 600px)').matches ? 3 : 2;
+            let imagesHtml = '';
+            if (images.length > 0) {
+                const shown = images.slice(0, maxShownImages);
+                const extra = images.length - shown.length;
+                const maskHtml = extra > 0 ? `<div class="image-more-mask">+${extra}</div>` : '';
+                imagesHtml = `<div class="dynamic-images" data-count="${shown.length}">` + shown.map((src, index) => `
+                <div class="dynamic-image-wrapper">
+                    <img src="${escapeHtml(src)}" alt="动态配图" loading="lazy">
+                    ${index === shown.length - 1 ? maskHtml : ''}
+                </div>`).join('') + `</div>`;
+            }
+
+            const deleteBtn = hasPermission('own-post', post)
+        ? deleteButtonMarkup(`data-action="delete-post" data-post-id="${postId}"`, 'dynamic-card-delete')
+        : (canDeleteInCurrentTopic(post)
+            ? deleteButtonMarkup(`data-action="delete-post" data-post-id="${postId}"`, 'dynamic-card-delete')
+            : '');
+            const liked = isPostLiked(post);
+            const commentCount = (post.comments || []).length;
+
+            return `
+        <article class="post-item dynamic-card" tabindex="0" role="link" data-action="view-post" data-post-id="${postId}" aria-label="查看动态：${escapeHtml(post.title || post.content || '')}">
+            <div class="dynamic-header">
+                <div class="dynamic-avatar">${avatar}</div>
+                <div class="dynamic-author-info">
+                    <div class="dynamic-author-name" data-action="open-author" data-author-id="${escapeHtml(post.authorId || post.author)}">${author}</div>
+                    <div class="dynamic-time">${escapeHtml(post.date || '')}</div>
+                </div>
+                ${deleteBtn ? `<div class="dynamic-header-actions">${deleteBtn}</div>` : ''}
+            </div>
+            <div class="dynamic-text-wrap">
+                <div class="dynamic-text">${textContent}</div>
+                <button type="button" class="dynamic-more-btn" data-action="view-post" data-post-id="${postId}">…全文</button>
+            </div>
+            ${imagesHtml}
+            <div class="dynamic-footer-actions">
+                <div class="dynamic-interactions">
+                    <button type="button" class="${liked ? 'active' : ''}" aria-label="点赞" data-action="toggle-like" data-post-id="${postId}">${thumbIconMarkup()}${escapeHtml(post.likes || 0)}</button>
+                    <button type="button" aria-label="评论" data-action="comment-post" data-post-id="${postId}">${commentIconMarkup()}${escapeHtml(commentCount)}</button>
+                </div>
+            </div>
+        </article>`;
+        }
         function viewPost(id, commentId) {
             const post = postsData.find(p=>p.id===id);
             if(!post) return;
@@ -7382,16 +7919,27 @@ ${isPostAuthor(post) ? `<button type="button" class="btn" data-action="submit-to
                 reshuffleOverviewFeed();
                 if (el) { el.classList.add('is-spinning'); setTimeout(() => el.classList.remove('is-spinning'), 500); }
             },
-            'toggle-overview-filter': el => {
+            'toggle-overview-filter': (el, e) => {
                 if (currentMediaTab !== 'overview') return;
-                toggleFilterMenu('overviewFilterMenu', { stopPropagation: () => {} });
-                if (el) el.classList.toggle('is-open');
+                if (e && e.stopPropagation) e.stopPropagation();
+                const menu = document.getElementById('overviewFilterMenu');
+                const willOpen = !(el && el.classList.contains('is-open'));
+                closeFilterMenus();
+                if (willOpen && menu) menu.classList.add('show');
+                if (el) el.classList.toggle('is-open', willOpen);
             },
-            'toggle-lit-filter': el => {
+            'toggle-lit-filter': (el, e) => {
                 if (currentMediaTab !== 'literature') return;
-                toggleFilterMenu('litFilterMenu', { stopPropagation: () => {} });
-                if (el) el.classList.toggle('is-open');
+                if (e && e.stopPropagation) e.stopPropagation();
+                const menu = document.getElementById('litFilterMenu');
+                const willOpen = !(el && el.classList.contains('is-open'));
+                closeFilterMenus();
+                if (willOpen && menu) menu.classList.add('show');
+                if (el) el.classList.toggle('is-open', willOpen);
             },
+            'clear-search-history': () => clearSearchHistory(),
+            'use-search-history': el => applySearchKeyword(el.dataset.keyword || ''),
+            'settings-toggle-history': () => toggleSearchHistorySetting(),
             'settings-toggle-theme': () => { toggleTheme(); openInfoModal('settings'); },
             'settings-clear-local': () => {
                 ['weatherPlatformArticleDraft', 'weatherPlatformFollows', 'weatherPlatformLikedPosts',
@@ -7503,6 +8051,85 @@ ${isPostAuthor(post) ? `<button type="button" class="btn" data-action="submit-to
         document.addEventListener('input', event => {
             if (event.target && event.target.classList && event.target.classList.contains('topic-picker-search')) handleTopicPickerSearch(event.target);
         }, false);
+
+        // ==================== 搜索历史（PC / 移动端通用） ====================
+        const SEARCH_HISTORY_KEY = 'weatherPlatformSearchHistory';
+        const SEARCH_HISTORY_MAX = 8;
+        let searchHistory = (() => {
+            try { return JSON.parse(localStorage.getItem(SEARCH_HISTORY_KEY) || '[]'); } catch (ignored) { return []; }
+        })();
+        let searchHistoryEnabled = (() => {
+            try { return localStorage.getItem('weatherPlatformSearchHistoryOn') !== 'off'; } catch (ignored) { return true; }
+        })();
+
+        function persistSearchHistory() {
+            try { localStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(searchHistory)); } catch (ignored) {}
+        }
+
+        function rememberSearch(keyword) {
+            const value = String(keyword || '').trim();
+            if (!value) return;
+            searchHistory = [value, ...searchHistory.filter(item => item !== value)].slice(0, SEARCH_HISTORY_MAX);
+            persistSearchHistory();
+        }
+
+        function clearSearchHistory() {
+            searchHistory = [];
+            persistSearchHistory();
+            renderSearchHistoryPanel();
+        }
+
+        function renderSearchHistoryPanel() {
+            const panel = document.getElementById('searchHistoryPanel');
+            if (!panel) return;
+            if (!searchHistoryEnabled || !searchHistory.length) {
+                panel.classList.remove('show');
+                panel.innerHTML = '';
+                return;
+            }
+            panel.innerHTML = `
+                <div class="search-history-head">
+                    <span>搜索历史</span>
+                    <button type="button" class="search-history-clear" data-action="clear-search-history">清空</button>
+                </div>
+                <div class="search-history-list">
+                    ${searchHistory.map(word => `<button type="button" class="search-history-item" data-action="use-search-history" data-keyword="${escapeHtml(word)}">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+                        <span>${escapeHtml(word)}</span>
+                    </button>`).join('')}
+                </div>`;
+        }
+
+        function openSearchHistoryPanel() {
+            const panel = document.getElementById('searchHistoryPanel');
+            if (!panel) return;
+            renderSearchHistoryPanel();
+            if (searchHistoryEnabled && searchHistory.length) panel.classList.add('show');
+        }
+
+        function closeSearchHistoryPanel() {
+            const panel = document.getElementById('searchHistoryPanel');
+            if (panel) panel.classList.remove('show');
+        }
+
+        function applySearchKeyword(keyword) {
+            const input = document.getElementById('globalSearchInput');
+            if (!input) return;
+            input.value = keyword;
+            rememberSearch(keyword);
+            applyGlobalSearch();
+            if (currentPage !== 'media') navigateTo('media');
+            closeSearchHistoryPanel();
+            if (window.matchMedia('(max-width: 600px)').matches) closeMobileSearch();
+        }
+
+        function toggleSearchHistorySetting() {
+            searchHistoryEnabled = !searchHistoryEnabled;
+            try { localStorage.setItem('weatherPlatformSearchHistoryOn', searchHistoryEnabled ? 'on' : 'off'); } catch (ignored) {}
+            if (!searchHistoryEnabled) closeSearchHistoryPanel();
+            openInfoModal('settings');
+            showToast(searchHistoryEnabled ? '已开启搜索历史' : '已关闭搜索历史', 'success');
+        }
 
         // ==================== 全局搜索 ====================
         function matchesSearchTitle(title) {
@@ -7655,13 +8282,14 @@ ${isPostAuthor(post) ? `<button type="button" class="btn" data-action="submit-to
             const input = document.getElementById('globalSearchInput');
             const value = input ? input.value.trim() : '';
             if (value) {
+                rememberSearch(value);
                 applyGlobalSearch();
                 if (currentPage !== 'media') navigateTo('media');
             }
+            closeSearchHistoryPanel();
             closeMobileSearch();
             if (input) input.blur();
         }
-
         function toggleMobilePublish(event) {
             event.stopPropagation();
             closeAccountMenu();
